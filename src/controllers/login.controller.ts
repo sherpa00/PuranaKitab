@@ -12,9 +12,9 @@ const LoginOne = async (
     const requestBody: InewUser = req.body
 
     // triggre login service
-    const loginStatus: loginPayload = LoginUser(requestBody)
+    const loginStatus : loginPayload = await LoginUser(requestBody)
 
-    if (!loginStatus.success) {
+    if (!(loginStatus.success)) {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'Username or Password Incorrect'

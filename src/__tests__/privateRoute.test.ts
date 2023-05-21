@@ -1,5 +1,5 @@
 
-/*
+
 import request from 'supertest'
 import app from '../index'
 import { type Iuser } from '../types'
@@ -9,8 +9,8 @@ import { db } from '../configs/db.configs'
 describe('Testing the private route', () => {
   // assing temp user
   const tempUser: Pick<Iuser, 'username' | 'password'> = {
-    username: 'tester1',
-    password: 'tester1'
+    username: 'testing1',
+    password: 'testing1'
   }
 
   // global jwt token space
@@ -69,4 +69,3 @@ describe('Testing the private route', () => {
   })
 })
 
-*/

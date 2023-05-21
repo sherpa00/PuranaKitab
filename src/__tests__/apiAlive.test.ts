@@ -1,4 +1,4 @@
-/*
+
 import request from 'supertest'
 import app from '../index'
 
@@ -11,4 +11,3 @@ describe('Testing the root route for api server aliveness', () => {
   })
 })
 
-*/

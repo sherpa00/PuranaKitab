@@ -18,7 +18,7 @@ describe('Testing for Login and Register routes', () => {
     expect(reqBody.body.success).toBeTruthy()
   })
 
-  it('Should return token when loggin in with correct data', async () => {
+  it('Should return token when login in with correct data', async () => {
     const reqBody = await request(app).post('/login').send(tempUserData)
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
