@@ -6,12 +6,10 @@ const router = express.Router()
 
 router.post(
   '/',
-  body('username')
-    .notEmpty()
-    .withMessage('Username should not empty'),
+  body('username').notEmpty().withMessage('Username should not empty'),
   body('email')
     .notEmpty()
-    .withMessage("Email should not be empty")
+    .withMessage('Email should not be empty')
     .isEmail()
     .withMessage('Email should not be invalid'),
   body('password')

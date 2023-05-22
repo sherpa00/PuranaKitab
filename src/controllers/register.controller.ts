@@ -3,11 +3,7 @@ import RegisterNewUser, { type InewUser } from '../services/register.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
 
-const registerOne = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+const registerOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // input validation
     const errors = validationResult(req)

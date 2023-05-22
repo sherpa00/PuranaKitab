@@ -63,11 +63,11 @@ describe('Testing for Login and Register routes', () => {
     const reqBody = await request(app).post('/register').send({
       username: tempUserData.username,
       email: tempUserData.email,
-      password: "test" // length is only 4
+      password: 'test' // length is only 4
     })
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
-    expect(reqBody.body.errors[0].path).toBe('password');
+    expect(reqBody.body.errors[0].path).toBe('password')
   })
 
   it('Should return token when login in with correct data', async () => {

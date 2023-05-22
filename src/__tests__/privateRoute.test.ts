@@ -1,4 +1,3 @@
-
 import request from 'supertest'
 import app from '../index'
 import { type Iuser } from '../types'
@@ -24,10 +23,12 @@ describe('Testing the private route', () => {
     const tempSalt = await genSalt(10)
     const tempHashedPassword = await hash(tempUser.password, tempSalt)
 
-    await db.query(
-      'INSERT INTO users (username,password,salt,email) VALUES ($1,$2,$3,$4)',
-      [tempUser.username, tempHashedPassword, tempSalt, tempUser.email]
-    )
+    await db.query('INSERT INTO users (username,password,salt,email) VALUES ($1,$2,$3,$4)', [
+      tempUser.username,
+      tempHashedPassword,
+      tempSalt,
+      tempUser.email
+    ])
 
     const loginResponse = await request(app).post('/login').send({
       email: tempUser.email,
@@ -71,4 +72,3 @@ describe('Testing the private route', () => {
     await db.end()
   })
 })
-

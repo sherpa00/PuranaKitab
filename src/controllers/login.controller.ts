@@ -4,30 +4,25 @@ import { type InewUser } from '../services/register.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
 
-const LoginOne = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
+const LoginOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-
     // input validation errors
-    const errors = validationResult(req);
+    const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         errors: errors.array()
-      });
-      return;
+      })
+      return
     }
 
     const requestBody: Pick<InewUser, 'email' | 'password'> = req.body
 
     // triggre login service
-    const loginStatus : loginPayload = await LoginUser(requestBody)
+    const loginStatus: loginPayload = await LoginUser(requestBody)
 
-    if (!(loginStatus.success)) {
+    if (!loginStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'Email or Password Incorrect'

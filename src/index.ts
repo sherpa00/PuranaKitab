@@ -4,6 +4,7 @@ import StatusCode from 'http-status-codes'
 import { registerRouter } from './routes/register.route'
 import { loginRouter } from './routes/login.route'
 import passport from './configs/passport.config'
+import { UserRouter } from './routes/user.route'
 
 // server application
 const app: Application = express()
@@ -30,20 +31,19 @@ app.get('/', (req: Request, res: Response): void => {
 })
 
 // private route for testing authorizations
-app.get(
-  '/private',
-  passport.authenticate('jwt', { session: false }),
-  (req: Request, res: Response) => {
-    res.status(StatusCode.OK).json({
-      success: true,
-      message: 'Authorization Success',
-      data: req.user
-    })
-  }
-)
+app.get('/private', passport.authenticate('jwt', { session: false }), (req: Request, res: Response) => {
+  res.status(StatusCode.OK).json({
+    success: true,
+    message: 'Authorization Success',
+    data: req.user
+  })
+})
 
 // register new user
 app.use('/register', registerRouter)
 app.use('/login', loginRouter)
+
+// user routes
+app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)
 
 export default app

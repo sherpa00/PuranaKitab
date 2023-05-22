@@ -19,11 +19,9 @@ const SECRET: Secret = process.env.SECRET!
 const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promise<loginPayload> => {
   try {
     // first find if userame exits
-    const foundUser = await db.query('SELECT * FROM users WHERE email = $1', [
-      userInfo.email
-    ])
+    const foundUser = await db.query('SELECT * FROM users WHERE email = $1', [userInfo.email])
 
-    if ((foundUser).rowCount <= 0) {
+    if (foundUser.rowCount <= 0) {
       return {
         success: false,
         message: 'No user found'
@@ -31,10 +29,7 @@ const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promis
     }
 
     // verify user's password
-    const isVerified: boolean = compareSync(
-      userInfo.password,
-      (foundUser).rows[0].password
-    )
+    const isVerified: boolean = compareSync(userInfo.password, foundUser.rows[0].password)
 
     if (!isVerified) {
       return {
@@ -44,14 +39,14 @@ const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promis
     }
 
     // sign new token
-    const token: string = sign({ sub: (foundUser).rows[0].userid }, SECRET, {
+    const token: string = sign({ sub: foundUser.rows[0].userid }, SECRET, {
       expiresIn: '1h'
     })
 
     return {
       success: true,
       token,
-      data: (foundUser).rows[0],
+      data: foundUser.rows[0],
       message: 'Successfully LoggedIn'
     }
   } catch (err) {
