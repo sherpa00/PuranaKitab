@@ -50,6 +50,62 @@ describe('Testing user route for logic in user info', () => {
     expect(reqBody.body.data.username).toEqual(tempUser.username)
   })
 
+  it('Should update username for authenticated user', async () => {
+    const tempNewUsername: string = 'newTesting2'
+
+    const reqBody = await request(app)
+      .patch('/user/username')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        newusername: tempNewUsername
+      })
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data.userid).toEqual(currUserId)
+    expect(reqBody.body.data.email).toEqual(tempUser.email)
+    expect(reqBody.body.data.username).toEqual(tempNewUsername)
+  })
+
+  it('Should not update username for unauthenticated user', async () => {
+    const tempNewUsername: string = 'newTesting2'
+
+    const reqBody = await request(app)
+      .patch('/user/username')
+      .set('Authorization', 'Bearer ' + 'wrongjwttoken')
+      .send({
+        newusername: tempNewUsername
+      })
+    expect(reqBody.statusCode).toBe(401)
+  })
+
+  it('Should update email for authenticated user', async () => {
+    const tempNewEmail: string = 'newTesting2@gmail.com'
+
+    const reqBody = await request(app)
+      .patch('/user/email')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        newemail: tempNewEmail
+      })
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data.userid).toEqual(currUserId)
+    expect(reqBody.body.data.username).toEqual(tempUser.username)
+    expect(reqBody.body.data.email).toEqual(tempNewEmail)
+  })
+
+  it('Should not update email for unauthenticated user', async () => {
+    const tempNewEmail: string = 'newTesting2@gmail.com'
+
+    const reqBody = await request(app)
+      .patch('/user/email')
+      .set('Authorization', 'Bearer ' + 'wrongjwttoken')
+      .send({
+        newemail: tempNewEmail
+      })
+    expect(reqBody.statusCode).toBe(401)
+  })
+
   // clear all temporary datas
   afterEach(async () => {
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
