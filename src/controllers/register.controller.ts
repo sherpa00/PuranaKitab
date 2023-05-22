@@ -26,7 +26,7 @@ const registerOne = async (
 
     res.status(StatusCodes.OK).json({
       success: true,
-      message: 'Successfully Registered New User'
+      message: 'Successfully Registered New User of email: ' + requestBody.email
     })
   } catch (err) {
     console.log(err)

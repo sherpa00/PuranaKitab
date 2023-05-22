@@ -16,11 +16,11 @@ export interface loginPayload {
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const SECRET: Secret = process.env.SECRET!
 
-const LoginUser = async (userInfo: InewUser): Promise<loginPayload> => {
+const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promise<loginPayload> => {
   try {
     // first find if userame exits
-    const foundUser = await db.query('SELECT * FROM users WHERE username = $1', [
-      userInfo.username
+    const foundUser = await db.query('SELECT * FROM users WHERE email = $1', [
+      userInfo.email
     ])
 
     if ((foundUser).rowCount <= 0) {

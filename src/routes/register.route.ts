@@ -9,6 +9,11 @@ router.post(
   body('username')
     .notEmpty()
     .withMessage('Username should not empty'),
+  body('email')
+    .notEmpty()
+    .withMessage("Email should not be empty")
+    .isEmail()
+    .withMessage('Email should not be invalid'),
   body('password')
     .notEmpty()
     .withMessage('Password should not be empty')

@@ -8,6 +8,7 @@ import { db } from './db.configs'
 // type for userdata;
 export interface userPayload {
   userid: number
+  email: string
   username: string
 }
 
@@ -40,6 +41,7 @@ passport.use(
         // assign req.user to userdata
         const userData: userPayload = {
           userid: foundUser.rows[0].userid,
+          email: foundUser.rows[0].email,
           username: foundUser.rows[0].username
         }
 

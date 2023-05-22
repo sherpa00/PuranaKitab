@@ -1,5 +1,4 @@
 
-
 import request from 'supertest'
 import app from '../index'
 import { type Iuser } from '../types'
@@ -8,8 +7,9 @@ import { db } from '../configs/db.configs'
 
 describe('Testing the private route', () => {
   // assing temp user
-  const tempUser: Pick<Iuser, 'username' | 'password'> = {
+  const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing1',
+    email: 'testgin1@gmail.com',
     password: 'testing1'
   }
 
@@ -25,11 +25,14 @@ describe('Testing the private route', () => {
     const tempHashedPassword = await hash(tempUser.password, tempSalt)
 
     await db.query(
-      'INSERT INTO users (username,password,salt) VALUES ($1,$2,$3)',
-      [tempUser.username, tempHashedPassword, tempSalt]
+      'INSERT INTO users (username,password,salt,email) VALUES ($1,$2,$3,$4)',
+      [tempUser.username, tempHashedPassword, tempSalt, tempUser.email]
     )
 
-    const loginResponse = await request(app).post('/login').send(tempUser)
+    const loginResponse = await request(app).post('/login').send({
+      email: tempUser.email,
+      password: tempUser.password
+    })
 
     // save token for later use
     jwtToken = loginResponse.body.token
