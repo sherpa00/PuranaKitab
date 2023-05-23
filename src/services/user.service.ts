@@ -37,7 +37,7 @@ const GetUserData = async (authenticatedUserid: number): Promise<UserDataInfo> =
   }
 }
 
-// service for updating user's data
+// service for updating user's userame
 const UpdateUsername = async (authenticatedUserId: number, newUsername: string): Promise<UserDataInfo> => {
   try {
     const updateStatus = await db.query(
@@ -67,6 +67,7 @@ const UpdateUsername = async (authenticatedUserId: number, newUsername: string):
   }
 }
 
+// service for updating user's email
 const UpdateEmail = async (authenticatedUserId: number, newEmail: string): Promise<UserDataInfo> => {
   try {
     const updateStatus = await db.query(
@@ -96,6 +97,7 @@ const UpdateEmail = async (authenticatedUserId: number, newEmail: string): Promi
   }
 }
 
+// service for updating user's password
 const UpdatePassword = async (
   authenticatedUserId: number,
   oldPassword: string,
@@ -158,4 +160,58 @@ const UpdatePassword = async (
   }
 }
 
-export { type UserDataInfo, GetUserData, UpdateUsername, UpdateEmail, UpdatePassword }
+// service for deleting user
+const DeleteUser = async (authenticatedUserId: number, password: string): Promise<UserDataInfo> => {
+    try {
+        // first get the user for db
+        const originalUserPassData = await db.query(`SELECT userid,email,username,password FROM users WHERE users.userid = $1`,[authenticatedUserId])
+
+        if (originalUserPassData.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Error while deleting user'
+            }
+        }
+        const originalPasswordHash: string = originalUserPassData.rows[0].password
+
+        // then comparing the password
+        const isVerified: boolean = await compare(password,originalPasswordHash)
+
+        if (!isVerified) {
+            return {
+                success: false,
+                message: 'Password is invalid'
+            }
+        }
+
+        // here delete user accoutn from db
+        const deleteStatus = await db.query(`DELETE FROM users WHERE users.userid = $1`,[authenticatedUserId])
+
+        if (deleteStatus.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Erorr while deleting user'
+            }
+        }
+        
+        return {
+            success: true,
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            message: `Successfully deleted ${originalUserPassData.rows[0].username}'s account`,
+            data: {
+                userid: originalUserPassData.rows[0].userid,
+                username: originalUserPassData.rows[0].username,
+                email: originalUserPassData.rows[0].email
+            }
+        }
+    } catch (err) {
+        console.log(err)
+        console.log('Error while deleting user')
+        return {
+            success: false,
+            message: 'Error while deleting user'
+        }
+    }
+}
+
+export { type UserDataInfo, GetUserData, UpdateUsername, UpdateEmail, UpdatePassword, DeleteUser}

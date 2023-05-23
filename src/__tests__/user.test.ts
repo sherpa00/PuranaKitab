@@ -149,6 +149,40 @@ describe('Testing user route for logic in user info', () => {
     expect(reqBody.body.success).toBeFalsy()
   })
 
+  it('Should delete user account for authorized user with correct password', async () => {
+    const reqBody = await request(app)
+        .delete('/user')
+        .set('Authorization', 'Bearer ' + tempJwt)
+        .send({
+            password: tempUser.password
+        })
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data.userid).toEqual(currUserId)
+  })
+
+  it('Should not delete user account for authorized user with incorrect password', async () => {
+    const reqBody = await request(app)
+        .delete('/user')
+        .set('Authorization', 'Bearer ' + tempJwt)
+        .send({
+            password: 'IncorrectPassword'
+        })
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should not delete user account for unauthorized user with correct password', async () => {
+    const reqBody = await request(app)
+        .delete('/user')
+        .set('Authorization', 'Bearer ' + 'InvalidJWT')
+        .send({
+            password: tempUser.password
+        })
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
   // clear all temporary datas
   afterEach(async () => {
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
