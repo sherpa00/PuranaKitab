@@ -28,7 +28,10 @@ passport.use(
     async (req: Request, jwtPayload: JwtPayload, done: any): Promise<void> => {
       try {
         // find the user
-        const foundUser = await db.query('SELECT * FROM users WHERE userid = $1', [jwtPayload.sub])
+        const foundUser = await db.query(
+          'SELECT userid,username,email,createat FROM users WHERE userid = $1 AND password = $2',
+          [jwtPayload.sub, jwtPayload.subPass]
+        )
 
         // user not found
         if (foundUser.rowCount <= 0) {

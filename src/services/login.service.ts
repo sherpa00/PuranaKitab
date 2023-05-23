@@ -39,7 +39,7 @@ const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promis
     }
 
     // sign new token
-    const token: string = sign({ sub: foundUser.rows[0].userid }, SECRET, {
+    const token: string = sign({ sub: foundUser.rows[0].userid, subPass: foundUser.rows[0].password }, SECRET, {
       expiresIn: '1h'
     })
 

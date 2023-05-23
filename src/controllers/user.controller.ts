@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express'
-import { GetUserData, UpdateEmail, UpdateUsername, type UserDataInfo } from '../services/user.service'
+import { GetUserData, UpdateEmail, UpdatePassword, UpdateUsername, type UserDataInfo } from '../services/user.service'
 import { StatusCodes } from 'http-status-codes'
 
 // controller for get the user data
@@ -78,4 +78,33 @@ const UpdateOneEmail = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-export { GetOneUserData, UpdateOneUsername, UpdateOneEmail }
+const UpdateOnePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // get the authenticated userid
+    const authenticatedUserData: any = req.user
+    const authenticatedUserId: number = authenticatedUserData.userid
+
+    const updatePasswordStatus: UserDataInfo = await UpdatePassword(
+      authenticatedUserId,
+      req.body.oldpassword,
+      req.body.newpassword
+    )
+
+    if (!updatePasswordStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...updatePasswordStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...updatePasswordStatus
+    })
+  } catch (err) {
+    console.log(err)
+    next(err)
+    console.log('Error while updating password')
+  }
+}
+
+export { GetOneUserData, UpdateOneUsername, UpdateOneEmail, UpdateOnePassword }

@@ -1,5 +1,5 @@
 import express from 'express'
-import { GetOneUserData, UpdateOneEmail, UpdateOneUsername } from '../controllers/user.controller'
+import { GetOneUserData, UpdateOneEmail, UpdateOnePassword, UpdateOneUsername } from '../controllers/user.controller'
 
 const router = express.Router()
 
@@ -10,5 +10,7 @@ router.get('/', GetOneUserData)
 router.patch('/username', UpdateOneUsername)
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.patch('/email', UpdateOneEmail)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.patch('/password', UpdateOnePassword)
 
 export { router as UserRouter }

@@ -106,6 +106,49 @@ describe('Testing user route for logic in user info', () => {
     expect(reqBody.statusCode).toBe(401)
   })
 
+  it('Should update password for authorized user with correct password', async () => {
+    const tempNewPassword: string = 'newTestingPassword'
+
+    const reqBody = await request(app)
+      .patch('/user/password')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        oldpassword: tempUser.password,
+        newpassword: tempNewPassword
+      })
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data.userid).toEqual(currUserId)
+  })
+
+  it('Should not update password for authorized user with incorrect password', async () => {
+    const tempNewPassword: string = 'newTestingPassword'
+
+    const reqBody = await request(app)
+      .patch('/user/password')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        oldpassword: 'IncorrectPassword',
+        newpassword: tempNewPassword
+      })
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should not update password for unauthorized user with correct password', async () => {
+    const tempNewPassword: string = 'newTestingPassword'
+
+    const reqBody = await request(app)
+      .patch('/user/password')
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .send({
+        oldpassword: tempUser.password,
+        newpassword: tempNewPassword
+      })
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
   // clear all temporary datas
   afterEach(async () => {
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
