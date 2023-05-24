@@ -5,6 +5,7 @@ import { registerRouter } from './routes/register.route'
 import { loginRouter } from './routes/login.route'
 import passport from './configs/passport.config'
 import { UserRouter } from './routes/user.route'
+import { BookRouter } from './routes/books.routes'
 
 // server application
 const app: Application = express()
@@ -45,5 +46,8 @@ app.use('/login', loginRouter)
 
 // user routes
 app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)
+
+// book routes
+app.use('/books',passport.authenticate('jwt', {session: false}), BookRouter)
 
 export default app

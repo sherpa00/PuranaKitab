@@ -6,3 +6,16 @@ export interface Iuser {
   salt: string
   createdat: Date
 }
+
+export interface IBook {
+  bookid: number
+  title: string
+  authorid: number
+  price: number
+  publication_date: string
+  book_type: string
+  book_condition: string
+  available_quantity: number,
+  isbn: string
+  createdat: string
+}
