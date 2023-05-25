@@ -9,6 +9,60 @@ export interface BookStatusInfo {
   data?: any
 }
 
+// service for getting all books
+const GetAllBooks = async (): Promise<BookStatusInfo> => {
+  try {
+    const getBooksStatus = await db.query(`SELECT * FROM books`)
+
+    if (getBooksStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Books found'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully got all books',
+      data: getBooksStatus.rows
+    }
+  } catch (err) {
+    console.log(err)
+    console.log('Error while getting all books')
+    return {
+      success: false,
+      message: 'Error while getting all books'
+    }
+  }
+}
+
+// service for getting all books
+const GetOnlyOneBook = async (bookID: number): Promise<BookStatusInfo> => {
+  try {
+    const getBooksStatus = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
+
+    if (getBooksStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No book with id: ' + String(bookID) + ' found'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully got a book by id: ' + String(bookID),
+      data: getBooksStatus.rows[0]
+    }
+  } catch (err) {
+    console.log(err)
+    console.log('Error while getting one book by id: ' + String(bookID))
+    return {
+      success: false,
+      message: 'Error while getting one book by id: ' + String(bookID)
+    }
+  }
+}
+
 // service for adding new books
 const AddBook = async (
   bookData: NewBookPayload,
@@ -27,7 +81,7 @@ const AddBook = async (
 
     if (getAuthorStatus.rowCount <= 0) {
       // no author found so add new author
-      const addAuthorStatus = await db.query(`INSERT INTO authors (firstname,lastname) VALUES ($1, $2) RETURNING *`, [
+      const addAuthorStatus = await db.query(`INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *`, [
         authorFirstname,
         authorLastname
       ])
@@ -81,4 +135,5 @@ const AddBook = async (
     }
   }
 }
-export { AddBook }
+
+export { GetAllBooks, GetOnlyOneBook, AddBook }

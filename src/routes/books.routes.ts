@@ -1,8 +1,18 @@
 import express from 'express'
-import { addOneNewBook } from '../controllers/books.controller'
-import { body } from 'express-validator'
+import { GetAllOneBooks, GetBookById, addOneNewBook } from '../controllers/books.controller'
+import { body, param } from 'express-validator'
 
 const router = express.Router()
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get('/', GetAllOneBooks)
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get(
+  '/:bookid',
+  param('bookid').isNumeric().withMessage('Param bookid should be integer'),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  GetBookById
+)
 
 router.post(
   '/',

@@ -53,6 +53,76 @@ describe('Testing book routes', () => {
     authorLastname: 'testlastname'
   }
 
+  it('Should get all books for authorized user', async () => {
+    const reqBody = await request(app)
+      .get('/books')
+      .set('Authorization', 'Bearer ' + tempJwt)
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+  })
+
+  it('Should return false while getting all books for unauthorized user', async () => {
+    const reqBody = await request(app)
+      .get('/books')
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should get a book with correct bookid for authorized user', async () => {
+    // add temporary book
+    const tempBookAdd = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempBookPayload)
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/books/${tempBookAdd.body.data.bookid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data.bookid).toBe(tempBookAdd.body.data.bookid)
+    expect(reqBody.body.data.title).toEqual(tempBookPayload.title)
+    expect(reqBody.body.data.isbn).toEqual(tempBookPayload.isbn)
+  })
+
+  it('Should not get a book with incorrect bookid for authorized user', async () => {
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/books/${234342379823}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should not get a book with incorrect bookid of type String for authorized user', async () => {
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/books/thisisnotvalid`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.errors).toBeDefined()
+    expect(reqBody.body.errors[0].path).toEqual('bookid')
+  })
+
+  it('Should not get a book with correct bookid for unauthorized user', async () => {
+    // add temporary book
+    const tempBookAdd = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempBookPayload)
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/books/${tempBookAdd.body.data.bookid}`)
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
   it('Should return success for adding new book with authorized user and correct payload', async () => {
     const reqBody = await request(app)
       .post('/books')

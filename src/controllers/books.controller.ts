@@ -1,7 +1,63 @@
 import type { Request, Response, NextFunction } from 'express'
-import { AddBook, type BookStatusInfo } from '../services/books.service'
+import { AddBook, GetAllBooks, type BookStatusInfo, GetOnlyOneBook } from '../services/books.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
+
+// controller for getting all books
+const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const getAllBooksStatus: BookStatusInfo = await GetAllBooks()
+
+    if (!getAllBooksStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...getAllBooksStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...getAllBooksStatus
+    })
+  } catch (err) {
+    console.log(err)
+    console.log('Error while getting all books')
+    next(err)
+  }
+}
+
+// controller for getting a book by id
+const GetBookById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // input validation errors
+    const BookGetErrors = validationResult(req)
+
+    if (!BookGetErrors.isEmpty()) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'Validation Error',
+        errors: BookGetErrors.array()
+      })
+      return
+    }
+
+    const getBookByIdStatus: BookStatusInfo = await GetOnlyOneBook(parseInt(req.params.bookid))
+
+    if (!getBookByIdStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...getBookByIdStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...getBookByIdStatus
+    })
+  } catch (err) {
+    console.log(err)
+    console.log('Error while getting a book with id: ' + String(req.params.bookid))
+    next(err)
+  }
+}
 
 // controller for adding new book
 const addOneNewBook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -12,7 +68,7 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
     if (!BookInputErrors.isEmpty()) {
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
-        message: 'Input Validation Error',
+        message: 'Validation Error',
         errors: BookInputErrors.array()
       })
       return
@@ -67,4 +123,4 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
   }
 }
 
-export { addOneNewBook }
+export { addOneNewBook, GetAllOneBooks, GetBookById }
