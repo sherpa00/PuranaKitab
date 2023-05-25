@@ -48,6 +48,6 @@ app.use('/login', loginRouter)
 app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)
 
 // book routes
-app.use('/books',passport.authenticate('jwt', {session: false}), BookRouter)
+app.use('/books', passport.authenticate('jwt', { session: false }), BookRouter)
 
 export default app

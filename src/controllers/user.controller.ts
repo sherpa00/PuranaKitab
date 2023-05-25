@@ -1,5 +1,12 @@
 import { type Request, type Response, type NextFunction } from 'express'
-import { DeleteUser, GetUserData, UpdateEmail, UpdatePassword, UpdateUsername, type UserDataInfo } from '../services/user.service'
+import {
+  DeleteUser,
+  GetUserData,
+  UpdateEmail,
+  UpdatePassword,
+  UpdateUsername,
+  type UserDataInfo
+} from '../services/user.service'
 import { StatusCodes } from 'http-status-codes'
 
 // controller for get the user data
@@ -107,29 +114,29 @@ const UpdateOnePassword = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-const DeleteOneUser = async (req: Request,res: Response,next: NextFunction) : Promise<void> => {
-    try {
-        // get the authenticated userid
-        const authenticatedUserData: any = req.user
-        const authenticatedUserId: number = authenticatedUserData.userid
+const DeleteOneUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // get the authenticated userid
+    const authenticatedUserData: any = req.user
+    const authenticatedUserId: number = authenticatedUserData.userid
 
-        const deleteStatus: UserDataInfo = await DeleteUser(authenticatedUserId,req.body.password)
+    const deleteStatus: UserDataInfo = await DeleteUser(authenticatedUserId, req.body.password)
 
-        if (!deleteStatus.success) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                ...deleteStatus
-            })
-            return
-        }
-
-        res.status(StatusCodes.OK).json({
-            ...deleteStatus
-        })
-    } catch (err) {
-        console.log(err)
-        console.log('Error while deleting user')
-        next(err)
+    if (!deleteStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...deleteStatus
+      })
+      return
     }
+
+    res.status(StatusCodes.OK).json({
+      ...deleteStatus
+    })
+  } catch (err) {
+    console.log(err)
+    console.log('Error while deleting user')
+    next(err)
+  }
 }
 
 export { GetOneUserData, UpdateOneUsername, UpdateOneEmail, UpdateOnePassword, DeleteOneUser }
