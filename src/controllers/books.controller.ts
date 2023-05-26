@@ -1,5 +1,12 @@
 import type { Request, Response, NextFunction } from 'express'
-import { AddBook, GetAllBooks, type BookStatusInfo, GetOnlyOneBook } from '../services/books.service'
+import {
+  AddBook,
+  GetAllBooks,
+  type BookStatusInfo,
+  GetOnlyOneBook,
+  UpdateBook,
+  type NewBookPayload
+} from '../services/books.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
 
@@ -123,4 +130,43 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
   }
 }
 
-export { addOneNewBook, GetAllOneBooks, GetBookById }
+// contrller for updating a book
+const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // validatino errors
+    const BookUpdateErrors = validationResult(req)
+
+    if (!BookUpdateErrors.isEmpty()) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'Validation Error',
+        errors: BookUpdateErrors.array()
+      })
+      return
+    }
+
+    const { bookid } = req.params
+
+    const newBookBody: Partial<NewBookPayload> = req.body
+
+    // call the update book service
+    const updateOneBookStatus = await UpdateBook(parseInt(bookid), newBookBody)
+
+    if (!updateOneBookStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...updateOneBookStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...updateOneBookStatus
+    })
+  } catch (err) {
+    console.log(err)
+    console.log('Error while updating book of id: ' + String(req.params.bookid))
+    next(err)
+  }
+}
+
+export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook }

@@ -136,4 +136,59 @@ const AddBook = async (
   }
 }
 
-export { GetAllBooks, GetOnlyOneBook, AddBook }
+// service for updating new books
+const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>): Promise<BookStatusInfo> => {
+  try {
+    // first get the book from db
+    const bookWithId = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
+
+    if (bookWithId.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Book with id ' + String(bookID) + ' found'
+      }
+    }
+
+    const oldBookInfo = bookWithId.rows[0]
+
+    // new updated book payload for using in updating book
+    const toUpdateBookInfo = Object.assign(oldBookInfo, newBookInfo)
+
+    // update book by db
+    const bookUpdateStatus = await db.query(
+      `UPDATE books SET title = $1, price = $2, publication_date = $3, book_type = $4, book_condition = $5, available_quantity = $6, isbn = $7  WHERE books.bookid = $8 RETURNING *`,
+      [
+        toUpdateBookInfo.title,
+        toUpdateBookInfo.price,
+        toUpdateBookInfo.publication_date,
+        toUpdateBookInfo.book_type,
+        toUpdateBookInfo.book_condition,
+        toUpdateBookInfo.available_quantity,
+        toUpdateBookInfo.isbn,
+        toUpdateBookInfo.bookid
+      ]
+    )
+
+    if (bookUpdateStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Error while updating book with id ' + String(bookID)
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully updated book with id ' + String(bookID),
+      data: bookUpdateStatus.rows[0]
+    }
+  } catch (err) {
+    console.log(err)
+    console.log('Error while updating book with id: ' + String(bookID))
+    return {
+      success: false,
+      message: 'Error while updating book with id: ' + String(bookID)
+    }
+  }
+}
+
+export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook }

@@ -1,5 +1,5 @@
 import express from 'express'
-import { GetAllOneBooks, GetBookById, addOneNewBook } from '../controllers/books.controller'
+import { GetAllOneBooks, GetBookById, UpdateOneBook, addOneNewBook } from '../controllers/books.controller'
 import { body, param } from 'express-validator'
 
 const router = express.Router()
@@ -28,6 +28,23 @@ router.post(
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   addOneNewBook
+)
+
+router.patch(
+  '/:bookid',
+  param('bookid').isNumeric().withMessage('Param bookid should be integer'),
+  body('title').optional().isAlphanumeric().withMessage('Book Title Should be string'),
+  body('price').optional().isInt().withMessage('Book Price Should be integer'),
+  body('publication_date').optional().trim().isDate().withMessage('Book Publication Date Should be valid date'),
+  body('book_type').optional().isAlpha().withMessage('Book Type should be string'),
+  body('book_condition')
+    .optional()
+    .isIn(['GOOD', 'ACCEPTABLE', 'OLD'])
+    .withMessage('Book Condition should either be GOOD or ACCEPTABLE or OLD'),
+  body('available_quantity').optional().isInt().withMessage('Book Available Quantity Should be integer'),
+  body('isbn').optional().isAlphanumeric().withMessage('Book isbn Should should be string'),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  UpdateOneBook
 )
 
 export { router as BookRouter }
