@@ -33,7 +33,7 @@ router.post(
 router.patch(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
-  body('title').optional().isAlphanumeric().withMessage('Book Title Should be string'),
+  body('title').optional().isAlpha().withMessage('Book Title Should be string'),
   body('price').optional().isInt().withMessage('Book Price Should be integer'),
   body('publication_date').optional().trim().isDate().withMessage('Book Publication Date Should be valid date'),
   body('book_type').optional().isAlpha().withMessage('Book Type should be string'),

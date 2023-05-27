@@ -158,6 +158,88 @@ describe('Testing book routes', () => {
     expect(reqBody.body.errors[0].path).toEqual('title')
   })
 
+  it('Should update book with correct type and correct bookid for authorized user', async () => {
+    const tempNewBookInfo = {
+      title: 'NewBookTitle'
+    }
+
+    // add temporary book
+    const tempBookAdd = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempBookPayload)
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/books/${tempBookAdd.body.data.bookid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempNewBookInfo)
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data.bookid).toEqual(tempBookAdd.body.data.bookid)
+    expect(reqBody.body.data.title).toEqual(tempNewBookInfo.title)
+  })
+
+  it('Should return false for updating book with correct type and incorrect bookid for authorized user', async () => {
+    const tempNewBookInfo = {
+      title: 'NewBookTitle'
+    }
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/books/12398374892058092384`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempNewBookInfo)
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should return false for updating book with incorrect type and correct bookid for authorized user', async () => {
+    const tempNewBookInfo = {
+      price: 'invalidPrice'
+    }
+
+    // add temporary book
+    const tempBookAdd = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempBookPayload)
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/books/${tempBookAdd.body.data.bookid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempNewBookInfo)
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.errors).toBeDefined()
+    expect(reqBody.body.errors[0].path).toEqual('price')
+  })
+
+  it('Should return false for updating book with correct type and correct bookid for unauthorized user', async () => {
+    const tempNewBookInfo = {
+      title: 'NewBookTitle'
+    }
+
+    // add temporary book
+    const tempBookAdd = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempBookPayload)
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/books/${tempBookAdd.body.data.bookid}`)
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .send(tempNewBookInfo)
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
   // clear all temporary datas
   afterEach(async () => {
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
