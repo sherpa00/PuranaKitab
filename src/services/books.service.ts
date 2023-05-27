@@ -191,4 +191,43 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
   }
 }
 
-export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook }
+// service for removing a book
+const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
+  try {
+    // get the book with bookid
+    const bookWithId = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookID])
+
+    // book not found with given bookid
+    if (bookWithId.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Book with ID ' + String(bookID) + ' found'
+      }
+    }
+
+    // now delete book with bookid
+    const deleteBookWithIdStatus = await db.query(`DELETE FROM books WHERE books.bookid = $1 RETURNING *`, [bookID])
+
+    if (deleteBookWithIdStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Error while Deleting book with id ' + String(bookID)
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully Removed book witth id ' + String(bookID),
+      data: deleteBookWithIdStatus.rows[0]
+    }
+  } catch (err) {
+    console.log(err)
+    console.log('Error while removing a book with id ' + String(bookID))
+    return {
+      success: false,
+      message: 'Error while removing a book with id ' + String(bookID)
+    }
+  }
+}
+
+export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook, RemoveBookWithId }

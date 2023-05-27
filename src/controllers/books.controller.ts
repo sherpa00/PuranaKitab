@@ -5,7 +5,8 @@ import {
   type BookStatusInfo,
   GetOnlyOneBook,
   UpdateBook,
-  type NewBookPayload
+  type NewBookPayload,
+  RemoveBookWithId
 } from '../services/books.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
@@ -169,4 +170,39 @@ const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): P
   }
 }
 
-export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook }
+// controller for removing a book
+const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const BookDeleteError = validationResult(req)
+
+    if (!BookDeleteError.isEmpty()) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        success: false,
+        message: 'Validation Error',
+        errors: BookDeleteError.array()
+      })
+      return
+    }
+
+    const { bookid } = req.params
+
+    // call remove book service
+    const removeBookStatus = await RemoveBookWithId(parseInt(bookid))
+
+    if (!removeBookStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...removeBookStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...removeBookStatus
+    })
+  } catch (err) {
+    console.log(err)
+    console.log('Error while removing book with id' + String(req.params.bookid))
+    next(err)
+  }
+}
+export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook }

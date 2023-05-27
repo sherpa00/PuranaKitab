@@ -1,5 +1,11 @@
 import express from 'express'
-import { GetAllOneBooks, GetBookById, UpdateOneBook, addOneNewBook } from '../controllers/books.controller'
+import {
+  GetAllOneBooks,
+  GetBookById,
+  RemoveOneBook,
+  UpdateOneBook,
+  addOneNewBook
+} from '../controllers/books.controller'
 import { body, param } from 'express-validator'
 
 const router = express.Router()
@@ -33,7 +39,7 @@ router.post(
 router.patch(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
-  body('title').optional().isAlpha().withMessage('Book Title Should be string'),
+  body('title').optional().isAlphanumeric().withMessage('Book Title Should be string'),
   body('price').optional().isInt().withMessage('Book Price Should be integer'),
   body('publication_date').optional().trim().isDate().withMessage('Book Publication Date Should be valid date'),
   body('book_type').optional().isAlpha().withMessage('Book Type should be string'),
@@ -45,6 +51,13 @@ router.patch(
   body('isbn').optional().isAlphanumeric().withMessage('Book isbn Should should be string'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneBook
+)
+
+router.delete(
+  '/:bookid',
+  param('bookid').isNumeric().withMessage('Param bookid should be integer'),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  RemoveOneBook
 )
 
 export { router as BookRouter }

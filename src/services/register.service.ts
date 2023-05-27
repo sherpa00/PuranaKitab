@@ -15,11 +15,12 @@ const RegisterNewUser = async (userInfo: InewUser): Promise<void> => {
     const hashedPassword = await hash(userInfo.password, salt)
 
     // create new user here with hashed password and salt given
-    await db.query('INSERT INTO users (username,password,salt,email) VALUES ($1,$2,$3,$4) RETURNING *', [
+    await db.query('INSERT INTO users (username,password,salt,email,role) VALUES ($1,$2,$3,$4,$5) RETURNING *', [
       userInfo.username,
       hashedPassword,
       salt,
-      userInfo.email
+      userInfo.email,
+      'CUSTOMER'
     ])
   } catch (err) {
     console.log(err)

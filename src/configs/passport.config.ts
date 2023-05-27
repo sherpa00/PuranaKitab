@@ -10,6 +10,7 @@ export interface userPayload {
   userid: number
   email: string
   username: string
+  role: string
 }
 
 dotenv.config()
@@ -29,7 +30,7 @@ passport.use(
       try {
         // find the user
         const foundUser = await db.query(
-          'SELECT userid,username,email,createat FROM users WHERE userid = $1 AND password = $2',
+          'SELECT userid,username,email,role,createat FROM users WHERE userid = $1 AND password = $2',
           [jwtPayload.sub, jwtPayload.subPass]
         )
 
@@ -42,7 +43,8 @@ passport.use(
         const userData: userPayload = {
           userid: foundUser.rows[0].userid,
           email: foundUser.rows[0].email,
-          username: foundUser.rows[0].username
+          username: foundUser.rows[0].username,
+          role: foundUser.rows[0].role
         }
 
         req.user = foundUser.rows[0].userdata

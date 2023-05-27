@@ -23,11 +23,12 @@ describe('Testing book routes', () => {
     const tempSalt = await genSalt(10)
     const tempHashedPassword = await hash(tempUser.password, tempSalt)
 
-    await db.query(`INSERT INTO users (username,password,salt,email) VALUES ($1,$2,$3,$4)`, [
+    await db.query(`INSERT INTO users (username,password,salt,email,role) VALUES ($1,$2,$3,$4,$5)`, [
       tempUser.username,
       tempHashedPassword,
       tempSalt,
-      tempUser.email
+      tempUser.email,
+      'CUSTOMER'
     ])
 
     const loginResponse = await request(app).post('/login').send({
@@ -91,7 +92,7 @@ describe('Testing book routes', () => {
   it('Should not get a book with incorrect bookid for authorized user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get(`/books/${234342379823}`)
+      .get(`/books/${23434223}`)
       .set('Authorization', 'Bearer ' + tempJwt)
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
@@ -188,7 +189,7 @@ describe('Testing book routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/books/12398374892058092384`)
+      .patch(`/books/12862384`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send(tempNewBookInfo)
 
@@ -235,6 +236,49 @@ describe('Testing book routes', () => {
       .patch(`/books/${tempBookAdd.body.data.bookid}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send(tempNewBookInfo)
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should remove a book with correct bookid for authorized user', async () => {
+    // add temporary book
+    const tempBookAdd = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempBookPayload)
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .delete(`/books/${tempBookAdd.body.data.bookid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data.bookid).toEqual(tempBookAdd.body.data.bookid)
+  })
+
+  it('Should not remove a book with incorrect bookid for authorized user', async () => {
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .delete(`/books/94384923849023`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should not remove a book with correct bookid for unauthorized user', async () => {
+    // add temporary book
+    const tempBookAdd = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send(tempBookPayload)
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .delete(`/books/${tempBookAdd.body.data.bookid}`)
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.success).toBeFalsy()

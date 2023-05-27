@@ -5,6 +5,8 @@ export interface Iuser {
   password: string
   salt: string
   createdat: Date
+  role: 'GUEST' | 'CUSTOMER' | 'ADMIN'
+  last_login: string
 }
 
 export interface IBook {
