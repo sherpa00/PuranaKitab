@@ -6,6 +6,7 @@ import { loginRouter } from './routes/login.route'
 import passport from './configs/passport.config'
 import { UserRouter } from './routes/user.route'
 import { BookRouter } from './routes/books.routes'
+import { LogoutRouter } from './routes/logout.route'
 
 // server application
 const app: Application = express()
@@ -42,7 +43,10 @@ app.get('/private', passport.authenticate('jwt', { session: false }), (req: Requ
 
 // register new user
 app.use('/register', registerRouter)
+// login user
 app.use('/login', loginRouter)
+// logout user
+app.use('/logout',passport.authenticate('jwt', {session: false}), LogoutRouter)
 
 // user routes
 app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)

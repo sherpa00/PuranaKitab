@@ -28,6 +28,7 @@ const GetOneUserData = async (req: Request, res: Response, next: NextFunction): 
     res.status(StatusCodes.OK).json({
       ...getUserDataStatus
     })
+    return
   } catch (err) {
     console.log(err)
     next(err)

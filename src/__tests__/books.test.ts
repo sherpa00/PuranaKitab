@@ -261,7 +261,7 @@ describe('Testing book routes', () => {
   it('Should not remove a book with incorrect bookid for authorized user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/books/94384923849023`)
+      .delete(`/books/94849023`)
       .set('Authorization', 'Bearer ' + tempJwt)
 
     expect(reqBody.statusCode).toBe(400)

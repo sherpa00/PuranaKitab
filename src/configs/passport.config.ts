@@ -30,13 +30,27 @@ passport.use(
       try {
         // find the user
         const foundUser = await db.query(
-          'SELECT userid,username,email,role,createat FROM users WHERE userid = $1 AND password = $2',
+          `SELECT userid,username,email,role,createat,last_logout FROM users WHERE userid = $1 AND password = $2`,
           [jwtPayload.sub, jwtPayload.subPass]
         )
 
-        // user not found
         if (foundUser.rowCount <= 0) {
-          done(null, false, { message: 'user not found' })
+          done(null,false,{message: 'User not found'})
+          return
+        }
+
+        // comparing issuedat and last_logout for logout verification
+        const jwtIssuedAt: Date = new Date(jwtPayload.subIssuedAt)
+
+        const lastLogOut: Date = new Date(foundUser.rows[0].last_logout)
+
+        // check if token created after last logout time (valid) or before (invalid)
+        if (jwtIssuedAt > lastLogOut) {
+          console.log('Token valid')
+        } else {
+          console.log('Token invalid')
+          done(null, false, { message: 'TOKEN INVALID '})
+          return
         }
 
         // assign req.user to userdata
