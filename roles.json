@@ -1,0 +1,31 @@
+{
+    "CUSTOMER": {
+        "GET": [
+            "/user","/logout","/books","/books/:bookid"
+        ],
+        "POST": [
+            
+        ],
+        "PATCH": [
+            "/user/username", "/user/email", "/user/password"
+        ],
+        "DELETE": [
+            "/user"
+        ]
+    },
+    "ADMIN": {
+        "GET": [
+            "/user","/logout","/books","/books/:bookid"
+        ],
+        "POST": [
+            "/books"
+        ],
+        "PATCH": [
+            "/books/:bookid"
+        ],
+        "DELETE": [
+            "/user", "/books/:bookid"
+        ]
+
+    }
+}
