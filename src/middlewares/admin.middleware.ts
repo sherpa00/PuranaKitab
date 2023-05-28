@@ -4,22 +4,16 @@ import { StatusCodes } from "http-status-codes";
 
 // middleware to verify if the current authenticated user is admin
 const isAdmin = (req: Request, res: Response, next: NextFunction) : void => {
-    try {
-        // get the authenticated user info from req
-        const authenticatedUserData: any | userPayload = req.user
+    // get the authenticated user info from req
+    const authenticatedUserData: any | userPayload = req.user
 
-        if ( (Boolean(authenticatedUserData.role)) && authenticatedUserData.role === 'ADMIN') {
-            next()
-        }
-
+    if ( (Boolean(authenticatedUserData.role)) && authenticatedUserData.role === 'ADMIN') {
+        next()
+    } else {
         res.status(StatusCodes.UNAUTHORIZED).json({
             success: false,
             message: 'Unauthorized access'
         })
-    } catch (err) {
-        console.log(err)
-        console.log('Error while verifying admin')
-        next(err)
     }
 }
 
