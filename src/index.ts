@@ -46,7 +46,7 @@ app.use('/register', registerRouter)
 // login user
 app.use('/login', loginRouter)
 // logout user
-app.use('/logout',passport.authenticate('jwt', {session: false}), LogoutRouter)
+app.use('/logout', passport.authenticate('jwt', { session: false }), LogoutRouter)
 
 // user routes
 app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)

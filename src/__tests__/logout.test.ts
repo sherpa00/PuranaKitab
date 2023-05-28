@@ -40,12 +40,12 @@ describe('Testing for Login and Register routes', () => {
 
   it('Should return success when logging out user for authorized user', async () => {
     const reqBody = await request(app)
-        .get('/logout')
-        .set('Authorization', 'Bearer ' + tempJWT)
-    
+      .get('/logout')
+      .set('Authorization', 'Bearer ' + tempJWT)
+
     const tempPrivateRoute = await request(app)
-        .get('/private')
-        .set('Authorization', 'Bearer ' + tempJWT)
+      .get('/private')
+      .set('Authorization', 'Bearer ' + tempJWT)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -54,13 +54,13 @@ describe('Testing for Login and Register routes', () => {
 
   it('Should not log out when logging out for unauthorized user', async () => {
     const reqBody = await request(app)
-        .get('/logout')
-        .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .get('/logout')
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     expect(reqBody.statusCode).toBe(401)
   })
 
-  afterEach(async() => {
+  afterEach(async () => {
     await db.query('DELETE FROM users where users.userid = $1', [tempUserid])
   })
 

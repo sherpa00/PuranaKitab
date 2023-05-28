@@ -26,30 +26,30 @@ passport.use(
       passReqToCallback: true
     },
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    async (req: Request, jwtPayload: JwtPayload, done: any): Promise<void> => {
+    async (req: Request, payload: JwtPayload, done: any): Promise<void> => {
       try {
         // find the user
         const foundUser = await db.query(
           `SELECT userid,username,email,role,createat,last_logout FROM users WHERE userid = $1 AND password = $2`,
-          [jwtPayload.sub, jwtPayload.subPass]
+          [payload.sub, payload.subPass]
         )
 
         if (foundUser.rowCount <= 0) {
-          done(null,false,{message: 'User not found'})
+          console.log('User not found')
+          done(null, false, { message: 'User not found' })
           return
         }
 
         // comparing issuedat and last_logout for logout verification
-        const jwtIssuedAt: Date = new Date(jwtPayload.subIssuedAt)
 
-        const lastLogOut: Date = new Date(foundUser.rows[0].last_logout)
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        const jwtIssuedAt = payload.iat ? new Date(payload.iat * 1000) : null // null check
+
+        const lastLogOut = new Date(foundUser.rows[0].last_logout)
 
         // check if token created after last logout time (valid) or before (invalid)
-        if (jwtIssuedAt > lastLogOut) {
-          console.log('Token valid')
-        } else {
-          console.log('Token invalid')
-          done(null, false, { message: 'TOKEN INVALID '})
+        if (jwtIssuedAt != null && jwtIssuedAt < lastLogOut) {
+          done(null, false, { message: 'TOKEN INVALID ' })
           return
         }
 
