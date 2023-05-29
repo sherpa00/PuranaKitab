@@ -8,6 +8,7 @@ import { UserRouter } from './routes/user.route'
 import { BookRouter } from './routes/books.routes'
 import { LogoutRouter } from './routes/logout.route'
 import { isAdmin } from './middlewares/admin.middleware'
+import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
 
 // server application
 const app: Application = express()
@@ -62,5 +63,10 @@ app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)
 
 // book routes
 app.use('/books', BookRouter)
+
+// custom erorr handler middlewares
+app.use(errorLogger)
+app.use(errorResponder)
+app.use(errorFailSafeHandler)
 
 export default app

@@ -10,6 +10,7 @@ import {
 } from '../services/books.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
+import CustomError from '../utils/custom-error'
 
 // controller for getting all books
 const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -17,18 +18,14 @@ const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): 
     const getAllBooksStatus: BookStatusInfo = await GetAllBooks()
 
     if (!getAllBooksStatus.success) {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        ...getAllBooksStatus
-      })
-      return
+      const error = new CustomError('No Books found', 403)
+      throw error
     }
 
     res.status(StatusCodes.OK).json({
       ...getAllBooksStatus
     })
   } catch (err) {
-    console.log(err)
-    console.log('Error while getting all books')
     next(err)
   }
 }
@@ -40,29 +37,33 @@ const GetBookById = async (req: Request, res: Response, next: NextFunction): Pro
     const BookGetErrors = validationResult(req)
 
     if (!BookGetErrors.isEmpty()) {
+      const error = new CustomError('Validation Error', 403)
+      throw error
+      /*
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'Validation Error',
         errors: BookGetErrors.array()
       })
-      return
+      return */
     }
 
     const getBookByIdStatus: BookStatusInfo = await GetOnlyOneBook(parseInt(req.params.bookid))
 
     if (!getBookByIdStatus.success) {
+      const error = new CustomError('No Book withd id: ' + req.params.bookid + ' found', 404)
+      throw error
+      /*
       res.status(StatusCodes.BAD_REQUEST).json({
         ...getBookByIdStatus
       })
-      return
+      return */
     }
 
     res.status(StatusCodes.OK).json({
       ...getBookByIdStatus
     })
   } catch (err) {
-    console.log(err)
-    console.log('Error while getting a book with id: ' + String(req.params.bookid))
     next(err)
   }
 }
