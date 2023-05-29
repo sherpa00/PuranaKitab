@@ -95,6 +95,7 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
       // eslint-disable-next-line @typescript-eslint/naming-convention
       available_quantity,
       isbn,
+      description,
       authorFirstname,
       authorLastname
     } = req.body
@@ -108,7 +109,8 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
         book_type,
         book_condition,
         available_quantity,
-        isbn
+        isbn,
+        description
       },
       authorFirstname,
       authorLastname

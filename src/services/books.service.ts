@@ -101,7 +101,7 @@ const AddBook = async (
 
     // now add new book with authorid and payload
     const addBookStatus = await db.query(
-      `INSERT INTO books (authorid, title, price, publication_date, book_type, book_condition, available_quantity, isbn) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      `INSERT INTO books (authorid, title, price, publication_date, book_type, book_condition, available_quantity, isbn, description) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
       [
         currentAuthorid,
         bookData.title,
@@ -110,7 +110,8 @@ const AddBook = async (
         bookData.book_type,
         bookData.book_condition,
         bookData.available_quantity,
-        bookData.isbn
+        bookData.isbn,
+        bookData.description
       ]
     )
 
@@ -156,7 +157,7 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
 
     // update book by db
     const bookUpdateStatus = await db.query(
-      `UPDATE books SET title = $1, price = $2, publication_date = $3, book_type = $4, book_condition = $5, available_quantity = $6, isbn = $7  WHERE books.bookid = $8 RETURNING *`,
+      `UPDATE books SET title = $1, price = $2, publication_date = $3, book_type = $4, book_condition = $5, available_quantity = $6, isbn = $7, description = $8  WHERE books.bookid = $9 RETURNING *`,
       [
         toUpdateBookInfo.title,
         toUpdateBookInfo.price,
@@ -165,6 +166,7 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
         toUpdateBookInfo.book_condition,
         toUpdateBookInfo.available_quantity,
         toUpdateBookInfo.isbn,
+        toUpdateBookInfo.description,
         toUpdateBookInfo.bookid
       ]
     )

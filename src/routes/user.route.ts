@@ -6,7 +6,6 @@ import {
   UpdateOnePassword,
   UpdateOneUsername
 } from '../controllers/user.controller'
-import passport from '../configs/passport.config'
 
 const router = express.Router()
 

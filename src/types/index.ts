@@ -19,5 +19,6 @@ export interface IBook {
   book_condition: string
   available_quantity: number
   isbn: string
+  description: string
   createdat: string
 }

@@ -31,6 +31,7 @@ router.post(
   body('book_condition').notEmpty().withMessage('Book Condition Should not be empty'),
   body('available_quantity').notEmpty().withMessage('Book Available Quantity Should not be empty'),
   body('isbn').notEmpty().withMessage('Book isbn Should not be empty'),
+  body('description').optional().isString().withMessage('Book description Should should be string'),
   body('authorFirstname').notEmpty().withMessage('Book author firstname Should not be empty'),
   body('authorLastname').notEmpty().withMessage('Book author lastname Should not be empty'),
   // user authorization
@@ -54,6 +55,7 @@ router.patch(
     .withMessage('Book Condition should either be GOOD or ACCEPTABLE or OLD'),
   body('available_quantity').optional().isInt().withMessage('Book Available Quantity Should be integer'),
   body('isbn').optional().isAlphanumeric().withMessage('Book isbn Should should be string'),
+  body('description').optional().isString().withMessage('Book description Should should be string'),
   // user authorization
   passport.authenticate('jwt',{session: false}),
   // admin authorization
