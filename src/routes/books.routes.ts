@@ -7,6 +7,8 @@ import {
   addOneNewBook
 } from '../controllers/books.controller'
 import { body, param } from 'express-validator'
+import { isAdmin } from '../middlewares/admin.middleware'
+import passport from '../configs/passport.config'
 
 const router = express.Router()
 
@@ -31,7 +33,10 @@ router.post(
   body('isbn').notEmpty().withMessage('Book isbn Should not be empty'),
   body('authorFirstname').notEmpty().withMessage('Book author firstname Should not be empty'),
   body('authorLastname').notEmpty().withMessage('Book author lastname Should not be empty'),
-
+  // user authorization
+  passport.authenticate('jwt',{session: false}),
+  // admin authorization
+  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   addOneNewBook
 )
@@ -49,6 +54,10 @@ router.patch(
     .withMessage('Book Condition should either be GOOD or ACCEPTABLE or OLD'),
   body('available_quantity').optional().isInt().withMessage('Book Available Quantity Should be integer'),
   body('isbn').optional().isAlphanumeric().withMessage('Book isbn Should should be string'),
+  // user authorization
+  passport.authenticate('jwt',{session: false}),
+  // admin authorization
+  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneBook
 )
@@ -56,6 +65,10 @@ router.patch(
 router.delete(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
+  // user authorization
+  passport.authenticate('jwt',{session: false}),
+  // admin authorization
+  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   RemoveOneBook
 )

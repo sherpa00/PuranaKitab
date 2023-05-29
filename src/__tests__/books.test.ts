@@ -19,6 +19,17 @@ describe('Testing book routes', () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let currUserId: number
 
+  // asssing new admin userdata
+  const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
+    username: 'testing1289423',
+    email: 'testing1830920@gmail.com',
+    password: 'testing48249032'
+  }
+
+  let tempAdminUserid: number
+
+  let tempAdminJWT: string
+
   beforeEach(async () => {
     const tempSalt = await genSalt(10)
     const tempHashedPassword = await hash(tempUser.password, tempSalt)
@@ -39,6 +50,27 @@ describe('Testing book routes', () => {
     tempJwt = loginResponse.body.token
 
     currUserId = loginResponse.body.data.userid
+
+    // assining jwt and id for admin user
+    const tempAdminSalt = await genSalt(10)
+    const tempAdminHashedPassword = await hash(tempAdminUserData.password, tempAdminSalt)
+
+    await db.query(`INSERT INTO users (username,password,salt,email,role) VALUES ($1,$2,$3,$4,$5)`, [
+      tempAdminUserData.username,
+      tempAdminHashedPassword,
+      tempAdminSalt,
+      tempAdminUserData.email,
+      'ADMIN'
+    ])
+
+    const loginAdminResponse = await request(app).post('/login').send({
+      email: tempAdminUserData.email,
+      password: tempAdminUserData.password
+    })
+
+    tempAdminJWT = loginAdminResponse.body.token
+
+    tempAdminUserid = loginAdminResponse.body.data.userid
   })
 
   // temporary book payload for req.body
@@ -63,19 +95,19 @@ describe('Testing book routes', () => {
     expect(reqBody.body.data).toBeDefined()
   })
 
-  it('Should return false while getting all books for unauthorized user', async () => {
+  it('Should get all books for guest user too', async () => {
     const reqBody = await request(app)
       .get('/books')
-      .set('Authorization', 'Bearer ' + 'invalidJWT')
-    expect(reqBody.statusCode).toBe(401)
-    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
   })
 
   it('Should get a book with correct bookid for authorized user', async () => {
     // add temporary book
     const tempBookAdd = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
@@ -94,8 +126,8 @@ describe('Testing book routes', () => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .get(`/books/${23434223}`)
       .set('Authorization', 'Bearer ' + tempJwt)
-    expect(reqBody.statusCode).toBe(400)
-    expect(reqBody.body.success).toBeFalsy()
+      expect(reqBody.statusCode).toBe(400)
+      expect(reqBody.body.success).toBeFalsy()
   })
 
   it('Should not get a book with incorrect bookid of type String for authorized user', async () => {
@@ -109,25 +141,28 @@ describe('Testing book routes', () => {
     expect(reqBody.body.errors[0].path).toEqual('bookid')
   })
 
-  it('Should not get a book with correct bookid for unauthorized user', async () => {
+  it('Should get a book with correct bookid for guest user', async () => {
     // add temporary book
     const tempBookAdd = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .get(`/books/${tempBookAdd.body.data.bookid}`)
-      .set('Authorization', 'Bearer ' + 'invalidJWT')
-    expect(reqBody.statusCode).toBe(401)
-    expect(reqBody.body.success).toBeFalsy()
+      
+      expect(reqBody.statusCode).toBe(200)
+      expect(reqBody.body.success).toBeTruthy()
+      expect(reqBody.body.data.bookid).toBe(tempBookAdd.body.data.bookid)
+      expect(reqBody.body.data.title).toEqual(tempBookPayload.title)
+      expect(reqBody.body.data.isbn).toEqual(tempBookPayload.isbn)
   })
 
-  it('Should return success for adding new book with authorized user and correct payload', async () => {
+  it('Should return success for adding new book with authorized admin user and correct payload', async () => {
     const reqBody = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempBookPayload)
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -135,10 +170,10 @@ describe('Testing book routes', () => {
     expect(reqBody.body.data.isbn).toEqual(tempBookPayload.isbn)
   })
 
-  it('Should return false for adding new book with unauthorized user and correct payload', async () => {
+  it('Should return false for adding new book with unauthorized admin user (CUSTOMER) and correct payload', async () => {
     const reqBody = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         ...tempBookPayload
       })
@@ -146,10 +181,10 @@ describe('Testing book routes', () => {
     expect(reqBody.body.success).toBeFalsy()
   })
 
-  it('Should return false for adding new book with authorized user and incorrect payload', async () => {
+  it('Should return false for adding new book with authorized admin user and incorrect payload', async () => {
     const reqBody = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send({
         ...tempBookPayload,
         title: ''
@@ -159,7 +194,7 @@ describe('Testing book routes', () => {
     expect(reqBody.body.errors[0].path).toEqual('title')
   })
 
-  it('Should update book with correct type and correct bookid for authorized user', async () => {
+  it('Should update book with correct type and correct bookid for authorized admin user', async () => {
     const tempNewBookInfo = {
       title: 'NewBookTitle'
     }
@@ -167,13 +202,13 @@ describe('Testing book routes', () => {
     // add temporary book
     const tempBookAdd = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .patch(`/books/${tempBookAdd.body.data.bookid}`)
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempNewBookInfo)
 
     expect(reqBody.statusCode).toBe(200)
@@ -182,7 +217,7 @@ describe('Testing book routes', () => {
     expect(reqBody.body.data.title).toEqual(tempNewBookInfo.title)
   })
 
-  it('Should return false for updating book with correct type and incorrect bookid for authorized user', async () => {
+  it('Should return false for updating book with correct type and incorrect bookid for authorized admin user', async () => {
     const tempNewBookInfo = {
       title: 'NewBookTitle'
     }
@@ -190,14 +225,14 @@ describe('Testing book routes', () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .patch(`/books/12862384`)
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempNewBookInfo)
 
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
   })
 
-  it('Should return false for updating book with incorrect type and correct bookid for authorized user', async () => {
+  it('Should return false for updating book with incorrect type and correct bookid for authorized admin user', async () => {
     const tempNewBookInfo = {
       price: 'invalidPrice'
     }
@@ -205,13 +240,13 @@ describe('Testing book routes', () => {
     // add temporary book
     const tempBookAdd = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .patch(`/books/${tempBookAdd.body.data.bookid}`)
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempNewBookInfo)
 
     expect(reqBody.statusCode).toBe(400)
@@ -220,7 +255,7 @@ describe('Testing book routes', () => {
     expect(reqBody.body.errors[0].path).toEqual('price')
   })
 
-  it('Should return false for updating book with correct type and correct bookid for unauthorized user', async () => {
+  it('Should return false for updating book with correct type and correct bookid for unauthorized admin user (CUSTOMER)', async () => {
     const tempNewBookInfo = {
       title: 'NewBookTitle'
     }
@@ -228,57 +263,57 @@ describe('Testing book routes', () => {
     // add temporary book
     const tempBookAdd = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .patch(`/books/${tempBookAdd.body.data.bookid}`)
-      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .set('Authorization', 'Bearer ' + tempJwt)
       .send(tempNewBookInfo)
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.success).toBeFalsy()
   })
 
-  it('Should remove a book with correct bookid for authorized user', async () => {
+  it('Should remove a book with correct bookid for authorized admin user', async () => {
     // add temporary book
     const tempBookAdd = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .delete(`/books/${tempBookAdd.body.data.bookid}`)
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data.bookid).toEqual(tempBookAdd.body.data.bookid)
   })
 
-  it('Should not remove a book with incorrect bookid for authorized user', async () => {
+  it('Should not remove a book with incorrect bookid for authorized admin user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .delete(`/books/94849023`)
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
 
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
   })
 
-  it('Should not remove a book with correct bookid for unauthorized user', async () => {
+  it('Should not remove a book with correct bookid for unauthorized admin user (CUSTOMER)', async () => {
     // add temporary book
     const tempBookAdd = await request(app)
       .post('/books')
-      .set('Authorization', 'Bearer ' + tempJwt)
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .delete(`/books/${tempBookAdd.body.data.bookid}`)
-      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .set('Authorization', 'Bearer ' + tempJwt)
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.success).toBeFalsy()
@@ -287,6 +322,7 @@ describe('Testing book routes', () => {
   // clear all temporary datas
   afterEach(async () => {
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
+    await db.query(`DELETE FROM users WHERE users.userid = $1`,[tempAdminUserid])
     await db.query(`DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2`, [
       tempBookPayload.authorFirstname,
       tempBookPayload.authorLastname

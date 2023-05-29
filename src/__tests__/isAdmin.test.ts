@@ -8,9 +8,9 @@ describe('Testing for /isadmin route to showcase admin authorization',() => {
 
     // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing103928409289423',
-    email: 'testing1842030920@gmail.com',
-    password: 'testing100948290349032'
+    username: 'testing1039289328409289423',
+    email: 'testing18422030920@gmail.com',
+    password: 'testing100554948290349032'
   }
 
   let tempAdminUserid: number
@@ -19,9 +19,9 @@ describe('Testing for /isadmin route to showcase admin authorization',() => {
 
   // asssing new customer userdata
   const tempCustomerUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing19482931',
-    email: 'testing1983249021@gmail.com',
-    password: 'testing12343201'
+    username: 'testing194848322931',
+    email: 'testing1983094380249021@gmail.com',
+    password: 'testing12348329043201'
   }
 
   let tempCustomerUserid: number

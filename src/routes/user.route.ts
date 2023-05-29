@@ -6,11 +6,14 @@ import {
   UpdateOnePassword,
   UpdateOneUsername
 } from '../controllers/user.controller'
+import passport from '../configs/passport.config'
 
 const router = express.Router()
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get('/', GetOneUserData)
+router.get('/', 
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  GetOneUserData
+)
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.patch('/username', UpdateOneUsername)

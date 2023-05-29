@@ -55,12 +55,12 @@ app.use('/register', registerRouter)
 // login user
 app.use('/login', loginRouter)
 // logout user
-app.use('/logout', passport.authenticate('jwt', { session: false }), LogoutRouter)
+app.use('/logout', LogoutRouter)
 
 // user routes
 app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)
 
 // book routes
-app.use('/books', passport.authenticate('jwt', { session: false }), BookRouter)
+app.use('/books', BookRouter)
 
 export default app
