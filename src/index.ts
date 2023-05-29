@@ -35,7 +35,7 @@ app.get('/', (req: Request, res: Response): void => {
 })
 
 // private route for testing authorizations
-app.get('/private', passport.authenticate('jwt', { session: false }) , (req: Request, res: Response) => {
+app.get('/private', passport.authenticate('jwt', { session: false }), (req: Request, res: Response) => {
   res.status(StatusCode.OK).json({
     success: true,
     message: 'Authorization Success',
@@ -44,7 +44,7 @@ app.get('/private', passport.authenticate('jwt', { session: false }) , (req: Req
 })
 
 // private route for admin
-app.get('/isadmin',passport.authenticate('jwt',{session: false}),isAdmin, (req: Request, res: Response) => {
+app.get('/isadmin', passport.authenticate('jwt', { session: false }), isAdmin, (req: Request, res: Response) => {
   res.status(StatusCode.OK).json({
     success: true,
     message: 'WELCOME ADMIN'

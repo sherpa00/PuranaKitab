@@ -9,7 +9,8 @@ import {
 
 const router = express.Router()
 
-router.get('/', 
+router.get(
+  '/',
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   GetOneUserData
 )

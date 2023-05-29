@@ -25,7 +25,7 @@ describe('Testing for Login and Register routes', () => {
       email: tempUserData.email,
       password: tempUserData.password
     })
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
   })
 
@@ -35,7 +35,7 @@ describe('Testing for Login and Register routes', () => {
       email: '',
       password: tempUserData.password
     })
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
   })
 
@@ -45,7 +45,7 @@ describe('Testing for Login and Register routes', () => {
       email: tempUserData.password,
       password: ''
     })
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
   })
 
@@ -55,7 +55,7 @@ describe('Testing for Login and Register routes', () => {
       email: 'incorrectEmail.com',
       password: tempUserData.password
     })
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
   })
 
@@ -65,9 +65,8 @@ describe('Testing for Login and Register routes', () => {
       email: tempUserData.email,
       password: 'test' // length is only 4
     })
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
-    expect(reqBody.body.errors[0].path).toBe('password')
   })
 
   it('Should return token when login in with correct data', async () => {

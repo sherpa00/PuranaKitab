@@ -4,9 +4,8 @@ import { type Iuser } from '../types'
 import { genSalt, hash } from 'bcrypt'
 import { db } from '../configs/db.configs'
 
-describe('Testing for /isadmin route to showcase admin authorization',() => {
-
-    // asssing new admin userdata
+describe('Testing for /isadmin route to showcase admin authorization', () => {
+  // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing1039289328409289423',
     email: 'testing18422030920@gmail.com',
@@ -72,43 +71,43 @@ describe('Testing for /isadmin route to showcase admin authorization',() => {
     tempCustomerUserid = loginCustomerResponse.body.data.userid
   })
 
-  it('Should return success for route /isadmin when using correct admin user token',async () => {
+  it('Should return success for route /isadmin when using correct admin user token', async () => {
     const reqBody = await request(app)
-        .get('/isadmin')
-        .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .get('/isadmin')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
   })
 
-  it('Should return false for route /isadmin when using incorrect admin user token',async () => {
+  it('Should return false for route /isadmin when using incorrect admin user token', async () => {
     const reqBody = await request(app)
-        .get('/isadmin')
-        .set('Authorization', 'Bearer ' + 'invalidAdminJWT')
+      .get('/isadmin')
+      .set('Authorization', 'Bearer ' + 'invalidAdminJWT')
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.success).toBeFalsy()
   })
 
-  it('Should return false for route /isadmin when using correct customer user token',async () => {
+  it('Should return false for route /isadmin when using correct customer user token', async () => {
     const reqBody = await request(app)
-        .get('/isadmin')
-        .set('Authorization', 'Bearer ' + tempCustomerJWT)
+      .get('/isadmin')
+      .set('Authorization', 'Bearer ' + tempCustomerJWT)
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.success).toBeFalsy()
   })
 
-  afterEach(async() => {
-    await db.query(`DELETE FROM users WHERE userid = $1`,[tempAdminUserid])
-    await db.query(`DELETE FROM users WHERE userid = $1`,[tempCustomerUserid])
+  afterEach(async () => {
+    await db.query(`DELETE FROM users WHERE userid = $1`, [tempAdminUserid])
+    await db.query(`DELETE FROM users WHERE userid = $1`, [tempCustomerUserid])
     tempAdminJWT = ''
     tempCustomerJWT = ''
     tempAdminUserid = 0
     tempCustomerUserid = 0
   })
 
-  afterAll(async() => {
+  afterAll(async () => {
     await db.end()
   })
 })

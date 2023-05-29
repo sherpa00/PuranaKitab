@@ -55,9 +55,7 @@ const UpdateOneUsername = async (req: Request, res: Response, next: NextFunction
       ...updateUsernameStatus
     })
   } catch (err) {
-    console.log(err)
     next(err)
-    console.log('Error while updating username')
   }
 }
 
@@ -80,9 +78,7 @@ const UpdateOneEmail = async (req: Request, res: Response, next: NextFunction): 
       ...updateEmailStatus
     })
   } catch (err) {
-    console.log(err)
     next(err)
-    console.log('Error while updating email')
   }
 }
 
@@ -109,9 +105,7 @@ const UpdateOnePassword = async (req: Request, res: Response, next: NextFunction
       ...updatePasswordStatus
     })
   } catch (err) {
-    console.log(err)
     next(err)
-    console.log('Error while updating password')
   }
 }
 
@@ -134,9 +128,7 @@ const DeleteOneUser = async (req: Request, res: Response, next: NextFunction): P
       ...deleteStatus
     })
   } catch (err) {
-    console.log(err)
     console.log('Error while deleting user')
-    next(err)
   }
 }
 

@@ -4,10 +4,11 @@ import passport from '../configs/passport.config'
 
 const router = express.Router()
 
-router.get('/',
-    passport.authenticate('jwt',{session: false}),
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    LogOutOne
+router.get(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  LogOutOne
 )
 
 export { router as LogoutRouter }

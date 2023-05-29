@@ -82,7 +82,8 @@ describe('Testing book routes', () => {
     book_condition: 'GOOD',
     available_quantity: 8,
     isbn: '12345234',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus libero id facilisis mollis. Mauris eu sollicitudin risus. Nulla posuere euismod mauris at facilisis. Curabitur sagittis dictum massa, at tempor metus feugiat ut. Nunc tincidunt sem non ex molestie, vel congue quam cursus. Sed non nunc bibendum, consequat purus ac, efficitur sem. Cras eget enim ac turpis aliquam consequat in in nulla. In auctor bibendum tellus at dictum.Nullam in feugiat mauris. Quisque in elit sem. Fusce rutrum mi ac tincidunt aliquam. Proin sed enim id leo varius cursus. Morbi placerat magna a metus ultrices dapibus. Aenean lacinia pellentesque odio, id ultricies quam tincidunt et. Curabitur iaculis urna a urna auctor, at cursus dolor eleifend. Suspendisse potenti. Donec condimentum, dolor nec viverra hendrerit, lacus risus consectetur justo, eget ullamcorper elit nulla id enim. Vivamus sollicitudin malesuada magna ac efficitur. Sed vitae nulla nec eros rhoncus ultrices. Donec a lacus est.',
+    description:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus faucibus libero id facilisis mollis. Mauris eu sollicitudin risus. Nulla posuere euismod mauris at facilisis. Curabitur sagittis dictum massa, at tempor metus feugiat ut. Nunc tincidunt sem non ex molestie, vel congue quam cursus. Sed non nunc bibendum, consequat purus ac, efficitur sem. Cras eget enim ac turpis aliquam consequat in in nulla. In auctor bibendum tellus at dictum.Nullam in feugiat mauris. Quisque in elit sem. Fusce rutrum mi ac tincidunt aliquam. Proin sed enim id leo varius cursus. Morbi placerat magna a metus ultrices dapibus. Aenean lacinia pellentesque odio, id ultricies quam tincidunt et. Curabitur iaculis urna a urna auctor, at cursus dolor eleifend. Suspendisse potenti. Donec condimentum, dolor nec viverra hendrerit, lacus risus consectetur justo, eget ullamcorper elit nulla id enim. Vivamus sollicitudin malesuada magna ac efficitur. Sed vitae nulla nec eros rhoncus ultrices. Donec a lacus est.',
     authorFirstname: 'testfirstname',
     authorLastname: 'testlastname'
   }
@@ -97,8 +98,7 @@ describe('Testing book routes', () => {
   })
 
   it('Should get all books for guest user too', async () => {
-    const reqBody = await request(app)
-      .get('/books')
+    const reqBody = await request(app).get('/books')
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -127,8 +127,8 @@ describe('Testing book routes', () => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .get(`/books/${23434223}`)
       .set('Authorization', 'Bearer ' + tempJwt)
-      expect(reqBody.statusCode).toBe(400)
-      expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.statusCode).toBe(404)
+    expect(reqBody.body.success).toBeFalsy()
   })
 
   it('Should not get a book with incorrect bookid of type String for authorized user', async () => {
@@ -136,10 +136,8 @@ describe('Testing book routes', () => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .get(`/books/thisisnotvalid`)
       .set('Authorization', 'Bearer ' + tempJwt)
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
-    expect(reqBody.body.errors).toBeDefined()
-    expect(reqBody.body.errors[0].path).toEqual('bookid')
   })
 
   it('Should get a book with correct bookid for guest user', async () => {
@@ -152,12 +150,12 @@ describe('Testing book routes', () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .get(`/books/${tempBookAdd.body.data.bookid}`)
-      
-      expect(reqBody.statusCode).toBe(200)
-      expect(reqBody.body.success).toBeTruthy()
-      expect(reqBody.body.data.bookid).toBe(tempBookAdd.body.data.bookid)
-      expect(reqBody.body.data.title).toEqual(tempBookPayload.title)
-      expect(reqBody.body.data.isbn).toEqual(tempBookPayload.isbn)
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data.bookid).toBe(tempBookAdd.body.data.bookid)
+    expect(reqBody.body.data.title).toEqual(tempBookPayload.title)
+    expect(reqBody.body.data.isbn).toEqual(tempBookPayload.isbn)
   })
 
   it('Should return success for adding new book with authorized admin user and correct payload', async () => {
@@ -190,9 +188,8 @@ describe('Testing book routes', () => {
         ...tempBookPayload,
         title: ''
       })
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
-    expect(reqBody.body.errors[0].path).toEqual('title')
   })
 
   it('Should update book with correct type and correct bookid for authorized admin user', async () => {
@@ -229,7 +226,7 @@ describe('Testing book routes', () => {
       .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempNewBookInfo)
 
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(500)
     expect(reqBody.body.success).toBeFalsy()
   })
 
@@ -250,10 +247,8 @@ describe('Testing book routes', () => {
       .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send(tempNewBookInfo)
 
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
-    expect(reqBody.body.errors).toBeDefined()
-    expect(reqBody.body.errors[0].path).toEqual('price')
   })
 
   it('Should return false for updating book with correct type and correct bookid for unauthorized admin user (CUSTOMER)', async () => {
@@ -300,7 +295,7 @@ describe('Testing book routes', () => {
       .delete(`/books/94849023`)
       .set('Authorization', 'Bearer ' + tempAdminJWT)
 
-    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.statusCode).toBe(500)
     expect(reqBody.body.success).toBeFalsy()
   })
 
@@ -323,7 +318,7 @@ describe('Testing book routes', () => {
   // clear all temporary datas
   afterEach(async () => {
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
-    await db.query(`DELETE FROM users WHERE users.userid = $1`,[tempAdminUserid])
+    await db.query(`DELETE FROM users WHERE users.userid = $1`, [tempAdminUserid])
     await db.query(`DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2`, [
       tempBookPayload.authorFirstname,
       tempBookPayload.authorLastname

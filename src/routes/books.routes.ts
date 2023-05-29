@@ -35,7 +35,7 @@ router.post(
   body('authorFirstname').notEmpty().withMessage('Book author firstname Should not be empty'),
   body('authorLastname').notEmpty().withMessage('Book author lastname Should not be empty'),
   // user authorization
-  passport.authenticate('jwt',{session: false}),
+  passport.authenticate('jwt', { session: false }),
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -57,7 +57,7 @@ router.patch(
   body('isbn').optional().isAlphanumeric().withMessage('Book isbn Should should be string'),
   body('description').optional().isString().withMessage('Book description Should should be string'),
   // user authorization
-  passport.authenticate('jwt',{session: false}),
+  passport.authenticate('jwt', { session: false }),
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -68,7 +68,7 @@ router.delete(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
   // user authorization
-  passport.authenticate('jwt',{session: false}),
+  passport.authenticate('jwt', { session: false }),
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises

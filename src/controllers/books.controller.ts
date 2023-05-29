@@ -75,12 +75,15 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
     const BookInputErrors = validationResult(req)
 
     if (!BookInputErrors.isEmpty()) {
+      const error = new CustomError('Validation Error', 403)
+      throw error
+      /*
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'Validation Error',
         errors: BookInputErrors.array()
       })
-      return
+      return */
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -118,18 +121,19 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
     )
 
     if (!addNewBookStatus.success) {
+      const error = new CustomError('Internal server error',500)
+      throw error
+      /*
       res.status(StatusCodes.BAD_REQUEST).json({
         ...addNewBookStatus
       })
-      return
+      return */
     }
 
     res.status(StatusCodes.OK).json({
       ...addNewBookStatus
     })
   } catch (err) {
-    console.log(err)
-    console.log('Error while adding new book')
     next(err)
   }
 }
@@ -141,12 +145,15 @@ const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): P
     const BookUpdateErrors = validationResult(req)
 
     if (!BookUpdateErrors.isEmpty()) {
+      const error = new CustomError('Validation error',403)
+      throw error
+      /*
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'Validation Error',
         errors: BookUpdateErrors.array()
       })
-      return
+      return */
     }
 
     const { bookid } = req.params
@@ -157,18 +164,19 @@ const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): P
     const updateOneBookStatus = await UpdateBook(parseInt(bookid), newBookBody)
 
     if (!updateOneBookStatus.success) {
+      const error = new CustomError('Internal server error',500)
+      throw error
+      /*
       res.status(StatusCodes.BAD_REQUEST).json({
         ...updateOneBookStatus
       })
-      return
+      return */
     }
 
     res.status(StatusCodes.OK).json({
       ...updateOneBookStatus
     })
   } catch (err) {
-    console.log(err)
-    console.log('Error while updating book of id: ' + String(req.params.bookid))
     next(err)
   }
 }
@@ -179,12 +187,15 @@ const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): P
     const BookDeleteError = validationResult(req)
 
     if (!BookDeleteError.isEmpty()) {
+      const error = new CustomError('Validation error',403)
+      throw error
+      /*
       res.status(StatusCodes.BAD_REQUEST).json({
         success: false,
         message: 'Validation Error',
         errors: BookDeleteError.array()
       })
-      return
+      return */
     }
 
     const { bookid } = req.params
@@ -193,18 +204,19 @@ const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): P
     const removeBookStatus = await RemoveBookWithId(parseInt(bookid))
 
     if (!removeBookStatus.success) {
+      const error = new CustomError('Internal server error',500)
+      throw error
+      /*
       res.status(StatusCodes.BAD_REQUEST).json({
         ...removeBookStatus
       })
-      return
+      return */
     }
 
     res.status(StatusCodes.OK).json({
       ...removeBookStatus
     })
   } catch (err) {
-    console.log(err)
-    console.log('Error while removing book with id' + String(req.params.bookid))
     next(err)
   }
 }

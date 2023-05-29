@@ -23,8 +23,6 @@ const LogOutOne = async (req: Request, res: Response, next: NextFunction): Promi
       ...LogOutStatus
     })
   } catch (err) {
-    console.log(err)
-    console.log('Error while loggin out')
     next(err)
   }
 }
