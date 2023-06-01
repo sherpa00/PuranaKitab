@@ -45,7 +45,7 @@ router.post(
 )
 
 // route to add book image to book with bookid
-router.post('/image',
+router.post('/:bookid/image',
   multerStorage.single('bookimage'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   AddBookImage

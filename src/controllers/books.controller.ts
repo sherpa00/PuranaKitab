@@ -230,7 +230,7 @@ const AddBookImage = async (req: Request, res: Response, next: NextFunction): Pr
     const localImagePath = req.file?.path ?? ''
 
     // upload the image by calling upload image service
-    const imageCloudUploadStatus: BookStatusInfo = await AddBookImg(localImagePath)
+    const imageCloudUploadStatus: BookStatusInfo = await AddBookImg(parseInt(req.params.bookid),localImagePath)
 
     if (!imageCloudUploadStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({

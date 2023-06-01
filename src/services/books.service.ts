@@ -234,8 +234,18 @@ const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
 }
 
 // service to add book image
-const AddBookImg = async (imgPath: string): Promise<BookStatusInfo> => {
+const AddBookImg = async (bookid: number, imgPath: string): Promise<BookStatusInfo> => {
   try {
+    // first showing if book is in db or not
+    const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`,[bookid])
+
+    if (isBookFound.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Book Not Found'
+      }
+    }
+
     // call util cloudingary upload function
     const imgUploadStatus: ICloudinaryResponse = await uploadImage(imgPath)
 
@@ -246,11 +256,23 @@ const AddBookImg = async (imgPath: string): Promise<BookStatusInfo> => {
       }
     }
 
+    const imgToDbStatus = await db.query(`INSERT INTO book_images(bookid, img_src) VALUES ($1, $2) RETURNING *`,[
+      bookid,
+      imgUploadStatus.imgURL
+    ])
+
+    if (imgToDbStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to upload book image'
+      }
+    }
+
     return {
       success: true,
       message: imgUploadStatus.message,
       data: {
-        url: imgUploadStatus.imgURL
+        src: imgToDbStatus.rows[0].img_src
       }
     }
   } catch (err) {
