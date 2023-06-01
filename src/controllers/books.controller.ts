@@ -6,7 +6,8 @@ import {
   GetOnlyOneBook,
   UpdateBook,
   type NewBookPayload,
-  RemoveBookWithId
+  RemoveBookWithId,
+  AddBookImg
 } from '../services/books.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
@@ -220,4 +221,30 @@ const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): P
     next(err)
   }
 }
-export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook }
+
+// controller for adding book images
+const AddBookImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // get the image local path
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    const localImagePath = req.file?.path ?? ''
+
+    // upload the image by calling upload image service
+    const imageCloudUploadStatus: BookStatusInfo = await AddBookImg(localImagePath)
+
+    if (!imageCloudUploadStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...imageCloudUploadStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...imageCloudUploadStatus
+    })
+
+  } catch (err) {
+    next(err)
+  }
+}
+export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook, AddBookImage }

@@ -4,11 +4,13 @@ import {
   GetBookById,
   RemoveOneBook,
   UpdateOneBook,
-  addOneNewBook
+  addOneNewBook,
+  AddBookImage
 } from '../controllers/books.controller'
 import { body, param } from 'express-validator'
 import { isAdmin } from '../middlewares/admin.middleware'
 import passport from '../configs/passport.config'
+import multerStorage from '../utils/multer.utils'
 
 const router = express.Router()
 
@@ -40,6 +42,13 @@ router.post(
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   addOneNewBook
+)
+
+// route to add book image to book with bookid
+router.post('/image',
+  multerStorage.single('bookimage'),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  AddBookImage
 )
 
 router.patch(

@@ -1,5 +1,6 @@
 import { type IBook } from '../types'
 import { db } from '../configs/db.configs'
+import uploadImage, { type ICloudinaryResponse } from '../utils/cloudinary.utils'
 
 export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>
 
@@ -232,4 +233,33 @@ const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
   }
 }
 
-export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook, RemoveBookWithId }
+// service to add book image
+const AddBookImg = async (imgPath: string): Promise<BookStatusInfo> => {
+  try {
+    // call util cloudingary upload function
+    const imgUploadStatus: ICloudinaryResponse = await uploadImage(imgPath)
+
+    if (!imgUploadStatus.success) {
+      return {
+        success: false,
+        message: 'Failed to upload book image'
+      }
+    }
+
+    return {
+      success: true,
+      message: imgUploadStatus.message,
+      data: {
+        url: imgUploadStatus.imgURL
+      }
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Failed to upload book image'
+    }
+  }
+}
+
+export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook, RemoveBookWithId, AddBookImg }
