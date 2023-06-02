@@ -11,6 +11,7 @@ export interface ICloudinaryResponse {
   message: string
   imgURL?: string
   imgPublicId?: string
+  data?: any
 }
 
 // config for cloudinary
@@ -20,6 +21,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 })
 
+// util to upload image to cloud
 const uploadImageToCloud = async (imageToBeUpload: string): Promise<ICloudinaryResponse> => {
   try {
     // uplaod to cloudinary
@@ -34,13 +36,13 @@ const uploadImageToCloud = async (imageToBeUpload: string): Promise<ICloudinaryR
     if (!url) {
       return {
         success: false,
-        message: 'Failed to upload imaage to cloudinary'
+        message: 'Failed to upload imaage'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully uploaded image to cloudinary',
+      message: 'Successfully uploaded image to cloud',
       imgURL: url,
       imgPublicId: String(public_id).replace('PuranaKitab/', '')
     }
@@ -56,6 +58,7 @@ const uploadImageToCloud = async (imageToBeUpload: string): Promise<ICloudinaryR
   }
 }
 
+// util to update image by replacing the original image from cloud using same public_id
 const updateImageToCloud = async (imageToBeUpload: string, imgPublicId: string): Promise<ICloudinaryResponse> => {
   try {
     // uplaod to cloudinary
@@ -72,13 +75,13 @@ const updateImageToCloud = async (imageToBeUpload: string, imgPublicId: string):
     if (!url) {
       return {
         success: false,
-        message: 'Failed to update image to cloudinary'
+        message: 'Failed to update image'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully updated image to cloudinary'
+      message: 'Successfully updated image to cloud'
     }
   } catch (err) {
     console.log(err)
@@ -92,4 +95,32 @@ const updateImageToCloud = async (imageToBeUpload: string, imgPublicId: string):
   }
 }
 
-export { updateImageToCloud, uploadImageToCloud }
+// util to remove image from cloud
+const removeImageFromCloud = async (imgPublicId: string): Promise<ICloudinaryResponse> => {
+    try {
+        // delete image from cloudinary
+        const newPubliId: string = 'PuranaKitab/' + imgPublicId
+        const imageRemovedFromCloudinaryData = await cloudinary.uploader.destroy(newPubliId)
+
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        if (imageRemovedFromCloudinaryData.result !== 'ok') {
+            return {
+                success: false,
+                message: 'Failed to remove image from cloud'
+            }
+        }
+
+        return {
+            success: true,
+            message: 'Successfully removed image from cloud',
+        }
+    } catch (err) {
+        console.log(err)
+        return {
+            success: false,
+            message: 'Error while removing image'
+        }
+    }
+}
+
+export { updateImageToCloud, uploadImageToCloud, removeImageFromCloud }

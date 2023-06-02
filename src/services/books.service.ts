@@ -1,6 +1,6 @@
 import { type IBook } from '../types'
 import { db } from '../configs/db.configs'
-import { uploadImageToCloud, type ICloudinaryResponse, updateImageToCloud } from '../utils/cloudinary.utils'
+import { uploadImageToCloud, type ICloudinaryResponse, updateImageToCloud, removeImageFromCloud } from '../utils/cloudinary.utils'
 
 export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>
 
@@ -207,6 +207,31 @@ const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
         message: 'No Book with ID ' + String(bookID) + ' found'
       }
     }
+    
+    // get the book images
+    const bookImagesWithId = await db.query(`SELECT * FROM book_images WHERE bookid = $1`,[bookID])
+
+    // if only book images exits delete them
+    if (bookImagesWithId.rowCount === 2) {
+      // and delete book images from cloud
+      await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
+      await removeImageFromCloud(bookImagesWithId.rows[1].img_public_id)
+    }
+
+    if (bookImagesWithId.rowCount === 1) {
+      // and delete book images from cloud
+      await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
+    }
+
+    // then delete book images with bookid from db
+    const deleteBookImagesWithIdStatus = await db.query(`DELETE FROM book_images WHERE bookid = $1 RETURNING *`,[bookID])
+
+    if (deleteBookImagesWithIdStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Error while deleting book images with id: ' + String(bookID)
+      }
+    }
 
     // now delete book with bookid
     const deleteBookWithIdStatus = await db.query(`DELETE FROM books WHERE books.bookid = $1 RETURNING *`, [bookID])
@@ -348,4 +373,56 @@ const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): 
   }
 }
 
-export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook, RemoveBookWithId, AddBookImg, UpdateBookImg }
+// service to delete book image
+const DeleteBookImage = async (bookid: number, imgType: string): Promise<BookStatusInfo> => {
+  try {
+    // first show if book images
+    const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2`,[
+      bookid,
+      imgType
+    ])
+
+    if (isBookImgFound.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Book images found'
+      }
+    }
+
+    // call util remove image from cloud
+    const removeImgFromCloudStatus: ICloudinaryResponse = await removeImageFromCloud(isBookImgFound.rows[0].img_public_id)
+    console.log(removeImgFromCloudStatus)
+    if (!removeImgFromCloudStatus.success) {
+      return {
+        success: false,
+        message: 'Failed to remove image from cloud'
+      }
+    }
+
+    // remove images from db
+    const bookImgRemoveStatus = await db.query(`DELETE FROM book_images WHERE bookid = $1 AND img_type = $2`, [
+      bookid,
+      imgType
+    ])
+
+    if (bookImgRemoveStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to remove book image'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully deleted'
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Failed to remove book images'
+    }
+  }
+}
+
+export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook, RemoveBookWithId, AddBookImg, UpdateBookImg, DeleteBookImage }

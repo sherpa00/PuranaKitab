@@ -8,7 +8,8 @@ import {
   type NewBookPayload,
   RemoveBookWithId,
   AddBookImg,
-  UpdateBookImg
+  UpdateBookImg,
+  DeleteBookImage
 } from '../services/books.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
@@ -260,4 +261,36 @@ const UploadBookImage = async (req: Request, res: Response, next: NextFunction):
     next(err)
   }
 }
-export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook, AddBookImage, UploadBookImage }
+
+// controller to remove book images
+const RemoveBookImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // validation errors
+    const BookInputErrors = validationResult(req)
+
+    if (!BookInputErrors.isEmpty()) {
+      const errors = new CustomError('Validation Error', 403)
+      throw errors
+    }
+
+    // get params and query
+    const bookid: number = parseInt(req.params.bookid)
+    const imgType: string = String(req.query.type).toUpperCase()
+
+    // call remove book image service
+    const removeBookStatus: BookStatusInfo = await DeleteBookImage(bookid, imgType)
+
+    if (!removeBookStatus.success) {
+      const errors = new CustomError(removeBookStatus.message, StatusCodes.BAD_REQUEST)
+      throw errors
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...removeBookStatus
+    })
+
+  } catch (err) {
+    next(err)
+  }
+}
+export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook, AddBookImage, UploadBookImage, RemoveBookImage }

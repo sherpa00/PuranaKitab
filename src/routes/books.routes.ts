@@ -6,7 +6,8 @@ import {
   UpdateOneBook,
   addOneNewBook,
   AddBookImage,
-  UploadBookImage
+  UploadBookImage,
+  RemoveBookImage
 } from '../controllers/books.controller'
 import { body, param, query } from 'express-validator'
 import { isAdmin } from '../middlewares/admin.middleware'
@@ -108,6 +109,18 @@ router.delete(
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   RemoveOneBook
+)
+
+router.delete(
+  '/:bookid/image',
+  param('bookid').isInt().withMessage('Param bookid must be integer'),
+  query('type').isIn(['front', 'FRONT', 'back', 'BACK']).withMessage('Query must be either front or back'),
+  // user authorization
+  passport.authenticate('jwt', { session: false }),
+  // admin authorization
+  isAdmin,
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  RemoveBookImage
 )
 
 export { router as BookRouter }
