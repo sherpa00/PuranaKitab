@@ -5,9 +5,10 @@ import {
   RemoveOneBook,
   UpdateOneBook,
   addOneNewBook,
-  AddBookImage
+  AddBookImage,
+  UploadBookImage
 } from '../controllers/books.controller'
-import { body, param } from 'express-validator'
+import { body, param, query } from 'express-validator'
 import { isAdmin } from '../middlewares/admin.middleware'
 import passport from '../configs/passport.config'
 import multerStorage from '../utils/multer.utils'
@@ -30,7 +31,11 @@ router.post(
   body('price').notEmpty().withMessage('Book Price Should not be empty'),
   body('publication_date').notEmpty().withMessage('Book Publication Date Should not be empty'),
   body('book_type').notEmpty().withMessage('Book Type Should not be empty'),
-  body('book_condition').notEmpty().withMessage('Book Condition Should not be empty'),
+  body('book_condition')
+    .notEmpty()
+    .withMessage('Book Condition should not be empty')
+    .isIn(['GOOD', 'ACCEPTABLE', 'OLD'])
+    .withMessage('Book Condition should either be GOOD or ACCEPTABLE or OLD'),
   body('available_quantity').notEmpty().withMessage('Book Available Quantity Should not be empty'),
   body('isbn').notEmpty().withMessage('Book isbn Should not be empty'),
   body('description').optional().isString().withMessage('Book description Should should be string'),
@@ -45,10 +50,31 @@ router.post(
 )
 
 // route to add book image to book with bookid
-router.post('/:bookid/image?type',
+router.post(
+  '/:bookid/image',
+  param('bookid').isInt().withMessage('Param bookid must be integer'),
+  query('type').isIn(['front', 'FRONT', 'back', 'BACK']).withMessage('Query must be either front or back'),
+  // user authorization
+  passport.authenticate('jwt', { session: false }),
+  // admin authorization
+  isAdmin,
   multerStorage.single('bookimage'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   AddBookImage
+)
+
+// route to update book image to book with bookid
+router.patch(
+  '/:bookid/image',
+  param('bookid').isInt().withMessage('Param bookid must be integer'),
+  query('type').isIn(['front', 'FRONT', 'back', 'BACK']).withMessage('Query must be either front or back'),
+  // user authorization
+  passport.authenticate('jwt', { session: false }),
+  // admin authorization
+  isAdmin,
+  multerStorage.single('bookimage'),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  UploadBookImage
 )
 
 router.patch(

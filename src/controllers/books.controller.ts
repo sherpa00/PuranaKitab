@@ -7,7 +7,8 @@ import {
   UpdateBook,
   type NewBookPayload,
   RemoveBookWithId,
-  AddBookImg
+  AddBookImg,
+  UpdateBookImg
 } from '../services/books.service'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
@@ -40,13 +41,6 @@ const GetBookById = async (req: Request, res: Response, next: NextFunction): Pro
     if (!BookGetErrors.isEmpty()) {
       const error = new CustomError('Validation Error', 403)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: 'Validation Error',
-        errors: BookGetErrors.array()
-      })
-      return */
     }
 
     const getBookByIdStatus: BookStatusInfo = await GetOnlyOneBook(parseInt(req.params.bookid))
@@ -54,11 +48,6 @@ const GetBookById = async (req: Request, res: Response, next: NextFunction): Pro
     if (!getBookByIdStatus.success) {
       const error = new CustomError('No Book withd id: ' + req.params.bookid + ' found', 404)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        ...getBookByIdStatus
-      })
-      return */
     }
 
     res.status(StatusCodes.OK).json({
@@ -78,13 +67,6 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
     if (!BookInputErrors.isEmpty()) {
       const error = new CustomError('Validation Error', 403)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: 'Validation Error',
-        errors: BookInputErrors.array()
-      })
-      return */
     }
 
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -122,13 +104,8 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
     )
 
     if (!addNewBookStatus.success) {
-      const error = new CustomError('Internal server error',500)
+      const error = new CustomError('Internal server error', 500)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        ...addNewBookStatus
-      })
-      return */
     }
 
     res.status(StatusCodes.OK).json({
@@ -146,15 +123,8 @@ const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): P
     const BookUpdateErrors = validationResult(req)
 
     if (!BookUpdateErrors.isEmpty()) {
-      const error = new CustomError('Validation error',403)
+      const error = new CustomError('Validation error', 403)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: 'Validation Error',
-        errors: BookUpdateErrors.array()
-      })
-      return */
     }
 
     const { bookid } = req.params
@@ -165,13 +135,8 @@ const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): P
     const updateOneBookStatus = await UpdateBook(parseInt(bookid), newBookBody)
 
     if (!updateOneBookStatus.success) {
-      const error = new CustomError('Internal server error',500)
+      const error = new CustomError('Internal server error', 500)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        ...updateOneBookStatus
-      })
-      return */
     }
 
     res.status(StatusCodes.OK).json({
@@ -188,7 +153,7 @@ const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): P
     const BookDeleteError = validationResult(req)
 
     if (!BookDeleteError.isEmpty()) {
-      const error = new CustomError('Validation error',403)
+      const error = new CustomError('Validation error', 403)
       throw error
       /*
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -205,7 +170,7 @@ const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): P
     const removeBookStatus = await RemoveBookWithId(parseInt(bookid))
 
     if (!removeBookStatus.success) {
-      const error = new CustomError('Internal server error',500)
+      const error = new CustomError('Internal server error', 500)
       throw error
       /*
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -225,16 +190,24 @@ const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): P
 // controller for adding book images
 const AddBookImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    // validationn errors
+    const BookInputErrors = validationResult(req)
+
+    if (!BookInputErrors.isEmpty()) {
+      const errors = new CustomError('Validation Error', 403)
+      throw errors
+    }
+
     // get the image local path
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     const localImagePath = req.file?.path ?? ''
 
     // params and query
-    const bookid : number = parseInt(req.params.bookid)
+    const bookid: number = parseInt(req.params.bookid)
     const bookImgType: string = String(req.query.type).toUpperCase()
 
     // upload the image by calling upload image service
-    const imageCloudUploadStatus: BookStatusInfo = await AddBookImg(bookid,localImagePath,bookImgType)
+    const imageCloudUploadStatus: BookStatusInfo = await AddBookImg(bookid, localImagePath, bookImgType)
 
     if (!imageCloudUploadStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -246,9 +219,45 @@ const AddBookImage = async (req: Request, res: Response, next: NextFunction): Pr
     res.status(StatusCodes.OK).json({
       ...imageCloudUploadStatus
     })
-
   } catch (err) {
     next(err)
   }
 }
-export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook, AddBookImage }
+
+// controller for adding book images
+const UploadBookImage = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // validation errors
+    const BookInputErrors = validationResult(req)
+
+    if (!BookInputErrors.isEmpty()) {
+      const errors = new CustomError('Validation Error', 403)
+      throw errors
+    }
+
+    // get the image local path
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    const localImagePath = req.file?.path ?? ''
+
+    // params and query
+    const bookid: number = parseInt(req.params.bookid)
+    const bookImgType: string = String(req.query.type).toUpperCase()
+
+    // upload the image by calling upload image service
+    const imageCloudUpdateStatus: BookStatusInfo = await UpdateBookImg(bookid, localImagePath, bookImgType)
+
+    if (!imageCloudUpdateStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...imageCloudUpdateStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...imageCloudUpdateStatus
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook, AddBookImage, UploadBookImage }

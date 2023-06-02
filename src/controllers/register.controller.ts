@@ -10,7 +10,7 @@ const registerOne = async (req: Request, res: Response, next: NextFunction): Pro
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
-      const error = new CustomError('Validation Error',403)
+      const error = new CustomError('Validation Error', 403)
       throw error
       /*
       res.status(StatusCodes.BAD_REQUEST).json({

@@ -11,14 +11,8 @@ const LoginOne = async (req: Request, res: Response, next: NextFunction): Promis
     const errors = validationResult(req)
 
     if (!errors.isEmpty()) {
-      const error = new CustomError('Validation Error',403)
+      const error = new CustomError('Validation Error', 403)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        errors: errors.array()
-      })
-      return */
     }
 
     const requestBody: Pick<InewUser, 'email' | 'password'> = req.body
@@ -31,13 +25,13 @@ const LoginOne = async (req: Request, res: Response, next: NextFunction): Promis
         success: false,
         message: 'Email or Password Incorrect'
       })
-      return 
+      return
     }
 
     res.status(StatusCodes.OK).json({
       ...loginStatus
     })
-    } catch (err) {
+  } catch (err) {
     next(err)
   }
 }

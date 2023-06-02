@@ -1,6 +1,6 @@
 import { type IBook } from '../types'
 import { db } from '../configs/db.configs'
-import uploadImage, { type ICloudinaryResponse } from '../utils/cloudinary.utils'
+import { uploadImageToCloud, type ICloudinaryResponse, updateImageToCloud } from '../utils/cloudinary.utils'
 
 export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>
 
@@ -237,7 +237,7 @@ const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
 const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<BookStatusInfo> => {
   try {
     // first showing if book is in db or not
-    const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`,[bookid])
+    const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookid])
 
     if (isBookFound.rowCount <= 0) {
       return {
@@ -246,8 +246,21 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
       }
     }
 
+    // check if already book image exitst or not
+    const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2`, [
+      bookid,
+      imgType
+    ])
+
+    if (isBookImgFound.rowCount > 0) {
+      return {
+        success: false,
+        message: 'Book Image of ' + imgType + ' cover already exits'
+      }
+    }
+
     // call util cloudingary upload function
-    const imgUploadStatus: ICloudinaryResponse = await uploadImage(imgPath)
+    const imgUploadStatus: ICloudinaryResponse = await uploadImageToCloud(imgPath)
 
     if (!imgUploadStatus.success) {
       return {
@@ -256,11 +269,10 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
       }
     }
 
-    const imgToDbStatus = await db.query(`INSERT INTO book_images(bookid, img_src, img_type) VALUES ($1, $2, $3) RETURNING *`,[
-      bookid,
-      imgUploadStatus.imgURL,
-      imgType
-    ])
+    const imgToDbStatus = await db.query(
+      `INSERT INTO book_images(bookid, img_src, img_type, img_public_id) VALUES ($1, $2, $3, $4) RETURNING *`,
+      [bookid, imgUploadStatus.imgURL, imgType, imgUploadStatus.imgPublicId]
+    )
 
     if (imgToDbStatus.rowCount <= 0) {
       return {
@@ -286,10 +298,10 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
 }
 
 // service to upadte book images
-const UpdateBookImg = async (bookid: number, localFilePath: string, imgType: string): Promise<BookStatusInfo> => {
+const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<BookStatusInfo> => {
   try {
     // first find if book exits or not
-    const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`,[bookid])
+    const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookid])
 
     if (isBookFound.rowCount <= 0) {
       return {
@@ -299,7 +311,10 @@ const UpdateBookImg = async (bookid: number, localFilePath: string, imgType: str
     }
 
     // then find if book image exits or not
-    const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND image_type = $2`,[bookid, imgType])
+    const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2`, [
+      bookid,
+      imgType
+    ])
 
     if (isBookImgFound.rowCount <= 0) {
       return {
@@ -308,22 +323,22 @@ const UpdateBookImg = async (bookid: number, localFilePath: string, imgType: str
       }
     }
 
-    // here update book image according to book type
-    const updateBookImgStatus = await db.query(`UPDATE book_images SET img_type = $1 WHERE bookid = $2 RETURNING *`,[imgType, bookid])
+    // get the public_id of book images
+    const imgPublicId = await isBookImgFound.rows[0].img_public_id
 
-    if (updateBookImgStatus.rowCount <= 0) {
+    // call util cloudingary update function
+    const imgUpdateStatus: ICloudinaryResponse = await updateImageToCloud(imgPath, imgPublicId)
+
+    if (!imgUpdateStatus.success) {
       return {
-        success: false,
-        message: 'Failed to update book image'
+        ...imgUpdateStatus
       }
     }
 
     return {
       success: true,
-      message: `Successfully updated book images of bookid: ${bookid} of ${imgType}-COVER`,
-      data: updateBookImgStatus.rows[0]
+      message: `Successfully updated book images of bookid: ${bookid} of ${imgType}-COVER`
     }
-
   } catch (err) {
     console.log(err)
     return {
