@@ -234,7 +234,7 @@ const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
 }
 
 // service to add book image
-const AddBookImg = async (bookid: number, imgPath: string): Promise<BookStatusInfo> => {
+const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<BookStatusInfo> => {
   try {
     // first showing if book is in db or not
     const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`,[bookid])
@@ -256,9 +256,10 @@ const AddBookImg = async (bookid: number, imgPath: string): Promise<BookStatusIn
       }
     }
 
-    const imgToDbStatus = await db.query(`INSERT INTO book_images(bookid, img_src) VALUES ($1, $2) RETURNING *`,[
+    const imgToDbStatus = await db.query(`INSERT INTO book_images(bookid, img_src, img_type) VALUES ($1, $2, $3) RETURNING *`,[
       bookid,
-      imgUploadStatus.imgURL
+      imgUploadStatus.imgURL,
+      imgType
     ])
 
     if (imgToDbStatus.rowCount <= 0) {
@@ -284,4 +285,52 @@ const AddBookImg = async (bookid: number, imgPath: string): Promise<BookStatusIn
   }
 }
 
-export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook, RemoveBookWithId, AddBookImg }
+// service to upadte book images
+const UpdateBookImg = async (bookid: number, localFilePath: string, imgType: string): Promise<BookStatusInfo> => {
+  try {
+    // first find if book exits or not
+    const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`,[bookid])
+
+    if (isBookFound.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No book found'
+      }
+    }
+
+    // then find if book image exits or not
+    const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND image_type = $2`,[bookid, imgType])
+
+    if (isBookImgFound.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Book images not found ! Upload them first'
+      }
+    }
+
+    // here update book image according to book type
+    const updateBookImgStatus = await db.query(`UPDATE book_images SET img_type = $1 WHERE bookid = $2 RETURNING *`,[imgType, bookid])
+
+    if (updateBookImgStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to update book image'
+      }
+    }
+
+    return {
+      success: true,
+      message: `Successfully updated book images of bookid: ${bookid} of ${imgType}-COVER`,
+      data: updateBookImgStatus.rows[0]
+    }
+
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Failed to update book images'
+    }
+  }
+}
+
+export { GetAllBooks, GetOnlyOneBook, AddBook, UpdateBook, RemoveBookWithId, AddBookImg, UpdateBookImg }

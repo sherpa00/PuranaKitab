@@ -229,8 +229,12 @@ const AddBookImage = async (req: Request, res: Response, next: NextFunction): Pr
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     const localImagePath = req.file?.path ?? ''
 
+    // params and query
+    const bookid : number = parseInt(req.params.bookid)
+    const bookImgType: string = String(req.query.type).toUpperCase()
+
     // upload the image by calling upload image service
-    const imageCloudUploadStatus: BookStatusInfo = await AddBookImg(parseInt(req.params.bookid),localImagePath)
+    const imageCloudUploadStatus: BookStatusInfo = await AddBookImg(bookid,localImagePath,bookImgType)
 
     if (!imageCloudUploadStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
