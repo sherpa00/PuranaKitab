@@ -8,7 +8,7 @@ describe('Testing book routes', () => {
   // assign temporary user
   const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing4',
-    email: 'testing4@gmail.com',
+    email: 'testing9508329045328@gmail.com',
     password: 'testing4'
   }
 
@@ -22,7 +22,7 @@ describe('Testing book routes', () => {
   // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing1289423',
-    email: 'testing1830920@gmail.com',
+    email: 'testing183598023809548390920@gmail.com',
     password: 'testing48249032'
   }
 
@@ -317,14 +317,18 @@ describe('Testing book routes', () => {
 
   // clear all temporary datas
   afterEach(async () => {
+
+    // clear customer user
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
+    // clear admin user
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [tempAdminUserid])
+    // clear author
     await db.query(`DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2`, [
       tempBookPayload.authorFirstname,
       tempBookPayload.authorLastname
     ])
-    await db.query(`DELETE FROM books WHERE books.title = $1 AND books.isbn = $2`, [
-      tempBookPayload.title,
+    // clear book
+    await db.query(`DELETE FROM books WHERE books.isbn = $1`, [
       tempBookPayload.isbn
     ])
     tempJwt = ''

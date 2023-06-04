@@ -17,8 +17,9 @@ const GetAllBooks = async (): Promise<BookStatusInfo> => {
 
     if (getBooksStatus.rowCount <= 0) {
       return {
-        success: false,
-        message: 'No Books found'
+        success: true,
+        message: 'No Books found',
+        data: []
       }
     }
 
@@ -210,26 +211,32 @@ const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
     
     // get the book images
     const bookImagesWithId = await db.query(`SELECT * FROM book_images WHERE bookid = $1`,[bookID])
-
+    let deleteBookImagesWithIdStatus: any
     // if only book images exits delete them
     if (bookImagesWithId.rowCount === 2) {
       // and delete book images from cloud
       await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
       await removeImageFromCloud(bookImagesWithId.rows[1].img_public_id)
+      // then delete book images with bookid from db
+      deleteBookImagesWithIdStatus = await db.query(`DELETE FROM book_images WHERE bookid = $1 RETURNING *`,[bookID])
+      if (deleteBookImagesWithIdStatus.rowCount <= 0) {
+        return {
+          success: false,
+          message: 'Error while deleting book images with id: ' + String(bookID)
+        }
+      }
     }
 
     if (bookImagesWithId.rowCount === 1) {
       // and delete book images from cloud
       await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
-    }
-
-    // then delete book images with bookid from db
-    const deleteBookImagesWithIdStatus = await db.query(`DELETE FROM book_images WHERE bookid = $1 RETURNING *`,[bookID])
-
-    if (deleteBookImagesWithIdStatus.rowCount <= 0) {
-      return {
-        success: false,
-        message: 'Error while deleting book images with id: ' + String(bookID)
+      // then delete book images with bookid from db
+      deleteBookImagesWithIdStatus = await db.query(`DELETE FROM book_images WHERE bookid = $1 RETURNING *`,[bookID])
+      if (deleteBookImagesWithIdStatus.rowCount <= 0) {
+        return {
+          success: false,
+          message: 'Error while deleting book images with id: ' + String(bookID)
+        }
       }
     }
 
