@@ -317,7 +317,6 @@ describe('Testing book routes', () => {
 
   // clear all temporary datas
   afterEach(async () => {
-
     // clear customer user
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
     // clear admin user
@@ -328,9 +327,7 @@ describe('Testing book routes', () => {
       tempBookPayload.authorLastname
     ])
     // clear book
-    await db.query(`DELETE FROM books WHERE books.isbn = $1`, [
-      tempBookPayload.isbn
-    ])
+    await db.query(`DELETE FROM books WHERE books.isbn = $1`, [tempBookPayload.isbn])
     tempJwt = ''
     currUserId = 0
   })

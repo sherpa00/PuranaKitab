@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import request from 'supertest'
 import { genSalt, hash } from 'bcrypt'
 import app from '../index'
@@ -5,7 +6,7 @@ import { db } from '../configs/db.configs'
 import type { Iuser } from '../types'
 
 describe('Testing cart routes', () => {
-    // assign temporary user
+  // assign temporary user
   const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing523423',
     email: 'testing95083290909045328@gmail.com',
@@ -103,26 +104,60 @@ describe('Testing cart routes', () => {
     authorLastname: 'test2lastname'
   }
 
-  it('Should add new cart for correct bookid and quantity for authorized customer user', async() => {
+  it('Should get all cart for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-        .post('/books')
-        .set('Authorization', 'Bearer ' + tempAdminJWT)
-        .send({
-            ...tempBookPayload1
-        })
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // tempory add cart
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
 
     const reqBody = await request(app)
-        .post('/cart')
-        .set('Authorization', 'Bearer ' + tempJwt)
-        .send({
-            bookid: parseInt(tempAddBook1.body.data.bookid),
-            quantity: 5
-        })
-    
-    console.log('-----------------------------------')
-    console.log(reqBody.body)
-    console.log('-----------------------------------')
+      .get('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data[0].bookid).toEqual(tempAddCart.body.data.bookid)
+    expect(reqBody.body.data[0].cartid).toEqual(tempAddCart.body.data.cartid)
+  })
+
+  it('Should not get all cart for unauthorized customer user', async () => {
+    const reqBody = await request(app)
+      .get('/cart')
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should add new cart for correct bookid and quantity for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const reqBody = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -130,10 +165,72 @@ describe('Testing cart routes', () => {
     expect(reqBody.body.data.userid).toEqual(currUserId)
   })
 
+  it('Should not add new cart for incorrect bookid and quantity for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const reqBody = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: 234384874892347,
+        quantity: 5
+      })
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should not add new cart for correct bookid and incorrect quantity for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const reqBody = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: tempBookPayload1.available_quantity + 1 // making quantity greater than availabe quantity
+      })
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+  })
+
+  it('Should not add new cart for correct bookid and quantity for unauthorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const reqBody = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.data).toBeUndefined()
+  })
 
   // clear all temporary datas
   afterEach(async () => {
-    // clear cart 
+    // clear cart
     await db.query(`DELETE FROM carts WHERE carts.userid = $1`, [currUserId])
     // clear customer user
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
@@ -145,16 +242,12 @@ describe('Testing cart routes', () => {
       tempBookPayload1.authorLastname
     ])
     await db.query(`DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2`, [
-        tempBookPayload2.authorFirstname,
-        tempBookPayload2.authorLastname
-      ])
-    // clear book
-    await db.query(`DELETE FROM books WHERE books.isbn = $1`, [
-      tempBookPayload1.isbn
+      tempBookPayload2.authorFirstname,
+      tempBookPayload2.authorLastname
     ])
-    await db.query(`DELETE FROM books WHERE books.isbn = $1`, [
-        tempBookPayload2.isbn
-      ])
+    // clear book
+    await db.query(`DELETE FROM books WHERE books.isbn = $1`, [tempBookPayload1.isbn])
+    await db.query(`DELETE FROM books WHERE books.isbn = $1`, [tempBookPayload2.isbn])
     tempJwt = ''
     currUserId = 0
   })

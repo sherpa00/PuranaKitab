@@ -97,30 +97,30 @@ const updateImageToCloud = async (imageToBeUpload: string, imgPublicId: string):
 
 // util to remove image from cloud
 const removeImageFromCloud = async (imgPublicId: string): Promise<ICloudinaryResponse> => {
-    try {
-        // delete image from cloudinary
-        const newPubliId: string = 'PuranaKitab/' + imgPublicId
-        const imageRemovedFromCloudinaryData = await cloudinary.uploader.destroy(newPubliId)
+  try {
+    // delete image from cloudinary
+    const newPubliId: string = 'PuranaKitab/' + imgPublicId
+    const imageRemovedFromCloudinaryData = await cloudinary.uploader.destroy(newPubliId)
 
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        if (imageRemovedFromCloudinaryData.result !== 'ok') {
-            return {
-                success: false,
-                message: 'Failed to remove image from cloud'
-            }
-        }
-
-        return {
-            success: true,
-            message: 'Successfully removed image from cloud',
-        }
-    } catch (err) {
-        console.log(err)
-        return {
-            success: false,
-            message: 'Error while removing image'
-        }
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    if (imageRemovedFromCloudinaryData.result !== 'ok') {
+      return {
+        success: false,
+        message: 'Failed to remove image from cloud'
+      }
     }
+
+    return {
+      success: true,
+      message: 'Successfully removed image from cloud'
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Error while removing image'
+    }
+  }
 }
 
 export { updateImageToCloud, uploadImageToCloud, removeImageFromCloud }

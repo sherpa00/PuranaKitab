@@ -288,9 +288,17 @@ const RemoveBookImage = async (req: Request, res: Response, next: NextFunction):
     res.status(StatusCodes.OK).json({
       ...removeBookStatus
     })
-
   } catch (err) {
     next(err)
   }
 }
-export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook, AddBookImage, UploadBookImage, RemoveBookImage }
+export {
+  addOneNewBook,
+  GetAllOneBooks,
+  GetBookById,
+  UpdateOneBook,
+  RemoveOneBook,
+  AddBookImage,
+  UploadBookImage,
+  RemoveBookImage
+}
