@@ -9,6 +9,7 @@ import { BookRouter } from './routes/books.routes'
 import { LogoutRouter } from './routes/logout.route'
 import { isAdmin } from './middlewares/admin.middleware'
 import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
+import { CartRouter } from './routes/cart.route'
 
 // server application
 const app: Application = express()
@@ -63,6 +64,9 @@ app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)
 
 // book routes
 app.use('/books', BookRouter)
+
+// cart routes
+app.use('/cart', CartRouter)
 
 // custom erorr handler middlewares
 app.use(errorLogger)

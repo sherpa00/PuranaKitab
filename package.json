@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --verbose",
+    "test:file": "jest --testPathPattern=src/__tests__/{{fileName}}",
     "lint": "eslint . --ext .ts",
     "format": "npx prettier --ignore-path .gitignore --write .",
     "build": "tsc -p tsconfig.build.json",
