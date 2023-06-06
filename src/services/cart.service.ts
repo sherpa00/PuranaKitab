@@ -92,4 +92,73 @@ const AddCart = async (userID: number, bookID: number, bookQuantity: number): Pr
   }
 }
 
-export { GetAllCart, AddCart }
+// service for updating cart
+const UpdateCart = async (userID: number, cartID: number, bookQuantity: number): Promise<CartInfoResponse> => {
+  try {
+    // first verify if cart exits or not with cartID
+    const foundCart = await db.query(`SELECT * FROM carts WHERE carts.cartid = $1 AND carts.userid = $2`, [
+      cartID,
+      userID
+    ])
+
+    if (foundCart.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Cart Found'
+      }
+    }
+
+    const bookFound = await db.query(`SELECT available_quantity FROM books WHERE bookid = $1`, [
+      foundCart.rows[0].bookid
+    ])
+
+    if (bookFound.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Book found for cart'
+      }
+    }
+
+    const originalBookAvailableQuantity: number = parseInt(bookFound.rows[0].available_quantity)
+
+    // verify book quantity is available
+    const isBookAvailable: boolean = originalBookAvailableQuantity >= bookQuantity
+
+    if (!isBookAvailable) {
+      return {
+        success: false,
+        message: 'Book is not in available quantity'
+      }
+    }
+
+    // new total price with updated quantity
+    const newTotalPrice: number = parseInt(foundCart.rows[0].original_price) * bookQuantity
+
+    // update cart
+    const updateCartStatus = await db.query(`UPDATE carts SET quantity = $1, total_price = $2 RETURNING *`, [
+      bookQuantity,
+      newTotalPrice
+    ])
+
+    if (updateCartStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to update cart with id: ' + String(cartID)
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully updated cart with id: ' + String(cartID),
+      data: updateCartStatus.rows[0]
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Error while updating cart'
+    }
+  }
+}
+
+export { GetAllCart, AddCart, UpdateCart }

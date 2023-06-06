@@ -4,6 +4,7 @@ import { genSalt, hash } from 'bcrypt'
 import app from '../index'
 import { db } from '../configs/db.configs'
 import type { Iuser } from '../types'
+import { ExpressValidator } from 'express-validator'
 
 describe('Testing cart routes', () => {
   // assign temporary user
@@ -222,6 +223,169 @@ describe('Testing cart routes', () => {
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
         quantity: 5
+      })
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should update cart for correct cartid and quantity for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const tempBookQuantity: number = 7
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/cart/${tempAddCart.body.data.cartid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        quantity: tempBookQuantity
+      })
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.cartid).toEqual(tempAddCart.body.data.cartid)
+    expect(reqBody.body.data.userid).toEqual(currUserId)
+    expect(reqBody.body.data.bookid).toEqual(tempAddBook1.body.data.bookid)
+    expect(reqBody.body.data.quantity).toEqual(tempBookQuantity)
+    expect(reqBody.body.data.total_price).toEqual(tempBookQuantity * tempBookPayload1.price)
+  })
+
+  it('Should not update cart for incorrect cartid and quantity for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const tempBookQuantity: number = 7
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/cart/487928832`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        quantity: tempBookQuantity
+      })
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should update cart for correct cartid and incorrect quantity for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const tempBookQuantity: number = tempBookPayload1.available_quantity + 2 // greater than availalbe quantity
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/cart/${tempAddCart.body.data.cartid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        quantity: tempBookQuantity
+      })
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not update cart for incorrect type cartid and quantity for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const tempBookQuantity: number = 7
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/cart/invalidcartid`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        quantity: tempBookQuantity
+      })
+
+    expect(reqBody.statusCode).toBe(403)
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not update cart for correct cartid and quantity for unauthorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const tempBookQuantity: number = 7
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/cart/${tempAddCart.body.data.cartid}`)
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .send({
+        quantity: tempBookQuantity
       })
 
     expect(reqBody.statusCode).toBe(401)
