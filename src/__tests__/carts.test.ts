@@ -392,6 +392,112 @@ describe('Testing cart routes', () => {
     expect(reqBody.body.data).toBeUndefined()
   })
 
+  it('Should delete cart with correct cartid for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const reqBody = await  request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .delete(`/cart/${tempAddCart.body.data.cartid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not delete cart with incorrect cartid for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const reqBody = await  request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .delete(`/cart/4932892`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not delete cart with incorrect type cartid for authorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const reqBody = await  request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .delete(`/cart/invalidcartid`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+
+    expect(reqBody.statusCode).toBe(403)
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not delete cart with correct cartid for unauthorized customer user', async () => {
+    // tempory add book
+    const tempAddBook1 = await request(app)
+      .post('/books')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        ...tempBookPayload1
+      })
+
+    const tempAddCart = await request(app)
+      .post('/cart')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 5
+      })
+
+    const reqBody = await  request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .delete(`/cart/${tempAddCart.body.data.cartid}`)
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
   // clear all temporary datas
   afterEach(async () => {
     // clear cart

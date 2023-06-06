@@ -1,7 +1,7 @@
 import express from 'express'
 import { body, param } from 'express-validator'
 import passport from '../configs/passport.config'
-import { AddOneCart, GetOneAllCart, UpdateOneCart } from '../controllers/cart.controller'
+import { AddOneCart, GetOneAllCart, RemoveSingleOneCart, UpdateOneCart } from '../controllers/cart.controller'
 
 const router = express.Router()
 
@@ -49,6 +49,19 @@ router.patch(
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneCart
+)
+
+router.delete(
+    '/:cartid',
+    param('cartid')
+    .notEmpty()
+    .withMessage('Param cartid should not be empty')
+    .isNumeric()
+    .withMessage('Param cartid should be an integer'),
+    // user authentication
+  passport.authenticate('jwt', { session: false }),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  RemoveSingleOneCart
 )
 
 export { router as CartRouter }
