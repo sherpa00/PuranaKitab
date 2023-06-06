@@ -163,44 +163,80 @@ const UpdateCart = async (userID: number, cartID: number, bookQuantity: number):
 
 // service for removing single cart
 const RemoveSingleCart = async (userID: number, cartID: number): Promise<CartInfoResponse> => {
-    try {
-        // verify if cart exists or not
-        const foundCart = await db.query(`SELECT * FROM carts WHERE carts.cartid = $1 AND carts.userid = $2`,[
-            cartID,
-            userID
-        ])
+  try {
+    // verify if cart exists or not
+    const foundCart = await db.query(`SELECT * FROM carts WHERE carts.cartid = $1 AND carts.userid = $2`, [
+      cartID,
+      userID
+    ])
 
-        if (foundCart.rowCount <= 0) {
-            return {
-                success: false,
-                message: 'No Cart Found'
-            }
-        }
-
-        // remove cart
-        const removeSingleCartStatus = await db.query(`DELETE FROM carts WHERE carts.cartid = $1 AND carts.userid = $2`,[
-            cartID,
-            userID
-        ])
-
-        if (removeSingleCartStatus.rowCount <= 0) {
-            return {
-                success: false,
-                message: 'Failed to remove cart with id: ' + String(cartID)
-            }
-        }
-
-        return {
-            success: true,
-            message: 'Successfully removed cart with id: ' + String(cartID)
-        }
-    } catch (err) {
-        console.log(err)
-        return {
-            success: false,
-            message: 'Error while removing cart with id: ' + String(cartID)
-        }
+    if (foundCart.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Cart Found'
+      }
     }
+
+    // remove cart
+    const removeSingleCartStatus = await db.query(`DELETE FROM carts WHERE carts.cartid = $1 AND carts.userid = $2`, [
+      cartID,
+      userID
+    ])
+
+    if (removeSingleCartStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to remove cart with id: ' + String(cartID)
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully removed cart with id: ' + String(cartID)
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Error while removing cart with id: ' + String(cartID)
+    }
+  }
 }
 
-export { GetAllCart, AddCart, UpdateCart, RemoveSingleCart }
+// service for removing single cart
+const RemoveAllCart = async (userID: number): Promise<CartInfoResponse> => {
+  try {
+    // verify if cart exists or not
+    const foundCart = await db.query(`SELECT * FROM carts WHERE carts.userid = $1`, [userID])
+
+    if (foundCart.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Carts Found'
+      }
+    }
+
+    // remove cart
+    const removeAllCartStatus = await db.query(`DELETE FROM carts WHERE carts.userid = $1`, [userID])
+
+    if (removeAllCartStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to remove all carts'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully removed all carts'
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Error while removing all carts'
+    }
+  }
+}
+
+export { GetAllCart, AddCart, UpdateCart, RemoveSingleCart, RemoveAllCart }

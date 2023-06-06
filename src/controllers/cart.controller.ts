@@ -1,7 +1,14 @@
 import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
-import { AddCart, GetAllCart, type CartInfoResponse, UpdateCart, RemoveSingleCart } from '../services/cart.service'
+import {
+  AddCart,
+  GetAllCart,
+  type CartInfoResponse,
+  UpdateCart,
+  RemoveSingleCart,
+  RemoveAllCart
+} from '../services/cart.service'
 import { StatusCodes } from 'http-status-codes'
 
 // controller for adding cart
@@ -104,38 +111,63 @@ const UpdateOneCart = async (req: Request, res: Response, next: NextFunction): P
 
 // controller for deleting single cart
 const RemoveSingleOneCart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-        // validation error
-        const cartInputErrors = validationResult(req)
-        
-        if (!cartInputErrors.isEmpty()) {
-            const error = new CustomError('Validation Error', 403)
-            throw error
-        }
+  try {
+    // validation error
+    const cartInputErrors = validationResult(req)
 
-        // get the authorized user and userid
-        const authenticatedUser: any = req.user
-        const authenticatedUserId: number = authenticatedUser.userid
-
-        // req params
-        const cartID: number = parseInt(req.params.cartid)
-
-        // call remove single cart service
-        const removeSingleCartStatus: CartInfoResponse = await RemoveSingleCart(authenticatedUserId, cartID)
-
-        if (!removeSingleCartStatus.success) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                ...removeSingleCartStatus
-            })
-            return
-        }
-
-        res.status(StatusCodes.OK).json({
-            ...removeSingleCartStatus
-        })
-    } catch (err) {
-        next(err)
+    if (!cartInputErrors.isEmpty()) {
+      const error = new CustomError('Validation Error', 403)
+      throw error
     }
+
+    // get the authorized user and userid
+    const authenticatedUser: any = req.user
+    const authenticatedUserId: number = authenticatedUser.userid
+
+    // req params
+    const cartID: number = parseInt(req.params.cartid)
+
+    // call remove single cart service
+    const removeSingleCartStatus: CartInfoResponse = await RemoveSingleCart(authenticatedUserId, cartID)
+
+    if (!removeSingleCartStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...removeSingleCartStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...removeSingleCartStatus
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
-export { GetOneAllCart, AddOneCart, UpdateOneCart, RemoveSingleOneCart }
+// controller for deleting single cart
+const RemoveAllOneCart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // get the authorized user and userid
+    const authenticatedUser: any = req.user
+    const authenticatedUserId: number = authenticatedUser.userid
+
+    // call remove single cart service
+    const removeAllCartStatus: CartInfoResponse = await RemoveAllCart(authenticatedUserId)
+
+    if (!removeAllCartStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...removeAllCartStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...removeAllCartStatus
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export { GetOneAllCart, AddOneCart, UpdateOneCart, RemoveSingleOneCart, RemoveAllOneCart }
