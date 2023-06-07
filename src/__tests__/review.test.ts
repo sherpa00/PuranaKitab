@@ -98,23 +98,26 @@ describe('Testing book reviews routes', () => {
   }
 
   it('Should get all book reviews for correct bookid for every user', async () => {
-
     // temporay req.body
     const tempReviewStars1: number = 3
     const tempReviewMessage1: string = 'Nice Book'
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review/${tempAddBookid}`)
+      .post(`/review`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
+        bookid: tempAddBookid,
         stars: tempReviewStars1,
         message: tempReviewMessage1
       })
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get(`/review/${tempAddBookid}`)
+      .get(`/review/`)
+      .send({
+        bookid: tempAddBookid
+      })
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -130,16 +133,20 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review/${tempAddBookid}`)
+      .post(`/review`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
+        bookid: tempAddBookid,
         stars: tempReviewStars1,
         message: tempReviewMessage1
       })
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get(`/review/347884238`)
+      .get(`/review`)
+      .send({
+        bookid: 498374832
+      })
 
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
@@ -153,9 +160,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review/${tempAddBookid}`)
+      .post(`/review`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
+        bookid: tempAddBookid,
         stars: tempReviewStars,
         message: tempReviewMessage
       })
@@ -176,9 +184,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review/${parseInt('123555474')}`)
+      .post(`/review`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
+        bookid: 968598342,
         stars: tempReviewStars,
         message: tempReviewMessage
       })
@@ -195,9 +204,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review/${tempAddBookid}`)
+      .post(`/review`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
+        bookid: tempAddBookid,
         stars: tempReviewStars,
         message: tempReviewMessage
       })
@@ -213,9 +223,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review/${tempAddBookid}`)
+      .post(`/review`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
+        bookid: tempAddBookid,
         stars: tempReviewStars,
         message: tempReviewMessage
       })
@@ -231,9 +242,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review/${tempAddBookid}`)
+      .post(`/review`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
+        bookid: tempAddBookid,
         stars: tempReviewStars,
         message: tempReviewMessage
       })
