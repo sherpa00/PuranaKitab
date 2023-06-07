@@ -1,9 +1,21 @@
 import express from 'express'
 import { body, param } from 'express-validator'
 import passport from '../configs/passport.config'
-import { AddOneReview } from '../controllers/reivew.controller'
+import { AddOneReview, GetAllOneBookReview } from '../controllers/reivew.controller'
 
 const router: express.IRouter = express.Router()
+
+// get all reviews
+router.get(
+    '/:bookid',
+    param('bookid')
+    .notEmpty()
+    .withMessage('Param bookid should not be empty')
+    .isNumeric()
+    .withMessage('Param bookid should be an integer'),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    GetAllOneBookReview
+)
 
 // post review
 router.post(

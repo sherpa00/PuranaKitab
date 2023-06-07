@@ -10,7 +10,7 @@ describe('Testing book reviews routes', () => {
   // assign temporary user
   const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing523423',
-    email: 'testing950823328@gmail.com',
+    email: 'testing950822490328@gmail.com',
     password: 'testing095'
   }
 
@@ -24,7 +24,7 @@ describe('Testing book reviews routes', () => {
   // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing12423',
-    email: 'testing3523390920@gmail.com',
+    email: 'testing3598090920@gmail.com',
     password: 'testing482032'
   }
 
@@ -96,6 +96,55 @@ describe('Testing book reviews routes', () => {
     authorFirstname: 'test1firstname',
     authorLastname: 'test1lastname'
   }
+
+  it('Should get all book reviews for correct bookid for every user', async () => {
+
+    // temporay req.body
+    const tempReviewStars1: number = 3
+    const tempReviewMessage1: string = 'Nice Book'
+
+    const tempAddReview1 = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .post(`/review/${tempAddBookid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        stars: tempReviewStars1,
+        message: tempReviewMessage1
+      })
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/review/${tempAddBookid}`)
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.length).toBe(1)
+    expect(reqBody.body.data[0].reviewid).toEqual(tempAddReview1.body.data.reviewid)
+  })
+
+  it('Should not get all book reviews for incorrect bookid for every user', async () => {
+    // temporay req.body
+    const tempReviewStars1: number = 3
+    const tempReviewMessage1: string = 'Nice Book'
+
+    const tempAddReview1 = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .post(`/review/${tempAddBookid}`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        stars: tempReviewStars1,
+        message: tempReviewMessage1
+      })
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/review/347884238`)
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
 
   it('Should add book review for correct bookid, correct review stars and correct review message for authorized customer user', async () => {
     // temporay req.body

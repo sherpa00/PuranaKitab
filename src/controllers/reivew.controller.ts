@@ -2,8 +2,38 @@ import type { NextFunction, Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import type { userPayload } from '../configs/passport.config'
-import { AddReview } from '../services/reviews.service'
+import { AddReview, GetAllReviews } from '../services/reviews.service'
 import { StatusCodes } from 'http-status-codes'
+
+const GetAllOneBookReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+
+        // validationn error
+        const reviewInputErrors = validationResult(req)
+        if (!reviewInputErrors.isEmpty()) {
+            const error = new CustomError('Validation Errors', 403)
+            throw error
+        }
+        // req params 
+        const bookID: number = parseInt(req.params.bookid)
+
+        // call get all book reviews service
+        const gotAllBookReviews = await GetAllReviews(bookID)
+
+        if (!gotAllBookReviews.success) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                ...gotAllBookReviews
+            })
+            return
+        }
+
+        res.status(StatusCodes.OK).json({
+            ...gotAllBookReviews
+        })
+    } catch (err) {
+        next(err)
+    }
+}
 
 // controller to add book review
 const AddOneReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -49,4 +79,4 @@ const AddOneReview = async (req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
-export { AddOneReview }
+export { AddOneReview, GetAllOneBookReview }
