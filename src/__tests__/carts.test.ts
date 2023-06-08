@@ -179,7 +179,7 @@ describe('Testing cart routes', () => {
       .post('/cart')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
-        bookid: 234384874892347,
+        bookid: 2343848747,
         quantity: 5
       })
 

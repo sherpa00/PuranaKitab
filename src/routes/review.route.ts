@@ -1,7 +1,8 @@
 import express from 'express'
 import { body } from 'express-validator'
 import passport from '../configs/passport.config'
-import { AddOneReview, GetAllOneBookReview } from '../controllers/reivew.controller'
+import { AddOneReview, GetAllOneBookReview, RemoveAllOneBookReviews } from '../controllers/reivew.controller'
+import { isAdmin } from '../middlewares/admin.middleware'
 
 const router: express.IRouter = express.Router()
 
@@ -40,5 +41,21 @@ router.post(
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   AddOneReview
 )
+
+// get all reviews
+router.delete(
+    '/',
+    body('bookid')
+      .notEmpty()
+      .withMessage('Body bookid should not be empty')
+      .isNumeric()
+      .withMessage('Body bookid should be an integer'),
+      // user authorization
+      passport.authenticate('jwt',{session: false}),
+      // admin authorization
+      isAdmin,
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    RemoveAllOneBookReviews
+  )
 
 export { router as ReviewRouter }

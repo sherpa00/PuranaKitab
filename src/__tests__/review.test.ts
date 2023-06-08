@@ -254,6 +254,121 @@ describe('Testing book reviews routes', () => {
     expect(reqBody.body.data).toBeUndefined()
   })
 
+  it('Should remove all book reviews for correct bookid for authorized admin user', async () => {
+    // temporay req.body
+    const tempReviewStars: number = 3
+    const tempReviewMessage: string = 'Nice Book'
+
+    const tempAddReview1 = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .post(`/review`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: tempAddBookid,
+        stars: tempReviewStars,
+        message: tempReviewMessage
+      })
+
+    const reqBody = await request(app)
+      .delete('/review')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        bookid: tempAddBookid
+      })
+
+    const tempGetReivew = await request(app)
+      .get('/review')
+      .send({
+        bookid: tempAddBookid
+      })
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data[0].reviewid).toEqual(tempAddReview1.body.data.reviewid)
+    expect(tempGetReivew.body.data.length).toEqual(0)
+  })
+
+  it('Should not remove all book reviews for incorrect bookid for authorized admin user', async () => {
+    // temporay req.body
+    const tempReviewStars: number = 3
+    const tempReviewMessage: string = 'Nice Book'
+
+    const tempAddReview1 = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .post(`/review`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: tempAddBookid,
+        stars: tempReviewStars,
+        message: tempReviewMessage
+      })
+
+    const reqBody = await request(app)
+      .delete('/review')
+      .set('Authorization', 'Bearer ' + tempAdminJWT)
+      .send({
+        bookid: 23498985902
+      })
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not remove all book reviews for correct bookid for authorized customer user', async () => {
+    // temporay req.body
+    const tempReviewStars: number = 3
+    const tempReviewMessage: string = 'Nice Book'
+
+    const tempAddReview1 = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .post(`/review`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: tempAddBookid,
+        stars: tempReviewStars,
+        message: tempReviewMessage
+      })
+
+    const reqBody = await request(app)
+      .delete('/review')
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: tempAddBookid
+      })
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not remove all book reviews for correct bookid for unauthorized admin user', async () => {
+    // temporay req.body
+    const tempReviewStars: number = 3
+    const tempReviewMessage: string = 'Nice Book'
+
+    const tempAddReview1 = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .post(`/review`)
+      .set('Authorization', 'Bearer ' + tempJwt)
+      .send({
+        bookid: tempAddBookid,
+        stars: tempReviewStars,
+        message: tempReviewMessage
+      })
+
+    const reqBody = await request(app)
+      .delete('/review')
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .send({
+        bookid: tempAddBookid
+      })
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
   // clear all temporary datas
   afterEach(async () => {
     // clear book reviews
