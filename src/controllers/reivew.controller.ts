@@ -2,7 +2,13 @@ import type { NextFunction, Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import type { userPayload } from '../configs/passport.config'
-import { AddReview, GetAllReviews, RemoveAllReviews, type ReviewInfoResponse } from '../services/reviews.service'
+import {
+  AddReview,
+  GetAllReviews,
+  RemoveAllReviews,
+  RemoveSinlgeReview,
+  type ReviewInfoResponse
+} from '../services/reviews.service'
 import { StatusCodes } from 'http-status-codes'
 
 const GetAllOneBookReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -79,34 +85,65 @@ const AddOneReview = async (req: Request, res: Response, next: NextFunction): Pr
 }
 
 // controllers for removing all book reviews
-const RemoveAllOneBookReviews = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-         // validation errors
-        const reviewInputErrors = validationResult(req)
-        if (!reviewInputErrors.isEmpty()) {
-            const error = new CustomError('Validation Errors', 403)
-            throw error
-        }
-
-        // req body
-        const bookID: number = parseInt(req.body.bookid)
-        
-        // call remove all book reviews service
-        const removeBookReviewsStatus: ReviewInfoResponse = await RemoveAllReviews(bookID)
-
-        if (!removeBookReviewsStatus.success) {
-            res.status(StatusCodes.BAD_REQUEST).json({
-                ...removeBookReviewsStatus
-            })
-            return
-        }
-
-        res.status(StatusCodes.OK).json({
-            ...removeBookReviewsStatus
-        })
-    } catch (err) {
-        next(err)
+const RemoveSingleOneBookReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // validation errors
+    const reviewInputErrors = validationResult(req)
+    if (!reviewInputErrors.isEmpty()) {
+      const error = new CustomError('Validation Errors', 403)
+      throw error
     }
+
+    // req params
+    const reviewID: number = parseInt(req.params.reviewid)
+
+    // call remove all book reviews service
+    const removeBookReviewStatus: ReviewInfoResponse = await RemoveSinlgeReview(reviewID)
+
+    if (!removeBookReviewStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...removeBookReviewStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...removeBookReviewStatus
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
-export { AddOneReview, GetAllOneBookReview, RemoveAllOneBookReviews }
+// controllers for removing all book reviews
+const RemoveAllOneBookReviews = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // validation errors
+    const reviewInputErrors = validationResult(req)
+    if (!reviewInputErrors.isEmpty()) {
+      const error = new CustomError('Validation Errors', 403)
+      throw error
+    }
+
+    // req body
+    const bookID: number = parseInt(req.body.bookid)
+
+    // call remove all book reviews service
+    const removeBookReviewsStatus: ReviewInfoResponse = await RemoveAllReviews(bookID)
+
+    if (!removeBookReviewsStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...removeBookReviewsStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...removeBookReviewsStatus
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export { AddOneReview, GetAllOneBookReview, RemoveSingleOneBookReview, RemoveAllOneBookReviews }

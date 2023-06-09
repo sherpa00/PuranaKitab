@@ -1,4 +1,3 @@
-
 import { db } from '../configs/db.configs'
 
 // review response type
@@ -10,47 +9,47 @@ export interface ReviewInfoResponse {
 
 // service for gettting all reviews for book
 const GetAllReviews = async (bookID: number): Promise<ReviewInfoResponse> => {
-    try {
-        // show if book exits or not
-        const foundBook = await db.query(`SELECT * FROM books WHERE books.bookid = $1`,[bookID])
+  try {
+    // show if book exits or not
+    const foundBook = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
 
-        if (foundBook.rowCount <= 0) {
-            return {
-                success: false,
-                message: 'No Book Found'
-            }
-        }
-
-        // get all book review
-        const foundBookReview = await db.query(`SELECT * FROM reviews WHERE reviews.bookid = $1`,[bookID])
-
-        if (foundBookReview.rowCount < 0) {
-            return {
-                success: false,
-                message: 'Failed to get all book reviews'
-            }
-        }
-
-        if (foundBookReview.rowCount === 0) {
-            return {
-                success: true,
-                message: 'Successfully got all book reviews',
-                data: []
-            }
-        }
-
-        return {
-            success: true,
-            message: 'Successfully got all book reviews',
-            data: foundBookReview.rows
-        }
-    } catch (err) {
-        console.log(err)
-        return {
-            success: false,
-            message: 'Error while gettting all book reviews'
-        }
+    if (foundBook.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Book Found'
+      }
     }
+
+    // get all book review
+    const foundBookReview = await db.query(`SELECT * FROM reviews WHERE reviews.bookid = $1`, [bookID])
+
+    if (foundBookReview.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to get all book reviews'
+      }
+    }
+
+    if (foundBookReview.rowCount === 0) {
+      return {
+        success: true,
+        message: 'Successfully got all book reviews',
+        data: []
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully got all book reviews',
+      data: foundBookReview.rows
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Error while gettting all book reviews'
+    }
+  }
 }
 
 // service for adding reviews for book
@@ -108,44 +107,80 @@ const AddReview = async (
   }
 }
 
-// service for removing all book reviews for book
-const RemoveAllReviews = async (bookID: number): Promise<ReviewInfoResponse> => {
-    try {
-        // verify if book exits or not
-        const bookFound = await db.query(`SELECT * FROM books WHERE books.bookid = $1`,[
-            bookID
-        ])
+// servie for removing single book reivew
+const RemoveSinlgeReview = async (reviewID: number): Promise<ReviewInfoResponse> => {
+  try {
+    // check if book reviews exits or not
+    const foundReview = await db.query(`SELECT * FROM reviews WHERE reviews.reviewid = $1`, [reviewID])
 
-        if (bookFound.rowCount <= 0) {
-            return {
-                success: false,
-                message: 'No Book Found'
-            }
-        }
-
-        // revove book reviews
-        const removeBookReviewsStatus = await db.query(`DELETE FROM reviews WHERE bookid = $1 RETURNING *`,[bookID])
-
-        if (removeBookReviewsStatus.rowCount <= 0) {
-            return {
-                success: false,
-                message: 'Failed to remove all book reviews'
-            }
-        }
-
-        return {
-            success: true,
-            message: 'Successfully removed all book reviews',
-            data: removeBookReviewsStatus.rows
-        }
-
-    } catch (err) {
-        console.log(err)
-        return {
-            success: false,
-            message: 'Error while removing all book reviews'
-        }
+    if (foundReview.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No book reviews found'
+      }
     }
+
+    // remove book reivew
+    const removeBookReviewStatus = await db.query(`DELETE FROM reviews WHERE reviews.reviewid = $1 RETURNING *`, [
+      reviewID
+    ])
+
+    if (removeBookReviewStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to remove book review'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully removed book review',
+      data: removeBookReviewStatus.rows[0]
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Error while removing book reivew'
+    }
+  }
 }
 
-export { AddReview, GetAllReviews, RemoveAllReviews }
+// service for removing all book reviews for book
+const RemoveAllReviews = async (bookID: number): Promise<ReviewInfoResponse> => {
+  try {
+    // verify if book exits or not
+    const bookFound = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
+
+    if (bookFound.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'No Book Found'
+      }
+    }
+
+    // revove book reviews
+    const removeBookReviewsStatus = await db.query(`DELETE FROM reviews WHERE bookid = $1 RETURNING *`, [bookID])
+
+    if (removeBookReviewsStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to remove all book reviews'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully removed all book reviews',
+      data: removeBookReviewsStatus.rows
+    }
+  } catch (err) {
+    console.log(err)
+    return {
+      success: false,
+      message: 'Error while removing all book reviews'
+    }
+  }
+}
+
+export { AddReview, GetAllReviews, RemoveSinlgeReview, RemoveAllReviews }
