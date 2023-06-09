@@ -179,7 +179,7 @@ describe('Testing cart routes', () => {
       .post('/cart')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
-        bookid: 234384874892347,
+        bookid: 2343848747,
         quantity: 5
       })
 
@@ -595,6 +595,8 @@ describe('Testing cart routes', () => {
   afterEach(async () => {
     // clear cart
     await db.query(`DELETE FROM carts WHERE carts.userid = $1`, [currUserId])
+    // clear book reivews
+    await db.query(`DELETE FROM reviews WHERE reviews.userid = $1`, [currUserId])
     // clear customer user
     await db.query(`DELETE FROM users WHERE users.userid = $1`, [currUserId])
     // clear admin user

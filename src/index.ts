@@ -10,6 +10,7 @@ import { LogoutRouter } from './routes/logout.route'
 import { isAdmin } from './middlewares/admin.middleware'
 import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
 import { CartRouter } from './routes/cart.route'
+import { ReviewRouter } from './routes/review.route'
 
 // server application
 const app: Application = express()
@@ -67,6 +68,9 @@ app.use('/books', BookRouter)
 
 // cart routes
 app.use('/cart', CartRouter)
+
+// book reviews
+app.use('/review', ReviewRouter)
 
 // custom erorr handler middlewares
 app.use(errorLogger)
