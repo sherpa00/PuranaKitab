@@ -135,7 +135,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -148,7 +148,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview2 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt1)
       .send({
         bookid: tempAddBookid,
@@ -158,7 +158,7 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get(`/review/`)
+      .get(`/reviews`)
       .send({
         bookid: tempAddBookid
       })
@@ -178,7 +178,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -188,7 +188,7 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get(`/review`)
+      .get(`/reviews`)
       .send({
         bookid: 498374832
       })
@@ -205,7 +205,7 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -229,7 +229,7 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: 968598342,
@@ -249,7 +249,7 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -268,7 +268,7 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -287,7 +287,7 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         bookid: tempAddBookid,
@@ -306,7 +306,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -319,7 +319,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview2 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt1)
       .send({
         bookid: tempAddBookid,
@@ -329,10 +329,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/review/${tempAddReview1.body.data.reviewid}`)
+      .delete(`/reviews/${tempAddReview1.body.data.reviewid}`)
       .set('Authorization', 'Bearer ' + tempAdminJWT)
 
-    const tempGetReivew = await request(app).get('/review').send({
+    const tempGetReivew = await request(app).get('/reviews').send({
       bookid: tempAddBookid
     })
 
@@ -350,7 +350,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -363,7 +363,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview2 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt1)
       .send({
         bookid: tempAddBookid,
@@ -373,10 +373,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/review/89034874`)
+      .delete(`/reviews/89034874`)
       .set('Authorization', 'Bearer ' + tempAdminJWT)
 
-    const tempGetReivew = await request(app).get('/review').send({
+    const tempGetReivew = await request(app).get('/reviews').send({
       bookid: tempAddBookid
     })
 
@@ -393,7 +393,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -406,7 +406,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview2 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt1)
       .send({
         bookid: tempAddBookid,
@@ -416,10 +416,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/review/${tempAddReview1.body.data.reviewid}`)
+      .delete(`/reviews/${tempAddReview1.body.data.reviewid}`)
       .set('Authorization', 'Bearer ' + tempJwt)
 
-    const tempGetReivew = await request(app).get('/review').send({
+    const tempGetReivew = await request(app).get('/reviews').send({
       bookid: tempAddBookid
     })
 
@@ -436,7 +436,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -449,7 +449,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview2 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt1)
       .send({
         bookid: tempAddBookid,
@@ -459,10 +459,10 @@ describe('Testing book reviews routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/review/${tempAddReview1.body.data.reviewid}`)
+      .delete(`/reviews/${tempAddReview1.body.data.reviewid}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
-    const tempGetReivew = await request(app).get('/review').send({
+    const tempGetReivew = await request(app).get('/reviews').send({
       bookid: tempAddBookid
     })
 
@@ -478,7 +478,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -491,7 +491,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview2 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt1)
       .send({
         bookid: tempAddBookid,
@@ -500,13 +500,13 @@ describe('Testing book reviews routes', () => {
       })
 
     const reqBody = await request(app)
-      .delete('/review')
+      .delete('/reviews')
       .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send({
         bookid: tempAddBookid
       })
 
-    const tempGetReivew = await request(app).get('/review').send({
+    const tempGetReivew = await request(app).get('/reviews').send({
       bookid: tempAddBookid
     })
 
@@ -525,7 +525,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -534,7 +534,7 @@ describe('Testing book reviews routes', () => {
       })
 
     const reqBody = await request(app)
-      .delete('/review')
+      .delete('/reviews')
       .set('Authorization', 'Bearer ' + tempAdminJWT)
       .send({
         bookid: 23498985902
@@ -552,7 +552,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -561,7 +561,7 @@ describe('Testing book reviews routes', () => {
       })
 
     const reqBody = await request(app)
-      .delete('/review')
+      .delete('/reviews')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid
@@ -579,7 +579,7 @@ describe('Testing book reviews routes', () => {
 
     const tempAddReview1 = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .post(`/review`)
+      .post(`/reviews`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: tempAddBookid,
@@ -588,7 +588,7 @@ describe('Testing book reviews routes', () => {
       })
 
     const reqBody = await request(app)
-      .delete('/review')
+      .delete('/reviews')
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         bookid: tempAddBookid

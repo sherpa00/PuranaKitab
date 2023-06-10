@@ -1,11 +1,3 @@
-export interface IDbServer {
-  host: string
-  user: string
-  database: string
-  password: string
-  port: number
-}
-
 export interface Iuser {
   userid: number
   username: string

@@ -116,7 +116,7 @@ describe('Testing cart routes', () => {
 
     // tempory add cart
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -124,7 +124,7 @@ describe('Testing cart routes', () => {
       })
 
     const reqBody = await request(app)
-      .get('/cart')
+      .get('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
 
     expect(reqBody.statusCode).toBe(200)
@@ -136,7 +136,7 @@ describe('Testing cart routes', () => {
 
   it('Should not get all cart for unauthorized customer user', async () => {
     const reqBody = await request(app)
-      .get('/cart')
+      .get('/carts')
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     expect(reqBody.statusCode).toBe(401)
@@ -153,7 +153,7 @@ describe('Testing cart routes', () => {
       })
 
     const reqBody = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -176,7 +176,7 @@ describe('Testing cart routes', () => {
       })
 
     const reqBody = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: 2343848747,
@@ -197,7 +197,7 @@ describe('Testing cart routes', () => {
       })
 
     const reqBody = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -218,7 +218,7 @@ describe('Testing cart routes', () => {
       })
 
     const reqBody = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -239,7 +239,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -250,7 +250,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/cart/${tempAddCart.body.data.cartid}`)
+      .patch(`/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         quantity: tempBookQuantity
@@ -276,7 +276,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -287,7 +287,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/cart/487928832`)
+      .patch(`/carts/487928832`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         quantity: tempBookQuantity
@@ -308,7 +308,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -319,7 +319,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/cart/${tempAddCart.body.data.cartid}`)
+      .patch(`/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         quantity: tempBookQuantity
@@ -340,7 +340,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -351,7 +351,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/cart/invalidcartid`)
+      .patch(`/carts/invalidcartid`)
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         quantity: tempBookQuantity
@@ -371,7 +371,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -382,7 +382,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/cart/${tempAddCart.body.data.cartid}`)
+      .patch(`/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         quantity: tempBookQuantity
@@ -402,7 +402,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -411,7 +411,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/cart/${tempAddCart.body.data.cartid}`)
+      .delete(`/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', 'Bearer ' + tempJwt)
 
     expect(reqBody.statusCode).toBe(200)
@@ -429,7 +429,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -438,7 +438,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/cart/4932892`)
+      .delete(`/carts/4932892`)
       .set('Authorization', 'Bearer ' + tempJwt)
 
     expect(reqBody.statusCode).toBe(400)
@@ -456,7 +456,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -465,7 +465,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/cart/invalidcartid`)
+      .delete(`/carts/invalidcartid`)
       .set('Authorization', 'Bearer ' + tempJwt)
 
     expect(reqBody.statusCode).toBe(403)
@@ -482,7 +482,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -491,7 +491,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/cart/${tempAddCart.body.data.cartid}`)
+      .delete(`/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     expect(reqBody.statusCode).toBe(401)
@@ -515,7 +515,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart1 = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -523,7 +523,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart2 = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook2.body.data.bookid),
@@ -532,11 +532,11 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/cart`)
+      .delete(`/carts`)
       .set('Authorization', 'Bearer ' + tempJwt)
 
     const tempGetCart = await request(app)
-      .get('/cart')
+      .get('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
 
     expect(reqBody.statusCode).toBe(200)
@@ -562,7 +562,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart1 = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -570,7 +570,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart2 = await request(app)
-      .post('/cart')
+      .post('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
       .send({
         bookid: parseInt(tempAddBook2.body.data.bookid),
@@ -579,11 +579,11 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/cart`)
+      .delete(`/carts`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     const tempGetCart = await request(app)
-      .get('/cart')
+      .get('/carts')
       .set('Authorization', 'Bearer ' + tempJwt)
 
     expect(reqBody.statusCode).toBe(401)

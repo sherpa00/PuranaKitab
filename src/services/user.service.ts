@@ -7,7 +7,7 @@ import type { ServiceResponse } from '../types'
 const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse> => {
   try {
     // get the user data from db
-    const userData = await db.query(`SELECT username,userid,email,role,last_login,createat FROM users WHERE users.userid = $1`, [
+    const userData = await db.query(`SELECT username,userid,email,role,last_logout,createat FROM users WHERE users.userid = $1`, [
       authenticatedUserid
     ])
 

@@ -61,16 +61,16 @@ app.use('/login', loginRouter)
 app.use('/logout', LogoutRouter)
 
 // user routes
-app.use('/user', passport.authenticate('jwt', { session: false }), UserRouter)
+app.use('/users', passport.authenticate('jwt', { session: false }), UserRouter)
 
 // book routes
 app.use('/books', BookRouter)
 
 // cart routes
-app.use('/cart', CartRouter)
+app.use('/carts', CartRouter)
 
 // book reviews
-app.use('/review', ReviewRouter)
+app.use('/reviews', ReviewRouter)
 
 // custom erorr handler middlewares
 app.use(errorLogger)

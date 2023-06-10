@@ -22,4 +22,14 @@ const connectToDb = async (): Promise<void> => {
   }
 }
 
-export { db, connectToDb }
+const disconnectToDb = async (): Promise<void> => {
+  try {
+    await db.end()
+    console.log('\x1b[32m', '\n -- DATABASE DISCONNECTION: SUCCESS --\n', '\x1b[0m')
+  } catch (err) {
+    console.log(err)
+    console.log('\x1b[31m', 'Error while disconnecting to server database..\n', '\x1b[0m')
+  }
+}
+
+export { db, connectToDb, disconnectToDb }
