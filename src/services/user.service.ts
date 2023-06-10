@@ -1,17 +1,13 @@
 import { compare, hash } from 'bcrypt'
 import { db } from '../configs/db.configs'
+import type { ServiceResponse } from '../types'
 
-interface UserDataInfo {
-  success: boolean
-  message: string
-  data?: any
-}
 
 // service for get  user's data
-const GetUserData = async (authenticatedUserid: number): Promise<UserDataInfo> => {
+const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse> => {
   try {
     // get the user data from db
-    const userData = await db.query(`SELECT username,userid,email,createat FROM users WHERE users.userid = $1`, [
+    const userData = await db.query(`SELECT username,userid,email,role,last_login,createat FROM users WHERE users.userid = $1`, [
       authenticatedUserid
     ])
 
@@ -38,7 +34,7 @@ const GetUserData = async (authenticatedUserid: number): Promise<UserDataInfo> =
 }
 
 // service for updating user's userame
-const UpdateUsername = async (authenticatedUserId: number, newUsername: string): Promise<UserDataInfo> => {
+const UpdateUsername = async (authenticatedUserId: number, newUsername: string): Promise<ServiceResponse> => {
   try {
     const updateStatus = await db.query(
       `UPDATE users SET username = $1 WHERE users.userid = $2 RETURNING userid,username,email`,
@@ -68,7 +64,7 @@ const UpdateUsername = async (authenticatedUserId: number, newUsername: string):
 }
 
 // service for updating user's email
-const UpdateEmail = async (authenticatedUserId: number, newEmail: string): Promise<UserDataInfo> => {
+const UpdateEmail = async (authenticatedUserId: number, newEmail: string): Promise<ServiceResponse> => {
   try {
     const updateStatus = await db.query(
       `UPDATE users SET email = $1 WHERE users.userid = $2 RETURNING userid,username,email`,
@@ -102,7 +98,7 @@ const UpdatePassword = async (
   authenticatedUserId: number,
   oldPassword: string,
   newPassword: string
-): Promise<UserDataInfo> => {
+): Promise<ServiceResponse> => {
   try {
     // get original password hash from db
     const originalUserPassData = await db.query(`SELECT password,salt FROM users WHERE users.userid = $1`, [
@@ -161,7 +157,7 @@ const UpdatePassword = async (
 }
 
 // service for deleting user
-const DeleteUser = async (authenticatedUserId: number, password: string): Promise<UserDataInfo> => {
+const DeleteUser = async (authenticatedUserId: number, password: string): Promise<ServiceResponse> => {
   try {
     // first get the user for db
     const originalUserPassData = await db.query(
@@ -217,4 +213,4 @@ const DeleteUser = async (authenticatedUserId: number, password: string): Promis
   }
 }
 
-export { type UserDataInfo, GetUserData, UpdateUsername, UpdateEmail, UpdatePassword, DeleteUser }
+export { GetUserData, UpdateUsername, UpdateEmail, UpdatePassword, DeleteUser }

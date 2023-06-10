@@ -4,12 +4,12 @@ import CustomError from '../utils/custom-error'
 import {
   AddCart,
   GetAllCart,
-  type CartInfoResponse,
   UpdateCart,
   RemoveSingleCart,
   RemoveAllCart
 } from '../services/cart.service'
 import { StatusCodes } from 'http-status-codes'
+import type { ServiceResponse } from '../types'
 
 // controller for adding cart
 const GetOneAllCart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -19,7 +19,7 @@ const GetOneAllCart = async (req: Request, res: Response, next: NextFunction): P
     const authenticatedUserId: number = authenticatedUser.userid
 
     // call the add cart service
-    const getCartStatus: CartInfoResponse = await GetAllCart(authenticatedUserId)
+    const getCartStatus: ServiceResponse = await GetAllCart(authenticatedUserId)
 
     if (!getCartStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -55,7 +55,7 @@ const AddOneCart = async (req: Request, res: Response, next: NextFunction): Prom
     const { quantity, bookid } = req.body
 
     // call the add cart service
-    const addNewCartStatus: CartInfoResponse = await AddCart(authenticatedUserId, bookid, quantity)
+    const addNewCartStatus: ServiceResponse = await AddCart(authenticatedUserId, bookid, quantity)
 
     if (!addNewCartStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -92,7 +92,7 @@ const UpdateOneCart = async (req: Request, res: Response, next: NextFunction): P
     const newBookQuantity: number = parseInt(req.body.quantity)
 
     // call updated cart service
-    const updateCartStatus: CartInfoResponse = await UpdateCart(authenticatedUserId, cartID, newBookQuantity)
+    const updateCartStatus: ServiceResponse = await UpdateCart(authenticatedUserId, cartID, newBookQuantity)
 
     if (!updateCartStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -128,7 +128,7 @@ const RemoveSingleOneCart = async (req: Request, res: Response, next: NextFuncti
     const cartID: number = parseInt(req.params.cartid)
 
     // call remove single cart service
-    const removeSingleCartStatus: CartInfoResponse = await RemoveSingleCart(authenticatedUserId, cartID)
+    const removeSingleCartStatus: ServiceResponse = await RemoveSingleCart(authenticatedUserId, cartID)
 
     if (!removeSingleCartStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -153,7 +153,7 @@ const RemoveAllOneCart = async (req: Request, res: Response, next: NextFunction)
     const authenticatedUserId: number = authenticatedUser.userid
 
     // call remove single cart service
-    const removeAllCartStatus: CartInfoResponse = await RemoveAllCart(authenticatedUserId)
+    const removeAllCartStatus: ServiceResponse = await RemoveAllCart(authenticatedUserId)
 
     if (!removeAllCartStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({

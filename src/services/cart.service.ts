@@ -1,14 +1,8 @@
 import { db } from '../configs/db.configs'
-
-// response type for cart service
-export interface CartInfoResponse {
-  success: boolean
-  message: string
-  data?: any
-}
+import type { ServiceResponse } from '../types'
 
 // service to get all cart for user
-const GetAllCart = async (userID: number): Promise<CartInfoResponse> => {
+const GetAllCart = async (userID: number): Promise<ServiceResponse> => {
   try {
     // get cart from userid
     const getCartStatus = await db.query(`SELECT * FROM carts WHERE carts.userid = $1`, [userID])
@@ -36,7 +30,7 @@ const GetAllCart = async (userID: number): Promise<CartInfoResponse> => {
 }
 
 // service to add new cart for user
-const AddCart = async (userID: number, bookID: number, bookQuantity: number): Promise<CartInfoResponse> => {
+const AddCart = async (userID: number, bookID: number, bookQuantity: number): Promise<ServiceResponse> => {
   try {
     // get the book from db by bookid
     const foundBookWithBookid = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookID])
@@ -93,7 +87,7 @@ const AddCart = async (userID: number, bookID: number, bookQuantity: number): Pr
 }
 
 // service for updating cart
-const UpdateCart = async (userID: number, cartID: number, bookQuantity: number): Promise<CartInfoResponse> => {
+const UpdateCart = async (userID: number, cartID: number, bookQuantity: number): Promise<ServiceResponse> => {
   try {
     // first verify if cart exits or not with cartID
     const foundCart = await db.query(`SELECT * FROM carts WHERE carts.cartid = $1 AND carts.userid = $2`, [
@@ -162,7 +156,7 @@ const UpdateCart = async (userID: number, cartID: number, bookQuantity: number):
 }
 
 // service for removing single cart
-const RemoveSingleCart = async (userID: number, cartID: number): Promise<CartInfoResponse> => {
+const RemoveSingleCart = async (userID: number, cartID: number): Promise<ServiceResponse> => {
   try {
     // verify if cart exists or not
     const foundCart = await db.query(`SELECT * FROM carts WHERE carts.cartid = $1 AND carts.userid = $2`, [
@@ -204,7 +198,7 @@ const RemoveSingleCart = async (userID: number, cartID: number): Promise<CartInf
 }
 
 // service for removing single cart
-const RemoveAllCart = async (userID: number): Promise<CartInfoResponse> => {
+const RemoveAllCart = async (userID: number): Promise<ServiceResponse> => {
   try {
     // verify if cart exists or not
     const foundCart = await db.query(`SELECT * FROM carts WHERE carts.userid = $1`, [userID])

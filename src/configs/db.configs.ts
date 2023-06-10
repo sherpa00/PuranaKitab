@@ -15,10 +15,10 @@ const db = new Pool({
 const connectToDb = async (): Promise<void> => {
   try {
     await db.connect()
-    console.log('Successfully connected to database...')
+    console.log('\x1b[32m', '\n -- DATABASE CONNECTION: SUCCESS --\n', '\x1b[0m')
   } catch (err) {
     console.log(err)
-    console.log('Error while connecting to server database..')
+    console.log('\x1b[31m', 'Error while connecting to server database..\n', '\x1b[0m')
   }
 }
 

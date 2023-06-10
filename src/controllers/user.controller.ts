@@ -5,9 +5,9 @@ import {
   UpdateEmail,
   UpdatePassword,
   UpdateUsername,
-  type UserDataInfo
 } from '../services/user.service'
 import { StatusCodes } from 'http-status-codes'
+import type { ServiceResponse } from '../types'
 
 // controller for get the user data
 const GetOneUserData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -16,7 +16,7 @@ const GetOneUserData = async (req: Request, res: Response, next: NextFunction): 
     const authenticatedUserData: any = req.user
     const authenticatedUserId: number = authenticatedUserData.userid
 
-    const getUserDataStatus: UserDataInfo = await GetUserData(authenticatedUserId)
+    const getUserDataStatus: ServiceResponse = await GetUserData(authenticatedUserId)
 
     if (!getUserDataStatus.success) {
       res.status(StatusCodes.BAD_GATEWAY).json({
@@ -42,7 +42,7 @@ const UpdateOneUsername = async (req: Request, res: Response, next: NextFunction
     const authenticatedUserData: any = req.user
     const authenticatedUserId: number = authenticatedUserData.userid
 
-    const updateUsernameStatus: UserDataInfo = await UpdateUsername(authenticatedUserId, req.body.newusername)
+    const updateUsernameStatus: ServiceResponse = await UpdateUsername(authenticatedUserId, req.body.newusername)
 
     if (!updateUsernameStatus.success) {
       res.status(StatusCodes.BAD_GATEWAY).json({
@@ -65,7 +65,7 @@ const UpdateOneEmail = async (req: Request, res: Response, next: NextFunction): 
     const authenticatedUserData: any = req.user
     const authenticatedUserId: number = authenticatedUserData.userid
 
-    const updateEmailStatus: UserDataInfo = await UpdateEmail(authenticatedUserId, req.body.newemail)
+    const updateEmailStatus: ServiceResponse = await UpdateEmail(authenticatedUserId, req.body.newemail)
 
     if (!updateEmailStatus.success) {
       res.status(StatusCodes.BAD_GATEWAY).json({
@@ -88,7 +88,7 @@ const UpdateOnePassword = async (req: Request, res: Response, next: NextFunction
     const authenticatedUserData: any = req.user
     const authenticatedUserId: number = authenticatedUserData.userid
 
-    const updatePasswordStatus: UserDataInfo = await UpdatePassword(
+    const updatePasswordStatus: ServiceResponse = await UpdatePassword(
       authenticatedUserId,
       req.body.oldpassword,
       req.body.newpassword
@@ -115,7 +115,7 @@ const DeleteOneUser = async (req: Request, res: Response, next: NextFunction): P
     const authenticatedUserData: any = req.user
     const authenticatedUserId: number = authenticatedUserData.userid
 
-    const deleteStatus: UserDataInfo = await DeleteUser(authenticatedUserId, req.body.password)
+    const deleteStatus: ServiceResponse = await DeleteUser(authenticatedUserId, req.body.password)
 
     if (!deleteStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({

@@ -7,9 +7,9 @@ import {
   GetAllReviews,
   RemoveAllReviews,
   RemoveSinlgeReview,
-  type ReviewInfoResponse
 } from '../services/reviews.service'
 import { StatusCodes } from 'http-status-codes'
+import type { ServiceResponse } from '../types'
 
 const GetAllOneBookReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -23,7 +23,7 @@ const GetAllOneBookReview = async (req: Request, res: Response, next: NextFuncti
     const bookID: number = parseInt(req.body.bookid)
 
     // call get all book reviews service
-    const gotAllBookReviews: ReviewInfoResponse = await GetAllReviews(bookID)
+    const gotAllBookReviews: ServiceResponse = await GetAllReviews(bookID)
 
     if (!gotAllBookReviews.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -61,7 +61,7 @@ const AddOneReview = async (req: Request, res: Response, next: NextFunction): Pr
     const reviewMessage: string = String(req.body.message)
 
     // call add book review
-    const addBookReviewStatus: ReviewInfoResponse = await AddReview(
+    const addBookReviewStatus: ServiceResponse = await AddReview(
       authenticatedUserId,
       bookID,
       authenticatedUserName,
@@ -98,7 +98,7 @@ const RemoveSingleOneBookReview = async (req: Request, res: Response, next: Next
     const reviewID: number = parseInt(req.params.reviewid)
 
     // call remove all book reviews service
-    const removeBookReviewStatus: ReviewInfoResponse = await RemoveSinlgeReview(reviewID)
+    const removeBookReviewStatus: ServiceResponse = await RemoveSinlgeReview(reviewID)
 
     if (!removeBookReviewStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -129,7 +129,7 @@ const RemoveAllOneBookReviews = async (req: Request, res: Response, next: NextFu
     const bookID: number = parseInt(req.body.bookid)
 
     // call remove all book reviews service
-    const removeBookReviewsStatus: ReviewInfoResponse = await RemoveAllReviews(bookID)
+    const removeBookReviewsStatus: ServiceResponse = await RemoveAllReviews(bookID)
 
     if (!removeBookReviewsStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({

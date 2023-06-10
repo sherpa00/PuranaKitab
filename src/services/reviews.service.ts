@@ -1,14 +1,8 @@
 import { db } from '../configs/db.configs'
-
-// review response type
-export interface ReviewInfoResponse {
-  success: boolean
-  message: string
-  data?: any
-}
+import   type { ServiceResponse } from '../types'
 
 // service for gettting all reviews for book
-const GetAllReviews = async (bookID: number): Promise<ReviewInfoResponse> => {
+const GetAllReviews = async (bookID: number): Promise<ServiceResponse> => {
   try {
     // show if book exits or not
     const foundBook = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
@@ -59,7 +53,7 @@ const AddReview = async (
   userName: string,
   reviewStars: number,
   reviewMessage: string
-): Promise<ReviewInfoResponse> => {
+): Promise<ServiceResponse> => {
   try {
     // verify if book exits or not
     const foundBook = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookID])
@@ -108,7 +102,7 @@ const AddReview = async (
 }
 
 // servie for removing single book reivew
-const RemoveSinlgeReview = async (reviewID: number): Promise<ReviewInfoResponse> => {
+const RemoveSinlgeReview = async (reviewID: number): Promise<ServiceResponse> => {
   try {
     // check if book reviews exits or not
     const foundReview = await db.query(`SELECT * FROM reviews WHERE reviews.reviewid = $1`, [reviewID])
@@ -147,7 +141,7 @@ const RemoveSinlgeReview = async (reviewID: number): Promise<ReviewInfoResponse>
 }
 
 // service for removing all book reviews for book
-const RemoveAllReviews = async (bookID: number): Promise<ReviewInfoResponse> => {
+const RemoveAllReviews = async (bookID: number): Promise<ServiceResponse> => {
   try {
     // verify if book exits or not
     const bookFound = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])

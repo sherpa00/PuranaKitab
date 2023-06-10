@@ -2,7 +2,6 @@ import type { Request, Response, NextFunction } from 'express'
 import {
   AddBook,
   GetAllBooks,
-  type BookStatusInfo,
   GetOnlyOneBook,
   UpdateBook,
   type NewBookPayload,
@@ -11,6 +10,7 @@ import {
   UpdateBookImg,
   DeleteBookImage
 } from '../services/books.service'
+import type { ServiceResponse } from '../types'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
@@ -18,7 +18,8 @@ import CustomError from '../utils/custom-error'
 // controller for getting all books
 const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const getAllBooksStatus: BookStatusInfo = await GetAllBooks()
+    // call get all books service
+    const getAllBooksStatus: ServiceResponse = await GetAllBooks()
 
     if (!getAllBooksStatus.success) {
       const error = new CustomError('No Books found', 403)
@@ -44,7 +45,7 @@ const GetBookById = async (req: Request, res: Response, next: NextFunction): Pro
       throw error
     }
 
-    const getBookByIdStatus: BookStatusInfo = await GetOnlyOneBook(parseInt(req.params.bookid))
+    const getBookByIdStatus: ServiceResponse = await GetOnlyOneBook(parseInt(req.params.bookid))
 
     if (!getBookByIdStatus.success) {
       const error = new CustomError('No Book withd id: ' + req.params.bookid + ' found', 404)
@@ -89,7 +90,7 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
     } = req.body
 
     // call the add new book service with payload
-    const addNewBookStatus: BookStatusInfo = await AddBook(
+    const addNewBookStatus: ServiceResponse = await AddBook(
       {
         title,
         price,
@@ -133,7 +134,7 @@ const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): P
     const newBookBody: Partial<NewBookPayload> = req.body
 
     // call the update book service
-    const updateOneBookStatus = await UpdateBook(parseInt(bookid), newBookBody)
+    const updateOneBookStatus: ServiceResponse = await UpdateBook(parseInt(bookid), newBookBody)
 
     if (!updateOneBookStatus.success) {
       const error = new CustomError('Internal server error', 500)
@@ -156,28 +157,16 @@ const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): P
     if (!BookDeleteError.isEmpty()) {
       const error = new CustomError('Validation error', 403)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        success: false,
-        message: 'Validation Error',
-        errors: BookDeleteError.array()
-      })
-      return */
     }
 
-    const { bookid } = req.params
+    const bookid:number = parseInt(req.params.bookid)
 
     // call remove book service
-    const removeBookStatus = await RemoveBookWithId(parseInt(bookid))
+    const removeBookStatus: ServiceResponse = await RemoveBookWithId(bookid)
 
     if (!removeBookStatus.success) {
       const error = new CustomError('Internal server error', 500)
       throw error
-      /*
-      res.status(StatusCodes.BAD_REQUEST).json({
-        ...removeBookStatus
-      })
-      return */
     }
 
     res.status(StatusCodes.OK).json({
@@ -208,7 +197,7 @@ const AddBookImage = async (req: Request, res: Response, next: NextFunction): Pr
     const bookImgType: string = String(req.query.type).toUpperCase()
 
     // upload the image by calling upload image service
-    const imageCloudUploadStatus: BookStatusInfo = await AddBookImg(bookid, localImagePath, bookImgType)
+    const imageCloudUploadStatus: ServiceResponse = await AddBookImg(bookid, localImagePath, bookImgType)
 
     if (!imageCloudUploadStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -245,7 +234,7 @@ const UploadBookImage = async (req: Request, res: Response, next: NextFunction):
     const bookImgType: string = String(req.query.type).toUpperCase()
 
     // upload the image by calling upload image service
-    const imageCloudUpdateStatus: BookStatusInfo = await UpdateBookImg(bookid, localImagePath, bookImgType)
+    const imageCloudUpdateStatus: ServiceResponse = await UpdateBookImg(bookid, localImagePath, bookImgType)
 
     if (!imageCloudUpdateStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -278,7 +267,7 @@ const RemoveBookImage = async (req: Request, res: Response, next: NextFunction):
     const imgType: string = String(req.query.type).toUpperCase()
 
     // call remove book image service
-    const removeBookStatus: BookStatusInfo = await DeleteBookImage(bookid, imgType)
+    const removeBookStatus: ServiceResponse = await DeleteBookImage(bookid, imgType)
 
     if (!removeBookStatus.success) {
       const errors = new CustomError(removeBookStatus.message, StatusCodes.BAD_REQUEST)
@@ -288,17 +277,9 @@ const RemoveBookImage = async (req: Request, res: Response, next: NextFunction):
     res.status(StatusCodes.OK).json({
       ...removeBookStatus
     })
+
   } catch (err) {
     next(err)
   }
 }
-export {
-  addOneNewBook,
-  GetAllOneBooks,
-  GetBookById,
-  UpdateOneBook,
-  RemoveOneBook,
-  AddBookImage,
-  UploadBookImage,
-  RemoveBookImage
-}
+export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook, AddBookImage, UploadBookImage, RemoveBookImage }

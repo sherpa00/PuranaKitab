@@ -1,4 +1,4 @@
-import { type IBook } from '../types'
+
 import { db } from '../configs/db.configs'
 import {
   uploadImageToCloud,
@@ -6,17 +6,12 @@ import {
   updateImageToCloud,
   removeImageFromCloud
 } from '../utils/cloudinary.utils'
+import type { ServiceResponse, IBook } from '../types'
 
 export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>
 
-export interface BookStatusInfo {
-  success: boolean
-  message: string
-  data?: any
-}
-
 // service for getting all books
-const GetAllBooks = async (): Promise<BookStatusInfo> => {
+const GetAllBooks = async (): Promise<ServiceResponse> => {
   try {
     const getBooksStatus = await db.query(`SELECT * FROM books`)
 
@@ -44,7 +39,7 @@ const GetAllBooks = async (): Promise<BookStatusInfo> => {
 }
 
 // service for getting all books
-const GetOnlyOneBook = async (bookID: number): Promise<BookStatusInfo> => {
+const GetOnlyOneBook = async (bookID: number): Promise<ServiceResponse> => {
   try {
     const getBooksStatus = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
 
@@ -75,7 +70,7 @@ const AddBook = async (
   bookData: NewBookPayload,
   authorFirstname: string,
   authorLastname: string
-): Promise<BookStatusInfo> => {
+): Promise<ServiceResponse> => {
   try {
     // first getting author and coparing if authors exits then not adding or else adding
     const getAuthorStatus = await db.query(`SELECT * FROM authors WHERE firstname = $1 AND lastname = $2`, [
@@ -145,7 +140,7 @@ const AddBook = async (
 }
 
 // service for updating new books
-const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>): Promise<BookStatusInfo> => {
+const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>): Promise<ServiceResponse> => {
   try {
     // first get the book from db
     const bookWithId = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
@@ -201,7 +196,7 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
 }
 
 // service for removing a book
-const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
+const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
   try {
     // get the book with bookid
     const bookWithId = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookID])
@@ -271,7 +266,7 @@ const RemoveBookWithId = async (bookID: number): Promise<BookStatusInfo> => {
 }
 
 // service to add book image
-const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<BookStatusInfo> => {
+const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<ServiceResponse> => {
   try {
     // first showing if book is in db or not
     const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookid])
@@ -335,7 +330,7 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
 }
 
 // service to upadte book images
-const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<BookStatusInfo> => {
+const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<ServiceResponse> => {
   try {
     // first find if book exits or not
     const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookid])
@@ -386,7 +381,7 @@ const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): 
 }
 
 // service to delete book image
-const DeleteBookImage = async (bookid: number, imgType: string): Promise<BookStatusInfo> => {
+const DeleteBookImage = async (bookid: number, imgType: string): Promise<ServiceResponse> => {
   try {
     // first show if book images
     const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2`, [

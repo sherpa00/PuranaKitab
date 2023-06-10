@@ -1,3 +1,11 @@
+export interface IDbServer {
+  host: string
+  user: string
+  database: string
+  password: string
+  port: number
+}
+
 export interface Iuser {
   userid: number
   username: string
@@ -21,4 +29,10 @@ export interface IBook {
   isbn: string
   description: string
   createdat: string
+}
+
+export interface ServiceResponse {
+  success: boolean
+  message: string
+  data?: any
 }
