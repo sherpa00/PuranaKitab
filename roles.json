@@ -1,14 +1,14 @@
 {
   "CUSTOMER": {
-    "GET": ["/user", "/logout", "/books", "/books/:bookid"],
-    "POST": [],
-    "PATCH": ["/user/username", "/user/email", "/user/password"],
-    "DELETE": ["/user"]
+    "GET": ["/user", "/logout", "/books", "/carts", "/carts/cartid", "/books/:bookid"],
+    "POST": ["/carts", "/reviews"],
+    "PATCH": ["/user/username", "/user/email", "/user/password", "/carts/:cartid"],
+    "DELETE": ["/user", "/carts/:cartid", "/carts"]
   },
   "ADMIN": {
-    "GET": ["/user", "/logout", "/books", "/books/:bookid"],
-    "POST": ["/books"],
-    "PATCH": ["/books/:bookid"],
-    "DELETE": ["/user", "/books/:bookid"]
+    "GET": ["/user", "/logout", "/books", "/books/:bookid", "/carts/:cartid", "/carts"],
+    "POST": ["/books", "/carts"],
+    "PATCH": ["/books/:bookid", "/carts/:cartid"],
+    "DELETE": ["/user", "/books/:bookid", "/carts", "/carts/:cartid", "/reviews:reviewid", "reviews"]
   }
 }

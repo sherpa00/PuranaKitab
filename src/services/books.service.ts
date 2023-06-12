@@ -240,6 +240,36 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
       }
     }
 
+    // delete book's reviews
+    const foundBookReviews = await db.query(`SELECT * FROM reviews WHERE reviews.bookid = $1`,[bookID])
+
+    if (foundBookReviews.rowCount > 0) {
+      // if reviews found delete them
+      const deleteBookReviews = await db.query(`DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING *`,[bookID])
+
+      if (deleteBookReviews.rowCount <= 0) {
+        return {
+          success: false,
+          message: 'Failed to delete book reviews'
+        }
+      }
+    }
+
+    // delete carts with this booki
+    const foundCarts = await db.query(`SELECT * FROM carts WHERE carts.bookid = $1`,[bookID])
+
+    if (foundCarts.rowCount > 0) {
+      // if carts found delete them
+      const deleteCarts = await db.query(`DELETE FROM carts WHERE carts.bookid = $1 RETURNING *`,[bookID])
+
+      if (deleteCarts.rowCount <= 0) {
+        return {
+          success: false,
+          message: 'Failed to delete carts'
+        }
+      }
+    }
+
     // now delete book with bookid
     const deleteBookWithIdStatus = await db.query(`DELETE FROM books WHERE books.bookid = $1 RETURNING *`, [bookID])
 
