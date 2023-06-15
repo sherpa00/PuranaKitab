@@ -1,6 +1,8 @@
 import express, { type Application, type Request, type Response } from 'express'
 import morgan from 'morgan'
+import pinoHTTP from 'pino-http'
 import StatusCode from 'http-status-codes'
+import logger from './utils/logger.utils'
 import { registerRouter } from './routes/register.route'
 import { loginRouter } from './routes/login.route'
 import passport from './configs/passport.config'
@@ -18,7 +20,20 @@ const app: Application = express()
 // middlewares for server handling
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(morgan('dev'))
+
+// dev -> morgan and prod -> pino
+app.use(
+  pinoHTTP({
+    logger,
+    serializers: {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      req: (req) => `> ${req.method} ${req.url}`,
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      res: (res) => `< ${res.statusCode} ${res.headers['content-type']}`
+    }
+  })
+)
+// app.use(morgan('dev'))
 
 // root rotue for checking server functioning
 app.get('/', (req: Request, res: Response): void => {
