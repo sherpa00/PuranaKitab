@@ -13,6 +13,7 @@ import { isAdmin } from './middlewares/admin.middleware'
 import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
 import { CartRouter } from './routes/cart.route'
 import { ReviewRouter } from './routes/review.route'
+import { HealthCheckRouter } from './routes/healthCheck'
 
 // server application
 const app: Application = express()
@@ -21,19 +22,23 @@ const app: Application = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// dev -> morgan and prod -> pino
-app.use(
-  pinoHTTP({
-    logger,
-    serializers: {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      req: (req) => `> ${req.method} ${req.url}`,
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      res: (res) => `< ${res.statusCode} ${res.headers['content-type']}`
-    }
-  })
-)
-// app.use(morgan('dev'))
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+}
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(
+    pinoHTTP({
+      logger,
+      serializers: {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        req: (req) => `> ${req.method} ${req.url}`,
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        res: (res) => `< ${res.statusCode} ${res.headers['content-type']}`
+      }
+    })
+  )
+}
 
 // root rotue for checking server functioning
 app.get('/', (req: Request, res: Response): void => {
@@ -59,6 +64,9 @@ app.get('/private', passport.authenticate('jwt', { session: false }), (req: Requ
     data: req.user
   })
 })
+
+// health check
+app.use('/healthcheck', HealthCheckRouter)
 
 // private route for admin
 app.get('/isadmin', passport.authenticate('jwt', { session: false }), isAdmin, (req: Request, res: Response) => {
