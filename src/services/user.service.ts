@@ -2,14 +2,14 @@ import { compare, hash } from 'bcrypt'
 import { db } from '../configs/db.configs'
 import type { ServiceResponse } from '../types'
 
-
 // service for get  user's data
 const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse> => {
   try {
     // get the user data from db
-    const userData = await db.query(`SELECT username,userid,email,role,last_logout,createat FROM users WHERE users.userid = $1`, [
-      authenticatedUserid
-    ])
+    const userData = await db.query(
+      `SELECT username,userid,email,role,last_logout,createat FROM users WHERE users.userid = $1`,
+      [authenticatedUserid]
+    )
 
     if (userData.rowCount <= 0) {
       return {

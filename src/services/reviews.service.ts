@@ -1,5 +1,5 @@
 import { db } from '../configs/db.configs'
-import   type { ServiceResponse } from '../types'
+import type { ServiceResponse } from '../types'
 
 // service for gettting all reviews for book
 const GetAllReviews = async (bookID: number): Promise<ServiceResponse> => {

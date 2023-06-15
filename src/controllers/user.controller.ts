@@ -1,11 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express'
-import {
-  DeleteUser,
-  GetUserData,
-  UpdateEmail,
-  UpdatePassword,
-  UpdateUsername,
-} from '../services/user.service'
+import { DeleteUser, GetUserData, UpdateEmail, UpdatePassword, UpdateUsername } from '../services/user.service'
 import { StatusCodes } from 'http-status-codes'
 import type { ServiceResponse } from '../types'
 

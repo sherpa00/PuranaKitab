@@ -1,13 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
-import {
-  AddCart,
-  GetAllCart,
-  UpdateCart,
-  RemoveSingleCart,
-  RemoveAllCart
-} from '../services/cart.service'
+import { AddCart, GetAllCart, UpdateCart, RemoveSingleCart, RemoveAllCart } from '../services/cart.service'
 import { StatusCodes } from 'http-status-codes'
 import type { ServiceResponse } from '../types'
 

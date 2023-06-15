@@ -15,13 +15,10 @@ const RegisterNewUser = async (userInfo: InewUser): Promise<ServiceResponse> => 
     const hashedPassword = await hash(userInfo.password, salt)
 
     // create new user here with hashed password and salt given
-    const reigisterStatus = await db.query('INSERT INTO users (username,password,salt,email,role) VALUES ($1,$2,$3,$4,$5) RETURNING *', [
-      userInfo.username,
-      hashedPassword,
-      salt,
-      userInfo.email,
-      'CUSTOMER'
-    ])
+    const reigisterStatus = await db.query(
+      'INSERT INTO users (username,password,salt,email,role) VALUES ($1,$2,$3,$4,$5) RETURNING *',
+      [userInfo.username, hashedPassword, salt, userInfo.email, 'CUSTOMER']
+    )
 
     if (reigisterStatus.rowCount <= 0) {
       return {

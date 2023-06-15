@@ -159,7 +159,7 @@ const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): P
       throw error
     }
 
-    const bookid:number = parseInt(req.params.bookid)
+    const bookid: number = parseInt(req.params.bookid)
 
     // call remove book service
     const removeBookStatus: ServiceResponse = await RemoveBookWithId(bookid)
@@ -277,9 +277,17 @@ const RemoveBookImage = async (req: Request, res: Response, next: NextFunction):
     res.status(StatusCodes.OK).json({
       ...removeBookStatus
     })
-
   } catch (err) {
     next(err)
   }
 }
-export { addOneNewBook, GetAllOneBooks, GetBookById, UpdateOneBook, RemoveOneBook, AddBookImage, UploadBookImage, RemoveBookImage }
+export {
+  addOneNewBook,
+  GetAllOneBooks,
+  GetBookById,
+  UpdateOneBook,
+  RemoveOneBook,
+  AddBookImage,
+  UploadBookImage,
+  RemoveBookImage
+}
