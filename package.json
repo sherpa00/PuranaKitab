@@ -27,11 +27,11 @@
     "pg": "^8.10.0"
   },
   "devDependencies": {
-    "@sendgrid/mail": "^7.7.0",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.1",
     "@types/morgan": "^1.9.4",
     "@types/multer": "^1.4.7",
+    "@types/nodemailer": "^6.4.8",
     "@types/passport": "^1.0.12",
     "@types/passport-jwt": "^3.0.8",
     "@types/pg": "^8.6.6",
@@ -54,6 +54,7 @@
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.3",
     "nodemon": "^2.0.22",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",

@@ -59,6 +59,7 @@ const ForgotPassword = async (email: string): Promise<ServiceResponse> => {
         }
         
     } catch (err) {
+        logger.error(err)
         console.log(err)
         return {
             success: false,

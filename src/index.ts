@@ -15,6 +15,7 @@ import { CartRouter } from './routes/cart.route'
 import { ReviewRouter } from './routes/review.route'
 import { HealthCheckRouter } from './routes/healthCheck'
 import { ForgotPasswordRouter } from './routes/forgot-password.route'
+import { ResetPasswordRouter } from './routes/reset-password.route'
 
 // server application
 const app: Application = express()
@@ -89,6 +90,8 @@ app.use('/users', passport.authenticate('jwt', { session: false }), UserRouter)
 
 // forgot passwrod routes
 app.use('/forgot-password', ForgotPasswordRouter)
+// reset passoword routes
+app.use('/reset-password', ResetPasswordRouter)
 
 // book routes
 app.use('/books', BookRouter)

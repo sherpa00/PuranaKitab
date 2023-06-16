@@ -1,4 +1,5 @@
-import sgMail, { type MailDataRequired } from '@sendgrid/mail'
+
+import nodemailer, { type Transporter } from 'nodemailer'
 import * as dotenv from 'dotenv'
 import logger from '../utils/logger.utils'
 
@@ -9,29 +10,31 @@ export interface SendResetEmailStatus {
     message: string
 }
 
-// sendgrid api
-const SENDGRID_API: string = String(process.env.SENDGRID_API_KEY)
-
-// config sendgrid api
-sgMail.setApiKey(SENDGRID_API)
-
 // function to send reset email
 const sendResetEmail = async (receiverEmail: string, token: string): Promise<SendResetEmailStatus> => {
     try {
 
         const resetLink: string = `http://localhost:3003/forgot-password/${token}`
 
-        const msgOptions: MailDataRequired = {
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+              user: process.env.DEFAULT_EMAIL,
+              pass: process.env.DEFAULT_EMAIL_PASSWORD,
+            },
+          });
+
+        const msgOptions = {
+            from: process.env.DEFAULT_EMAIL,
             to: receiverEmail,
-            from: String(process.env.SENDGRID_DEFAULT_EMAIL),
             subject: 'PASSWORD RESET',
-            text: 'here you can reset your password',
-            html: `<p>You requested a password reset so please visit this <a href=${resetLink}/>link</a> and note it that it is only valid for 1 hour only. Thank You</p>`
+            text: 'Sending reset password link',
+            html: `You requested reset passoword so please visit ${resetLink} to reset password.`
         }
 
         // send email
-        await sgMail.send(msgOptions)
-
+        await transporter.sendMail(msgOptions)
+        
         return {
             success: true,
             message: 'Successfully sent reset email'
@@ -39,6 +42,7 @@ const sendResetEmail = async (receiverEmail: string, token: string): Promise<Sen
 
     } catch (err) {
         logger.error('Error while sending reset email', err)
+        console.log(err)
         return {
             success: false,
             message: 'Error while sending reset email'
