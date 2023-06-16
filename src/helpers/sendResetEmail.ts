@@ -10,7 +10,7 @@ export interface SendResetEmailStatus {
 }
 
 // sendgrid api
-const SENDGRID_API: string = String(process.env.SENDGRID_API)
+const SENDGRID_API: string = String(process.env.SENDGRID_API_KEY)
 
 // config sendgrid api
 sgMail.setApiKey(SENDGRID_API)
@@ -19,14 +19,14 @@ sgMail.setApiKey(SENDGRID_API)
 const sendResetEmail = async (receiverEmail: string, token: string): Promise<SendResetEmailStatus> => {
     try {
 
-        const resetLink: string = `http://localhost:3000/reset-password/${token} `
+        const resetLink: string = `http://localhost:3003/forgot-password/${token}`
 
         const msgOptions: MailDataRequired = {
             to: receiverEmail,
             from: String(process.env.SENDGRID_DEFAULT_EMAIL),
             subject: 'PASSWORD RESET',
             text: 'here you can reset your password',
-            html: `<p>You requested a password reset so please visit <a href=${resetLink} /> and note it that it is only valid for 1 hour only. Thank You</p>`
+            html: `<p>You requested a password reset so please visit this <a href=${resetLink}/>link</a> and note it that it is only valid for 1 hour only. Thank You</p>`
         }
 
         // send email

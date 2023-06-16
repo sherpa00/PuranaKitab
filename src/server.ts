@@ -55,6 +55,7 @@ process.on('SIGINT', async () => {
 
 process.on('uncaughtException', err => {
   console.error('Uncaught Exception:', err)
+  process.exit(0)
 })
 
 export { server }

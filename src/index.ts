@@ -14,6 +14,7 @@ import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares
 import { CartRouter } from './routes/cart.route'
 import { ReviewRouter } from './routes/review.route'
 import { HealthCheckRouter } from './routes/healthCheck'
+import { ForgotPasswordRouter } from './routes/forgot-password.route'
 
 // server application
 const app: Application = express()
@@ -85,6 +86,9 @@ app.use('/logout', LogoutRouter)
 
 // user routes
 app.use('/users', passport.authenticate('jwt', { session: false }), UserRouter)
+
+// forgot passwrod routes
+app.use('/forgot-password', ForgotPasswordRouter)
 
 // book routes
 app.use('/books', BookRouter)
