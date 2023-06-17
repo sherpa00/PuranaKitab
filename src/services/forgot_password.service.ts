@@ -29,11 +29,14 @@ const ForgotPassword = async (email: string): Promise<ServiceResponse> => {
 
         const token: string = String(tokenStatus.token)
 
+        const expireDate = new Date()
+        expireDate.setHours(expireDate.getHours() + 1) // 1 hr expiry
+
         // add new token to db with expiry of 1hr to verify later
         const addTokenToDb = await db.query(`INSERT INTO reset_tokens(email, token, expiry_date) VALUES ($1, $2, $3) RETURNING *`,[
             email,
             token,
-            new Date(Date.now() + 3600000) // 1hr expire time
+            expireDate
         ])
 
         if (addTokenToDb.rowCount <= 0) {

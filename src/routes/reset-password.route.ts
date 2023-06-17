@@ -5,7 +5,7 @@ import { ResetPasswordOne } from "../controllers/reset-password.controller"
 const router = express.Router()
 
 router.post(
-    '/',
+    '/:token',
     param('token')
         .notEmpty().withMessage('Param token should not be empty'),
     body('password')
