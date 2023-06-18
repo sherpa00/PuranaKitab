@@ -1,4 +1,3 @@
-
 import { db } from '../configs/db.configs'
 import {
   uploadImageToCloud,
@@ -241,11 +240,11 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
     }
 
     // delete book's reviews
-    const foundBookReviews = await db.query(`SELECT * FROM reviews WHERE reviews.bookid = $1`,[bookID])
+    const foundBookReviews = await db.query(`SELECT * FROM reviews WHERE reviews.bookid = $1`, [bookID])
 
     if (foundBookReviews.rowCount > 0) {
       // if reviews found delete them
-      const deleteBookReviews = await db.query(`DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING *`,[bookID])
+      const deleteBookReviews = await db.query(`DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING *`, [bookID])
 
       if (deleteBookReviews.rowCount <= 0) {
         return {
@@ -256,11 +255,11 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
     }
 
     // delete carts with this booki
-    const foundCarts = await db.query(`SELECT * FROM carts WHERE carts.bookid = $1`,[bookID])
+    const foundCarts = await db.query(`SELECT * FROM carts WHERE carts.bookid = $1`, [bookID])
 
     if (foundCarts.rowCount > 0) {
       // if carts found delete them
-      const deleteCarts = await db.query(`DELETE FROM carts WHERE carts.bookid = $1 RETURNING *`,[bookID])
+      const deleteCarts = await db.query(`DELETE FROM carts WHERE carts.bookid = $1 RETURNING *`, [bookID])
 
       if (deleteCarts.rowCount <= 0) {
         return {
@@ -293,7 +292,7 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
       message: 'Error while removing a book with id ' + String(bookID)
     }
   }
-} 
+}
 
 // service to add book image
 const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<ServiceResponse> => {
