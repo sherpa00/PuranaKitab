@@ -14,6 +14,8 @@ import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares
 import { CartRouter } from './routes/cart.route'
 import { ReviewRouter } from './routes/review.route'
 import { HealthCheckRouter } from './routes/healthCheck'
+import { ForgotPasswordRouter } from './routes/forgot-password.route'
+import { ResetPasswordRouter } from './routes/reset-password.route'
 
 // server application
 const app: Application = express()
@@ -32,9 +34,9 @@ if (process.env.NODE_ENV === 'production') {
       logger,
       serializers: {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        req: (req) => `> ${req.method} ${req.url}`,
+        req: req => `> ${req.method} ${req.url}`,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        res: (res) => `< ${res.statusCode} ${res.headers['content-type']}`
+        res: res => `< ${res.statusCode} ${res.headers['content-type']}`
       }
     })
   )
@@ -85,6 +87,11 @@ app.use('/logout', LogoutRouter)
 
 // user routes
 app.use('/users', passport.authenticate('jwt', { session: false }), UserRouter)
+
+// forgot passwrod routes
+app.use('/forgot-password', ForgotPasswordRouter)
+// reset passoword routes
+app.use('/reset-password', ResetPasswordRouter)
 
 // book routes
 app.use('/books', BookRouter)
