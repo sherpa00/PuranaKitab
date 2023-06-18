@@ -2,6 +2,7 @@
 import { connectToDb } from './configs/db.configs'
 import app from './index'
 import * as dotenv from 'dotenv'
+import logger from './utils/logger.utils'
 
 dotenv.config()
 
@@ -38,16 +39,15 @@ process.on('SIGINT', async () => {
   try {
     // end http server
     await closeServer
-    console.log('Http server closed')
-
-    // end db server
+    logger.info('HTTP server closed...')
+    // close db
     // await db.end()
-    // console.log('DB server closed')
 
-    // Exit the process with a success code
+    // exit node process
     process.exit(0)
+
   } catch (err) {
-    console.error('Error while closing the database connection:', err)
+    logger.error(err, 'Error while closing all servers...')
     // Exit the process with an error code
     process.exit(1)
   }
