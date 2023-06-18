@@ -9,6 +9,14 @@ export interface SendResetEmailStatus {
   message: string
 }
 
+export interface IMailOptions {
+    from: string,
+    to: string,
+    subject: string,
+    text: string,
+    html: string
+}
+
 // function to send reset email
 const sendResetEmail = async (receiverEmail: string, resetToken: string): Promise<SendResetEmailStatus> => {
   try {
@@ -23,8 +31,8 @@ const sendResetEmail = async (receiverEmail: string, resetToken: string): Promis
       }
     })
 
-    const mailOptions = {
-      frm: process.env.MAILGUN_SMTP_LOGIN,
+    const mailOptions: IMailOptions = {
+      from: String(process.env.DEFAULT_EMAIL),
       to: receiverEmail,
       subject: 'RESET PASSWORD',
       text: 'Reset link is given to reset password',
