@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid'
-import logger from '../utils/logger.utils'
+import { v4 as uuidv4 } from 'uuid';
+import logger from '../utils/logger.utils';
 
 export interface GenTokenStatus {
   success: boolean
@@ -11,20 +11,20 @@ export interface GenTokenStatus {
 const generateResetToken = (): GenTokenStatus => {
   try {
     // generate uuid token
-    const resetToken = uuidv4()
+    const resetToken = uuidv4();
 
     return {
       success: true,
       message: 'Successfully generated reset token',
-      token: resetToken
-    }
+      token: resetToken,
+    };
   } catch (err) {
-    logger.error('Error while generting reset token', err)
+    logger.error('Error while generting reset token', err);
     return {
       success: false,
-      message: 'Error while genrating reset token'
-    }
+      message: 'Error while genrating reset token',
+    };
   }
-}
+};
 
-export default generateResetToken
+export default generateResetToken;

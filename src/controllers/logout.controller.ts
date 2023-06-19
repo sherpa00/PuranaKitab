@@ -1,31 +1,31 @@
-import type { Request, Response, NextFunction } from 'express'
-import { LogOut } from '../services/logout.service'
-import { StatusCodes } from 'http-status-codes'
-import type { ServiceResponse } from '../types'
+import type { Request, Response, NextFunction } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { LogOut } from '../services/logout.service';
+import type { ServiceResponse } from '../types';
 
 // controller for logout
 const LogOutOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // get the authenticated userid
-    const authenticatedUserData: any = req.user
-    const authenticatedUserId: number = authenticatedUserData.userid
+    const authenticatedUserData: any = req.user;
+    const authenticatedUserId: number = authenticatedUserData.userid;
 
     // call the logout service
-    const LogOutStatus: ServiceResponse = await LogOut(authenticatedUserId)
+    const LogOutStatus: ServiceResponse = await LogOut(authenticatedUserId);
 
     if (!LogOutStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
-        ...LogOutStatus
-      })
-      return
+        ...LogOutStatus,
+      });
+      return;
     }
 
     res.status(StatusCodes.OK).json({
-      ...LogOutStatus
-    })
+      ...LogOutStatus,
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
-export { LogOutOne }
+export { LogOutOne };

@@ -1,28 +1,28 @@
-import express from 'express'
+import express from 'express';
 import {
   DeleteOneUser,
   GetOneUserData,
   UpdateOneEmail,
   UpdateOnePassword,
-  UpdateOneUsername
-} from '../controllers/user.controller'
+  UpdateOneUsername,
+} from '../controllers/user.controller';
 
-const router = express.Router()
+const router = express.Router();
 
 router.get(
   '/',
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  GetOneUserData
-)
+  GetOneUserData,
+);
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.patch('/username', UpdateOneUsername)
+router.patch('/username', UpdateOneUsername);
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.patch('/email', UpdateOneEmail)
+router.patch('/email', UpdateOneEmail);
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.patch('/password', UpdateOnePassword)
+router.patch('/password', UpdateOnePassword);
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.delete('/', DeleteOneUser)
+router.delete('/', DeleteOneUser);
 
-export { router as UserRouter }
+export { router as UserRouter };

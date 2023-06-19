@@ -1,4 +1,4 @@
-import { type userPayload } from './configs/passport.config'
+import { type userPayload } from './configs/passport.config';
 
 declare global {
   namespace Express {

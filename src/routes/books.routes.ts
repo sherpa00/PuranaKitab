@@ -1,4 +1,5 @@
-import express from 'express'
+import express from 'express';
+import { body, param, query } from 'express-validator';
 import {
   GetAllOneBooks,
   GetBookById,
@@ -7,24 +8,23 @@ import {
   addOneNewBook,
   AddBookImage,
   UploadBookImage,
-  RemoveBookImage
-} from '../controllers/books.controller'
-import { body, param, query } from 'express-validator'
-import { isAdmin } from '../middlewares/admin.middleware'
-import passport from '../configs/passport.config'
-import multerStorage from '../utils/multer.utils'
+  RemoveBookImage,
+} from '../controllers/books.controller';
+import { isAdmin } from '../middlewares/admin.middleware';
+import passport from '../configs/passport.config';
+import multerStorage from '../utils/multer.utils';
 
-const router = express.Router()
+const router = express.Router();
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get('/', GetAllOneBooks)
+router.get('/', GetAllOneBooks);
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 router.get(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  GetBookById
-)
+  GetBookById,
+);
 
 router.post(
   '/',
@@ -47,8 +47,8 @@ router.post(
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  addOneNewBook
-)
+  addOneNewBook,
+);
 
 // route to add book image to book with bookid
 router.post(
@@ -61,8 +61,8 @@ router.post(
   isAdmin,
   multerStorage.single('bookimage'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  AddBookImage
-)
+  AddBookImage,
+);
 
 // route to update book image to book with bookid
 router.patch(
@@ -75,15 +75,16 @@ router.patch(
   isAdmin,
   multerStorage.single('bookimage'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  UploadBookImage
-)
+  UploadBookImage,
+);
 
 router.patch(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
   body('title').optional().isAlphanumeric().withMessage('Book Title Should be string'),
   body('price').optional().isInt().withMessage('Book Price Should be integer'),
-  body('publication_date').optional().trim().isDate().withMessage('Book Publication Date Should be valid date'),
+  body('publication_date').optional().trim().isDate()
+    .withMessage('Book Publication Date Should be valid date'),
   body('book_type').optional().isAlpha().withMessage('Book Type should be string'),
   body('book_condition')
     .optional()
@@ -97,8 +98,8 @@ router.patch(
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  UpdateOneBook
-)
+  UpdateOneBook,
+);
 
 router.delete(
   '/:bookid',
@@ -108,8 +109,8 @@ router.delete(
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  RemoveOneBook
-)
+  RemoveOneBook,
+);
 
 router.delete(
   '/:bookid/image',
@@ -120,7 +121,7 @@ router.delete(
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  RemoveBookImage
-)
+  RemoveBookImage,
+);
 
-export { router as BookRouter }
+export { router as BookRouter };

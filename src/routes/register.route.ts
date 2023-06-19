@@ -1,8 +1,8 @@
-import express from 'express'
-import { body } from 'express-validator'
-import registerOne from '../controllers/register.controller'
+import express from 'express';
+import { body } from 'express-validator';
+import registerOne from '../controllers/register.controller';
 
-const router = express.Router()
+const router = express.Router();
 
 router.post(
   '/',
@@ -18,7 +18,7 @@ router.post(
     .isLength({ min: 5 })
     .withMessage('Password length should not be less than 5.'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  registerOne
-)
+  registerOne,
+);
 
-export { router as registerRouter }
+export { router as registerRouter };

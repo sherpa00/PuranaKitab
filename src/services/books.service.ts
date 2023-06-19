@@ -1,107 +1,107 @@
-import { db } from '../configs/db.configs'
+import { db } from '../configs/db.configs';
 import {
   uploadImageToCloud,
   type ICloudinaryResponse,
   updateImageToCloud,
-  removeImageFromCloud
-} from '../utils/cloudinary.utils'
-import type { ServiceResponse, IBook } from '../types'
-import logger from '../utils/logger.utils'
+  removeImageFromCloud,
+} from '../utils/cloudinary.utils';
+import type { ServiceResponse, IBook } from '../types';
+import logger from '../utils/logger.utils';
 
-export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>
+export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>;
 
 // service for getting all books
 const GetAllBooks = async (): Promise<ServiceResponse> => {
   try {
-    const getBooksStatus = await db.query(`SELECT * FROM books`)
+    const getBooksStatus = await db.query('SELECT * FROM books');
 
     if (getBooksStatus.rowCount <= 0) {
       return {
         success: true,
         message: 'No Books found',
-        data: []
-      }
+        data: [],
+      };
     }
 
     return {
       success: true,
       message: 'Successfully got all books',
-      data: getBooksStatus.rows
-    }
+      data: getBooksStatus.rows,
+    };
   } catch (err) {
-    logger.error(err, 'Error while getting all books')
+    logger.error(err, 'Error while getting all books');
     return {
       success: false,
-      message: 'Error while getting all books'
-    }
+      message: 'Error while getting all books',
+    };
   }
-}
+};
 
 // service for getting all books
 const GetOnlyOneBook = async (bookID: number): Promise<ServiceResponse> => {
   try {
-    const getBooksStatus = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
+    const getBooksStatus = await db.query('SELECT * FROM books WHERE books.bookid = $1', [bookID]);
 
     if (getBooksStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book is not available'
-      }
+        message: 'Book is not available',
+      };
     }
 
     return {
       success: true,
       message: 'Successfully got a book',
-      data: getBooksStatus.rows[0]
-    }
+      data: getBooksStatus.rows[0],
+    };
   } catch (err) {
-    logger.error(err, 'Error while getting a book')
+    logger.error(err, 'Error while getting a book');
     return {
       success: false,
-      message: 'Error while getting a book'
-    }
+      message: 'Error while getting a book',
+    };
   }
-}
+};
 
 // service for adding new books
 const AddBook = async (
   bookData: NewBookPayload,
   authorFirstname: string,
-  authorLastname: string
+  authorLastname: string,
 ): Promise<ServiceResponse> => {
   try {
     // first getting author and coparing if authors exits then not adding or else adding
-    const getAuthorStatus = await db.query(`SELECT * FROM authors WHERE firstname = $1 AND lastname = $2`, [
+    const getAuthorStatus = await db.query('SELECT * FROM authors WHERE firstname = $1 AND lastname = $2', [
       authorFirstname,
-      authorLastname
-    ])
+      authorLastname,
+    ]);
 
     // authorid of new or found author
-    let currentAuthorid: number
+    let currentAuthorid: number;
 
     if (getAuthorStatus.rowCount <= 0) {
       // no author found so add new author
-      const addAuthorStatus = await db.query(`INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *`, [
+      const addAuthorStatus = await db.query('INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *', [
         authorFirstname,
-        authorLastname
-      ])
+        authorLastname,
+      ]);
 
       if (addAuthorStatus.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed while adding Book'
-        }
+          message: 'Failed while adding Book',
+        };
       }
 
-      currentAuthorid = addAuthorStatus.rows[0].authorid
+      currentAuthorid = addAuthorStatus.rows[0].authorid;
     } else {
       // autor found so get the authorid
-      currentAuthorid = getAuthorStatus.rows[0].authorid
+      currentAuthorid = getAuthorStatus.rows[0].authorid;
     }
 
     // now add new book with authorid and payload
     const addBookStatus = await db.query(
-      `INSERT INTO books (authorid, title, price, publication_date, book_type, book_condition, available_quantity, isbn, description) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
+      'INSERT INTO books (authorid, title, price, publication_date, book_type, book_condition, available_quantity, isbn, description) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',
       [
         currentAuthorid,
         bookData.title,
@@ -111,52 +111,52 @@ const AddBook = async (
         bookData.book_condition,
         bookData.available_quantity,
         bookData.isbn,
-        bookData.description
-      ]
-    )
+        bookData.description,
+      ],
+    );
 
     if (addBookStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Failed while adding new book'
-      }
+        message: 'Failed while adding new book',
+      };
     }
 
     return {
       success: true,
       message: 'Successfully added new book',
-      data: addBookStatus.rows[0]
-    }
+      data: addBookStatus.rows[0],
+    };
   } catch (err) {
-    logger.error(err, 'Error while adding new book')
+    logger.error(err, 'Error while adding new book');
     return {
       success: false,
-      message: 'Error while adding new book'
-    }
+      message: 'Error while adding new book',
+    };
   }
-}
+};
 
 // service for updating new books
 const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>): Promise<ServiceResponse> => {
   try {
     // first get the book from db
-    const bookWithId = await db.query(`SELECT * FROM books WHERE books.bookid = $1`, [bookID])
+    const bookWithId = await db.query('SELECT * FROM books WHERE books.bookid = $1', [bookID]);
 
     if (bookWithId.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book is unavaiable'
-      }
+        message: 'Book is unavaiable',
+      };
     }
 
-    const oldBookInfo = bookWithId.rows[0]
+    const oldBookInfo = bookWithId.rows[0];
 
     // new updated book payload for using in updating book
-    const toUpdateBookInfo = Object.assign(oldBookInfo, newBookInfo)
+    const toUpdateBookInfo = Object.assign(oldBookInfo, newBookInfo);
 
     // update book by db
     const bookUpdateStatus = await db.query(
-      `UPDATE books SET title = $1, price = $2, publication_date = $3, book_type = $4, book_condition = $5, available_quantity = $6, isbn = $7, description = $8  WHERE books.bookid = $9 RETURNING *`,
+      'UPDATE books SET title = $1, price = $2, publication_date = $3, book_type = $4, book_condition = $5, available_quantity = $6, isbn = $7, description = $8  WHERE books.bookid = $9 RETURNING *',
       [
         toUpdateBookInfo.title,
         toUpdateBookInfo.price,
@@ -166,298 +166,298 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
         toUpdateBookInfo.available_quantity,
         toUpdateBookInfo.isbn,
         toUpdateBookInfo.description,
-        toUpdateBookInfo.bookid
-      ]
-    )
+        toUpdateBookInfo.bookid,
+      ],
+    );
 
     if (bookUpdateStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating a book'
-      }
+        message: 'Error while updating a book',
+      };
     }
 
     return {
       success: true,
       message: 'Successfully updated book',
-      data: bookUpdateStatus.rows[0]
-    }
+      data: bookUpdateStatus.rows[0],
+    };
   } catch (err) {
-    logger.error(err, 'Error while updating book')
+    logger.error(err, 'Error while updating book');
     return {
       success: false,
-      message: 'Error while updating book'
-    }
+      message: 'Error while updating book',
+    };
   }
-}
+};
 
 // service for removing a book
 const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
   try {
     // get the book with bookid
-    const bookWithId = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookID])
+    const bookWithId = await db.query('SELECT * FROM books WHERE bookid = $1', [bookID]);
 
     // book not found with given bookid
     if (bookWithId.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book is not available'
-      }
+        message: 'Book is not available',
+      };
     }
 
     // get the book images
-    const bookImagesWithId = await db.query(`SELECT * FROM book_images WHERE bookid = $1`, [bookID])
-    let deleteBookImagesWithIdStatus: any
+    const bookImagesWithId = await db.query('SELECT * FROM book_images WHERE bookid = $1', [bookID]);
+    let deleteBookImagesWithIdStatus: any;
     // if only book images exits delete them
     if (bookImagesWithId.rowCount === 2) {
       // and delete book images from cloud
-      await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
-      await removeImageFromCloud(bookImagesWithId.rows[1].img_public_id)
+      await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id);
+      await removeImageFromCloud(bookImagesWithId.rows[1].img_public_id);
       // then delete book images with bookid from db
-      deleteBookImagesWithIdStatus = await db.query(`DELETE FROM book_images WHERE bookid = $1 RETURNING *`, [bookID])
+      deleteBookImagesWithIdStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 RETURNING *', [bookID]);
       if (deleteBookImagesWithIdStatus.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete a book'
-        }
+          message: 'Failed to delete a book',
+        };
       }
     }
 
     if (bookImagesWithId.rowCount === 1) {
       // and delete book images from cloud
-      await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
+      await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id);
       // then delete book images with bookid from db
-      deleteBookImagesWithIdStatus = await db.query(`DELETE FROM book_images WHERE bookid = $1 RETURNING *`, [bookID])
+      deleteBookImagesWithIdStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 RETURNING *', [bookID]);
       if (deleteBookImagesWithIdStatus.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete a book'
-        }
+          message: 'Failed to delete a book',
+        };
       }
     }
 
     // delete book's reviews
-    const foundBookReviews = await db.query(`SELECT * FROM reviews WHERE reviews.bookid = $1`, [bookID])
+    const foundBookReviews = await db.query('SELECT * FROM reviews WHERE reviews.bookid = $1', [bookID]);
 
     if (foundBookReviews.rowCount > 0) {
       // if reviews found delete them
-      const deleteBookReviews = await db.query(`DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING *`, [bookID])
+      const deleteBookReviews = await db.query('DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING *', [bookID]);
 
       if (deleteBookReviews.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete a book'
-        }
+          message: 'Failed to delete a book',
+        };
       }
     }
 
     // delete carts with this booki
-    const foundCarts = await db.query(`SELECT * FROM carts WHERE carts.bookid = $1`, [bookID])
+    const foundCarts = await db.query('SELECT * FROM carts WHERE carts.bookid = $1', [bookID]);
 
     if (foundCarts.rowCount > 0) {
       // if carts found delete them
-      const deleteCarts = await db.query(`DELETE FROM carts WHERE carts.bookid = $1 RETURNING *`, [bookID])
+      const deleteCarts = await db.query('DELETE FROM carts WHERE carts.bookid = $1 RETURNING *', [bookID]);
 
       if (deleteCarts.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete a book'
-        }
+          message: 'Failed to delete a book',
+        };
       }
     }
 
     // now delete book with bookid
-    const deleteBookWithIdStatus = await db.query(`DELETE FROM books WHERE books.bookid = $1 RETURNING *`, [bookID])
+    const deleteBookWithIdStatus = await db.query('DELETE FROM books WHERE books.bookid = $1 RETURNING *', [bookID]);
 
     if (deleteBookWithIdStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Failed to delete a book'
-      }
+        message: 'Failed to delete a book',
+      };
     }
 
     return {
       success: true,
       message: 'Successfully Removed a book',
-      data: deleteBookWithIdStatus.rows[0]
-    }
+      data: deleteBookWithIdStatus.rows[0],
+    };
   } catch (err) {
-    logger.error(err, 'Error while removing a book')
+    logger.error(err, 'Error while removing a book');
     return {
       success: false,
-      message: 'Error while removing a book'
-    }
+      message: 'Error while removing a book',
+    };
   }
-}
+};
 
 // service to add book image
 const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<ServiceResponse> => {
   try {
     // first showing if book is in db or not
-    const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookid])
+    const isBookFound = await db.query('SELECT * FROM books WHERE bookid = $1', [bookid]);
 
     if (isBookFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book is not available'
-      }
+        message: 'Book is not available',
+      };
     }
 
     // check if already book image exitst or not
-    const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2`, [
+    const isBookImgFound = await db.query('SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2', [
       bookid,
-      imgType
-    ])
+      imgType,
+    ]);
 
     if (isBookImgFound.rowCount > 0) {
       return {
         success: false,
-        message: 'Book Image of ' + imgType + ' cover already exits'
-      }
+        message: `Book Image of ${imgType} cover already exits`,
+      };
     }
 
     // call util cloudingary upload function
-    const imgUploadStatus: ICloudinaryResponse = await uploadImageToCloud(imgPath)
+    const imgUploadStatus: ICloudinaryResponse = await uploadImageToCloud(imgPath);
 
     if (!imgUploadStatus.success) {
       return {
         success: false,
-        message: 'Failed to upload book image'
-      }
+        message: 'Failed to upload book image',
+      };
     }
 
     const imgToDbStatus = await db.query(
-      `INSERT INTO book_images(bookid, img_src, img_type, img_public_id) VALUES ($1, $2, $3, $4) RETURNING *`,
-      [bookid, imgUploadStatus.imgURL, imgType, imgUploadStatus.imgPublicId]
-    )
+      'INSERT INTO book_images(bookid, img_src, img_type, img_public_id) VALUES ($1, $2, $3, $4) RETURNING *',
+      [bookid, imgUploadStatus.imgURL, imgType, imgUploadStatus.imgPublicId],
+    );
 
     if (imgToDbStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Failed to upload book image'
-      }
+        message: 'Failed to upload book image',
+      };
     }
 
     return {
       success: true,
       message: imgUploadStatus.message,
       data: {
-        src: imgToDbStatus.rows[0].img_src
-      }
-    }
+        src: imgToDbStatus.rows[0].img_src,
+      },
+    };
   } catch (err) {
-    logger.error(err, 'Error while uploading book image')
+    logger.error(err, 'Error while uploading book image');
     return {
       success: false,
-      message: 'Failed to upload book image'
-    }
+      message: 'Failed to upload book image',
+    };
   }
-}
+};
 
 // service to upadte book images
 const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<ServiceResponse> => {
   try {
     // first find if book exits or not
-    const isBookFound = await db.query(`SELECT * FROM books WHERE bookid = $1`, [bookid])
+    const isBookFound = await db.query('SELECT * FROM books WHERE bookid = $1', [bookid]);
 
     if (isBookFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book is not available'
-      }
+        message: 'Book is not available',
+      };
     }
 
     // then find if book image exits or not
-    const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2`, [
+    const isBookImgFound = await db.query('SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2', [
       bookid,
-      imgType
-    ])
+      imgType,
+    ]);
 
     if (isBookImgFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book images not found ! Upload them first'
-      }
+        message: 'Book images not found ! Upload them first',
+      };
     }
 
     // get the public_id of book images
-    const imgPublicId = await isBookImgFound.rows[0].img_public_id
+    const imgPublicId = await isBookImgFound.rows[0].img_public_id;
 
     // call util cloudingary update function
-    const imgUpdateStatus: ICloudinaryResponse = await updateImageToCloud(imgPath, imgPublicId)
+    const imgUpdateStatus: ICloudinaryResponse = await updateImageToCloud(imgPath, imgPublicId);
 
     if (!imgUpdateStatus.success) {
       return {
-        ...imgUpdateStatus
-      }
+        ...imgUpdateStatus,
+      };
     }
 
     return {
       success: true,
-      message: `Successfully updated book images`
-    }
+      message: 'Successfully updated book images',
+    };
   } catch (err) {
-    logger.error(err, 'Error while updating book images')
+    logger.error(err, 'Error while updating book images');
     return {
       success: false,
-      message: 'Failed to update book images'
-    }
+      message: 'Failed to update book images',
+    };
   }
-}
+};
 
 // service to delete book image
 const DeleteBookImage = async (bookid: number, imgType: string): Promise<ServiceResponse> => {
   try {
     // first show if book images
-    const isBookImgFound = await db.query(`SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2`, [
+    const isBookImgFound = await db.query('SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2', [
       bookid,
-      imgType
-    ])
+      imgType,
+    ]);
 
     if (isBookImgFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'No Book images found'
-      }
+        message: 'No Book images found',
+      };
     }
 
     // call util remove image from cloud
     const removeImgFromCloudStatus: ICloudinaryResponse = await removeImageFromCloud(
-      isBookImgFound.rows[0].img_public_id
-    )
+      isBookImgFound.rows[0].img_public_id,
+    );
 
     if (!removeImgFromCloudStatus.success) {
       return {
         success: false,
-        message: 'Failed to remove book image'
-      }
+        message: 'Failed to remove book image',
+      };
     }
 
     // remove images from db
-    const bookImgRemoveStatus = await db.query(`DELETE FROM book_images WHERE bookid = $1 AND img_type = $2`, [
+    const bookImgRemoveStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 AND img_type = $2', [
       bookid,
-      imgType
-    ])
+      imgType,
+    ]);
 
     if (bookImgRemoveStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Failed to remove book image'
-      }
+        message: 'Failed to remove book image',
+      };
     }
 
     return {
       success: true,
-      message: 'Successfully removed book image'
-    }
+      message: 'Successfully removed book image',
+    };
   } catch (err) {
-    logger.error(err, 'Error while removing book image')
+    logger.error(err, 'Error while removing book image');
     return {
       success: false,
-      message: 'Failed to remove book image'
-    }
+      message: 'Failed to remove book image',
+    };
   }
-}
+};
 
 export {
   GetAllBooks,
@@ -467,5 +467,5 @@ export {
   RemoveBookWithId,
   AddBookImg,
   UpdateBookImg,
-  DeleteBookImage
-}
+  DeleteBookImage,
+};

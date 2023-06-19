@@ -1,126 +1,130 @@
-import { type Request, type Response, type NextFunction } from 'express'
-import { DeleteUser, GetUserData, UpdateEmail, UpdatePassword, UpdateUsername } from '../services/user.service'
-import { StatusCodes } from 'http-status-codes'
-import type { ServiceResponse } from '../types'
+import { type Request, type Response, type NextFunction } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import {
+  DeleteUser, GetUserData, UpdateEmail, UpdatePassword, UpdateUsername,
+} from '../services/user.service';
+import type { ServiceResponse } from '../types';
 
 // controller for get the user data
 const GetOneUserData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // get the authenticated userid
-    const authenticatedUserData: any = req.user
-    const authenticatedUserId: number = authenticatedUserData.userid
+    const authenticatedUserData: any = req.user;
+    const authenticatedUserId: number = authenticatedUserData.userid;
 
-    const getUserDataStatus: ServiceResponse = await GetUserData(authenticatedUserId)
+    const getUserDataStatus: ServiceResponse = await GetUserData(authenticatedUserId);
 
     if (!getUserDataStatus.success) {
       res.status(StatusCodes.BAD_GATEWAY).json({
-        ...getUserDataStatus
-      })
-      return
+        ...getUserDataStatus,
+      });
+      return;
     }
 
     res.status(StatusCodes.OK).json({
-      ...getUserDataStatus
-    })
+      ...getUserDataStatus,
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
 const UpdateOneUsername = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // get the authenticated userid
-    const authenticatedUserData: any = req.user
-    const authenticatedUserId: number = authenticatedUserData.userid
+    const authenticatedUserData: any = req.user;
+    const authenticatedUserId: number = authenticatedUserData.userid;
 
-    const updateUsernameStatus: ServiceResponse = await UpdateUsername(authenticatedUserId, req.body.newusername)
+    const updateUsernameStatus: ServiceResponse = await UpdateUsername(authenticatedUserId, req.body.newusername);
 
     if (!updateUsernameStatus.success) {
       res.status(StatusCodes.BAD_GATEWAY).json({
-        ...updateUsernameStatus
-      })
-      return
+        ...updateUsernameStatus,
+      });
+      return;
     }
 
     res.status(StatusCodes.OK).json({
-      ...updateUsernameStatus
-    })
+      ...updateUsernameStatus,
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
 const UpdateOneEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // get the authenticated userid
-    const authenticatedUserData: any = req.user
-    const authenticatedUserId: number = authenticatedUserData.userid
+    const authenticatedUserData: any = req.user;
+    const authenticatedUserId: number = authenticatedUserData.userid;
 
-    const updateEmailStatus: ServiceResponse = await UpdateEmail(authenticatedUserId, req.body.newemail)
+    const updateEmailStatus: ServiceResponse = await UpdateEmail(authenticatedUserId, req.body.newemail);
 
     if (!updateEmailStatus.success) {
       res.status(StatusCodes.BAD_GATEWAY).json({
-        ...updateEmailStatus
-      })
-      return
+        ...updateEmailStatus,
+      });
+      return;
     }
 
     res.status(StatusCodes.OK).json({
-      ...updateEmailStatus
-    })
+      ...updateEmailStatus,
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
 const UpdateOnePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // get the authenticated userid
-    const authenticatedUserData: any = req.user
-    const authenticatedUserId: number = authenticatedUserData.userid
+    const authenticatedUserData: any = req.user;
+    const authenticatedUserId: number = authenticatedUserData.userid;
 
     const updatePasswordStatus: ServiceResponse = await UpdatePassword(
       authenticatedUserId,
       req.body.oldpassword,
-      req.body.newpassword
-    )
+      req.body.newpassword,
+    );
 
     if (!updatePasswordStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
-        ...updatePasswordStatus
-      })
-      return
+        ...updatePasswordStatus,
+      });
+      return;
     }
 
     res.status(StatusCodes.OK).json({
-      ...updatePasswordStatus
-    })
+      ...updatePasswordStatus,
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
 const DeleteOneUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // get the authenticated userid
-    const authenticatedUserData: any = req.user
-    const authenticatedUserId: number = authenticatedUserData.userid
+    const authenticatedUserData: any = req.user;
+    const authenticatedUserId: number = authenticatedUserData.userid;
 
-    const deleteStatus: ServiceResponse = await DeleteUser(authenticatedUserId, req.body.password)
+    const deleteStatus: ServiceResponse = await DeleteUser(authenticatedUserId, req.body.password);
 
     if (!deleteStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
-        ...deleteStatus
-      })
-      return
+        ...deleteStatus,
+      });
+      return;
     }
 
     res.status(StatusCodes.OK).json({
-      ...deleteStatus
-    })
+      ...deleteStatus,
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
-export { GetOneUserData, UpdateOneUsername, UpdateOneEmail, UpdateOnePassword, DeleteOneUser }
+export {
+  GetOneUserData, UpdateOneUsername, UpdateOneEmail, UpdateOnePassword, DeleteOneUser,
+};

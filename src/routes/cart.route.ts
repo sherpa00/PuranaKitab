@@ -1,15 +1,15 @@
-import express from 'express'
-import { body, param } from 'express-validator'
-import passport from '../configs/passport.config'
+import express from 'express';
+import { body, param } from 'express-validator';
+import passport from '../configs/passport.config';
 import {
   AddOneCart,
   GetOneAllCart,
   RemoveAllOneCart,
   RemoveSingleOneCart,
-  UpdateOneCart
-} from '../controllers/cart.controller'
+  UpdateOneCart,
+} from '../controllers/cart.controller';
 
-const router = express.Router()
+const router = express.Router();
 
 // get all cart
 router.get(
@@ -17,8 +17,8 @@ router.get(
   // user authentication
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  GetOneAllCart
-)
+  GetOneAllCart,
+);
 
 // post new cart
 router.post(
@@ -36,8 +36,8 @@ router.post(
   // user authentication
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  AddOneCart
-)
+  AddOneCart,
+);
 
 router.patch(
   '/:cartid',
@@ -54,16 +54,16 @@ router.patch(
   // user authentication
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  UpdateOneCart
-)
+  UpdateOneCart,
+);
 
 router.delete(
   '/',
   // user authentication
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  RemoveAllOneCart
-)
+  RemoveAllOneCart,
+);
 
 router.delete(
   '/:cartid',
@@ -71,7 +71,7 @@ router.delete(
   // user authentication
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  RemoveSingleOneCart
-)
+  RemoveSingleOneCart,
+);
 
-export { router as CartRouter }
+export { router as CartRouter };
