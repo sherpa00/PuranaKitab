@@ -1,5 +1,6 @@
 import { Pool } from 'pg'
 import * as dotenv from 'dotenv'
+import logger from '../utils/logger.utils'
 
 dotenv.config()
 
@@ -15,20 +16,18 @@ const db = new Pool({
 const connectToDb = async (): Promise<void> => {
   try {
     await db.connect()
-    console.log('\x1b[32m', '\n -- DATABASE CONNECTION: SUCCESS --\n', '\x1b[0m')
+    logger.info('\x1b[32m', '\n -- DATABASE CONNECTION: SUCCESS --\n', '\x1b[0m')
   } catch (err) {
-    console.log(err)
-    console.log('\x1b[31m', 'Error while connecting to server database..\n', '\x1b[0m')
+    logger.error(err, '\x1b[31m', 'Error while connecting to server database..\n', '\x1b[0m')
   }
 }
 
 const disconnectToDb = async (): Promise<void> => {
   try {
     await db.end()
-    console.log('\x1b[32m', '\n -- DATABASE DISCONNECTION: SUCCESS --\n', '\x1b[0m')
+    logger.info('\x1b[32m', '\n -- DATABASE DISCONNECTION: SUCCESS --\n', '\x1b[0m')
   } catch (err) {
-    console.log(err)
-    console.log('\x1b[31m', 'Error while disconnecting to server database..\n', '\x1b[0m')
+    logger.error(err, '\x1b[31m', 'Error while disconnecting to server database..\n', '\x1b[0m')
   }
 }
 

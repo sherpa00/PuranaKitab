@@ -3,6 +3,7 @@ import { db } from '../configs/db.configs'
 import { compareSync } from 'bcrypt'
 import { type Secret, sign } from 'jsonwebtoken'
 import * as dotenv from 'dotenv'
+import logger from '../utils/logger.utils'
 
 dotenv.config()
 
@@ -54,11 +55,10 @@ const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promis
       message: 'Successfully LoggedIn'
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while loggin in')
+    logger.error(err, 'Error while login in')
     return {
       success: false,
-      message: 'Error while loggin in'
+      message: 'Error while login in'
     }
   }
 }

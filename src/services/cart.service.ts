@@ -1,5 +1,6 @@
 import { db } from '../configs/db.configs'
 import type { ServiceResponse } from '../types'
+import logger from '../utils/logger.utils'
 
 // service to get all cart for user
 const GetAllCart = async (userID: number): Promise<ServiceResponse> => {
@@ -21,7 +22,7 @@ const GetAllCart = async (userID: number): Promise<ServiceResponse> => {
       data: getCartStatus.rows
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while gettting all cart')
     return {
       success: false,
       message: 'Error while gettting all cart'
@@ -38,7 +39,7 @@ const AddCart = async (userID: number, bookID: number, bookQuantity: number): Pr
     if (foundBookWithBookid.rowCount <= 0) {
       return {
         success: false,
-        message: 'No Book Found with bookid: ' + String(bookID)
+        message: 'Book is not available'
       }
     }
 
@@ -74,11 +75,11 @@ const AddCart = async (userID: number, bookID: number, bookQuantity: number): Pr
 
     return {
       success: true,
-      message: 'Succesfully added cart with cartid: ' + String(addNewCartStatus.rows[0].cartid),
+      message: 'Succesfully added cart',
       data: addNewCartStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while adding new cart')
     return {
       success: false,
       message: 'Error while adding new cart'
@@ -137,20 +138,20 @@ const UpdateCart = async (userID: number, cartID: number, bookQuantity: number):
     if (updateCartStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Failed to update cart with id: ' + String(cartID)
+        message: 'Failed to update a cart'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully updated cart with id: ' + String(cartID),
+      message: 'Successfully updated a cart',
       data: updateCartStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while updating a cart')
     return {
       success: false,
-      message: 'Error while updating cart'
+      message: 'Error while updating a cart'
     }
   }
 }
@@ -180,19 +181,19 @@ const RemoveSingleCart = async (userID: number, cartID: number): Promise<Service
     if (removeSingleCartStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Failed to remove cart with id: ' + String(cartID)
+        message: 'Failed to remove a single cart'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully removed cart with id: ' + String(cartID)
+      message: 'Successfully removed a single cart'
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while removing a single cart')
     return {
       success: false,
-      message: 'Error while removing cart with id: ' + String(cartID)
+      message: 'Error while removing a sigle cart'
     }
   }
 }
@@ -225,7 +226,7 @@ const RemoveAllCart = async (userID: number): Promise<ServiceResponse> => {
       message: 'Successfully removed all carts'
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while removing all carts')
     return {
       success: false,
       message: 'Error while removing all carts'

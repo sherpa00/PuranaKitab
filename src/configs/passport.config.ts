@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import { type Secret, type JwtPayload } from 'jsonwebtoken'
 import { type Request } from 'express'
 import { db } from './db.configs'
+import logger from '../utils/logger.utils'
 
 // type for userdata;
 export interface userPayload {
@@ -35,7 +36,6 @@ passport.use(
         )
 
         if (foundUser.rowCount <= 0) {
-          console.log('User not found')
           done(null, false, { message: 'User not found' })
           return
         }
@@ -64,7 +64,7 @@ passport.use(
         req.user = foundUser.rows[0].userdata
         done(null, userData, { message: 'Logged in' })
       } catch (err) {
-        console.log(err)
+        logger.error(err, 'Error while passport configs')
       }
     }
   )

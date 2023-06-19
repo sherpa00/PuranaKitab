@@ -2,6 +2,7 @@
 import { v2 as cloudinary } from 'cloudinary'
 import * as dotenv from 'dotenv'
 import * as fs from 'node:fs/promises'
+import logger from './logger.utils'
 
 dotenv.config()
 
@@ -47,7 +48,7 @@ const uploadImageToCloud = async (imageToBeUpload: string): Promise<ICloudinaryR
       imgPublicId: String(public_id).replace('PuranaKitab/', '')
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while uploading image to cloud')
     return {
       success: false,
       message: 'Error while uploading image '
@@ -81,10 +82,10 @@ const updateImageToCloud = async (imageToBeUpload: string, imgPublicId: string):
 
     return {
       success: true,
-      message: 'Successfully updated image to cloud'
+      message: 'Successfully updated image'
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while updating image from cloud')
     return {
       success: false,
       message: 'Error while updating image'
@@ -115,7 +116,7 @@ const removeImageFromCloud = async (imgPublicId: string): Promise<ICloudinaryRes
       message: 'Successfully removed image from cloud'
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while removng image from cloud')
     return {
       success: false,
       message: 'Error while removing image'

@@ -1,14 +1,14 @@
 import type { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import CustomError from '../utils/custom-error'
+import logger from '../utils/logger.utils'
 
 const errorLogger = (err: Error, req: Request, res: Response, next: NextFunction): void => {
   try {
-    console.error('\x1b[31m', err) // adding colors to error
+    logger.error(err) // adding colors to error
     next(err)
-  } catch (err) {
-    console.log(err)
-    console.log('Error while logging errors')
+  } catch (err1) {
+    logger.error(err1, 'Error while loggin errors')
   }
 }
 
@@ -23,9 +23,8 @@ const errorResponder = (err: CustomError | Error, req: Request, res: Response, n
         message: err.message
       }
     })
-  } catch (err) {
-    console.log(err)
-    console.log('Error while responding to errors')
+  } catch (err1) {
+    logger.error(err1, 'Error while responding to errors')
   }
 }
 
@@ -42,9 +41,8 @@ const errorFailSafeHandler = (err: Error, req: Request, res: Response, next: Nex
         message: 'Internal Server Error'
       }
     })
-  } catch (err) {
-    console.log(err)
-    console.log('Error while fail safe handling errors')
+  } catch (err1) {
+    logger.error(err1, 'Error while fail safe error handling')
   }
 }
 

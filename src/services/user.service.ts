@@ -1,6 +1,7 @@
 import { compare, hash } from 'bcrypt'
 import { db } from '../configs/db.configs'
 import type { ServiceResponse } from '../types'
+import logger from '../utils/logger.utils'
 
 // service for get  user's data
 const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse> => {
@@ -24,8 +25,7 @@ const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse
       data: userData.rows[0]
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while getting user data')
+    logger.error(err, 'Error while getting user data')
     return {
       success: false,
       message: 'Error occured while getting user data'
@@ -54,8 +54,7 @@ const UpdateUsername = async (authenticatedUserId: number, newUsername: string):
       data: updateStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while updating username')
+    logger.error(err, 'Error while updating username')
     return {
       success: false,
       message: 'Error while updating username'
@@ -84,8 +83,7 @@ const UpdateEmail = async (authenticatedUserId: number, newEmail: string): Promi
       data: updateStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while updating email')
+    logger.error(err, 'Error while updating user email')
     return {
       success: false,
       message: 'Error while updating email'
@@ -147,8 +145,7 @@ const UpdatePassword = async (
       data: updateStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while updating password')
+    logger.error(err, 'Error whil updating user password')
     return {
       success: false,
       message: 'Error while updating password'
@@ -204,8 +201,7 @@ const DeleteUser = async (authenticatedUserId: number, password: string): Promis
       }
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while deleting user')
+    logger.error(err, 'Error while deleting user')
     return {
       success: false,
       message: 'Error while deleting user'

@@ -1,5 +1,6 @@
 import { db } from '../configs/db.configs'
 import type { ServiceResponse } from '../types'
+import logger from '../utils/logger.utils'
 
 // service for gettting all reviews for book
 const GetAllReviews = async (bookID: number): Promise<ServiceResponse> => {
@@ -38,7 +39,7 @@ const GetAllReviews = async (bookID: number): Promise<ServiceResponse> => {
       data: foundBookReview.rows
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while getting all book reviews')
     return {
       success: false,
       message: 'Error while gettting all book reviews'
@@ -93,7 +94,7 @@ const AddReview = async (
       data: bookReviewAddStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while adding book review')
     return {
       success: false,
       message: 'Error while adding book review'
@@ -132,10 +133,10 @@ const RemoveSinlgeReview = async (reviewID: number): Promise<ServiceResponse> =>
       data: removeBookReviewStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while removing a book review')
     return {
       success: false,
-      message: 'Error while removing book reivew'
+      message: 'Error while removing a book reivew'
     }
   }
 }
@@ -169,7 +170,7 @@ const RemoveAllReviews = async (bookID: number): Promise<ServiceResponse> => {
       data: removeBookReviewsStatus.rows
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while removing all book reviews')
     return {
       success: false,
       message: 'Error while removing all book reviews'

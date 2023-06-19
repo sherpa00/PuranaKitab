@@ -2,6 +2,7 @@ import request from 'supertest'
 import app from '../index'
 import { type Iuser } from '../types'
 import { db } from '../configs/db.configs'
+import logger from '../utils/logger.utils'
 
 describe('Testing for Login and Register routes', () => {
   // asssing new userdata
@@ -103,8 +104,7 @@ describe('Testing for Login and Register routes', () => {
       await db.query('DELETE FROM users where users.userid = $1', [tempUserid])
       await db.end()
     } catch (err) {
-      console.log(err)
-      console.log('Error while testing signup and login routes.')
+      logger.error(err, 'Error while deleing and ending db on signup and login routes test')
     }
   })
 })

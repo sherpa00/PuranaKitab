@@ -1,4 +1,11 @@
 {
+  "GUEST": {
+    "GET": ["/", "/healthCheck", "/books", "/books/:bookid"],
+    "POST": ["/forgot-password", "/reset-password"],
+    "PATCH": [],
+    "DELETE": []
+  },
+
   "CUSTOMER": {
     "GET": ["/user", "/logout", "/books", "/carts", "/carts/cartid", "/books/:bookid"],
     "POST": ["/carts", "/reviews"],

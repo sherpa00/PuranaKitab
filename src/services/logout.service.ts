@@ -1,5 +1,6 @@
 import { db } from '../configs/db.configs'
 import type { ServiceResponse } from '../types'
+import logger from '../utils/logger.utils'
 
 // service for logging out
 const LogOut = async (authenticatedUserId: number): Promise<ServiceResponse> => {
@@ -24,7 +25,7 @@ const LogOut = async (authenticatedUserId: number): Promise<ServiceResponse> => 
       message: 'Successfully Logged out'
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while loggin out')
     return {
       success: false,
       message: 'Error while logging out'

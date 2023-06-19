@@ -6,6 +6,7 @@ import {
   removeImageFromCloud
 } from '../utils/cloudinary.utils'
 import type { ServiceResponse, IBook } from '../types'
+import logger from '../utils/logger.utils'
 
 export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>
 
@@ -28,8 +29,7 @@ const GetAllBooks = async (): Promise<ServiceResponse> => {
       data: getBooksStatus.rows
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while getting all books')
+    logger.error(err, 'Error while getting all books')
     return {
       success: false,
       message: 'Error while getting all books'
@@ -45,21 +45,20 @@ const GetOnlyOneBook = async (bookID: number): Promise<ServiceResponse> => {
     if (getBooksStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'No book with id: ' + String(bookID) + ' found'
+        message: 'Book is not available'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully got a book by id: ' + String(bookID),
+      message: 'Successfully got a book',
       data: getBooksStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while getting one book by id: ' + String(bookID))
+    logger.error(err, 'Error while getting a book')
     return {
       success: false,
-      message: 'Error while getting one book by id: ' + String(bookID)
+      message: 'Error while getting a book'
     }
   }
 }
@@ -90,7 +89,7 @@ const AddBook = async (
       if (addAuthorStatus.rowCount <= 0) {
         return {
           success: false,
-          message: 'Error while adding Books author'
+          message: 'Failed while adding Book'
         }
       }
 
@@ -119,18 +118,17 @@ const AddBook = async (
     if (addBookStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while adding new book'
+        message: 'Failed while adding new book'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully added new book: ' + bookData.title,
+      message: 'Successfully added new book',
       data: addBookStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while adding new book')
+    logger.error(err, 'Error while adding new book')
     return {
       success: false,
       message: 'Error while adding new book'
@@ -147,7 +145,7 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
     if (bookWithId.rowCount <= 0) {
       return {
         success: false,
-        message: 'No Book with id ' + String(bookID) + ' found'
+        message: 'Book is unavaiable'
       }
     }
 
@@ -175,21 +173,20 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
     if (bookUpdateStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating book with id ' + String(bookID)
+        message: 'Error while updating a book'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully updated book with id ' + String(bookID),
+      message: 'Successfully updated book',
       data: bookUpdateStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while updating book with id: ' + String(bookID))
+    logger.error(err, 'Error while updating book')
     return {
       success: false,
-      message: 'Error while updating book with id: ' + String(bookID)
+      message: 'Error while updating book'
     }
   }
 }
@@ -204,7 +201,7 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
     if (bookWithId.rowCount <= 0) {
       return {
         success: false,
-        message: 'No Book with ID ' + String(bookID) + ' found'
+        message: 'Book is not available'
       }
     }
 
@@ -221,7 +218,7 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
       if (deleteBookImagesWithIdStatus.rowCount <= 0) {
         return {
           success: false,
-          message: 'Error while deleting book images with id: ' + String(bookID)
+          message: 'Failed to delete a book'
         }
       }
     }
@@ -234,7 +231,7 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
       if (deleteBookImagesWithIdStatus.rowCount <= 0) {
         return {
           success: false,
-          message: 'Error while deleting book images with id: ' + String(bookID)
+          message: 'Failed to delete a book'
         }
       }
     }
@@ -249,7 +246,7 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
       if (deleteBookReviews.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete book reviews'
+          message: 'Failed to delete a book'
         }
       }
     }
@@ -264,7 +261,7 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
       if (deleteCarts.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete carts'
+          message: 'Failed to delete a book'
         }
       }
     }
@@ -275,21 +272,20 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
     if (deleteBookWithIdStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while Deleting book with id ' + String(bookID)
+        message: 'Failed to delete a book'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully Removed book witth id ' + String(bookID),
+      message: 'Successfully Removed a book',
       data: deleteBookWithIdStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
-    console.log('Error while removing a book with id ' + String(bookID))
+    logger.error(err, 'Error while removing a book')
     return {
       success: false,
-      message: 'Error while removing a book with id ' + String(bookID)
+      message: 'Error while removing a book'
     }
   }
 }
@@ -303,7 +299,7 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
     if (isBookFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book Not Found'
+        message: 'Book is not available'
       }
     }
 
@@ -350,7 +346,7 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
       }
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while uploading book image')
     return {
       success: false,
       message: 'Failed to upload book image'
@@ -367,7 +363,7 @@ const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): 
     if (isBookFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'No book found'
+        message: 'Book is not available'
       }
     }
 
@@ -398,10 +394,10 @@ const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): 
 
     return {
       success: true,
-      message: `Successfully updated book images of bookid: ${bookid} of ${imgType}-COVER`
+      message: `Successfully updated book images`
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while updating book images')
     return {
       success: false,
       message: 'Failed to update book images'
@@ -429,11 +425,11 @@ const DeleteBookImage = async (bookid: number, imgType: string): Promise<Service
     const removeImgFromCloudStatus: ICloudinaryResponse = await removeImageFromCloud(
       isBookImgFound.rows[0].img_public_id
     )
-    console.log(removeImgFromCloudStatus)
+
     if (!removeImgFromCloudStatus.success) {
       return {
         success: false,
-        message: 'Failed to remove image from cloud'
+        message: 'Failed to remove book image'
       }
     }
 
@@ -452,13 +448,13 @@ const DeleteBookImage = async (bookid: number, imgType: string): Promise<Service
 
     return {
       success: true,
-      message: 'Successfully deleted'
+      message: 'Successfully removed book image'
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while removing book image')
     return {
       success: false,
-      message: 'Failed to remove book images'
+      message: 'Failed to remove book image'
     }
   }
 }

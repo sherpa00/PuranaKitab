@@ -50,8 +50,8 @@ app.get('/', (req: Request, res: Response): void => {
       message: 'Api server is alive'
     })
   } catch (err) {
-    console.log(err)
-    res.status(StatusCode.BAD_REQUEST).json({
+    logger.error(err, 'Error in / route')
+    res.status(StatusCode.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Api server Error'
     })

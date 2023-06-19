@@ -22,11 +22,8 @@ const GetOneUserData = async (req: Request, res: Response, next: NextFunction): 
     res.status(StatusCodes.OK).json({
       ...getUserDataStatus
     })
-    return
   } catch (err) {
-    console.log(err)
     next(err)
-    console.log('Error while gettig user data')
   }
 }
 
@@ -122,7 +119,7 @@ const DeleteOneUser = async (req: Request, res: Response, next: NextFunction): P
       ...deleteStatus
     })
   } catch (err) {
-    console.log('Error while deleting user')
+    next(err)
   }
 }
 

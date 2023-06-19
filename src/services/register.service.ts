@@ -1,6 +1,7 @@
 import { genSalt, hash } from 'bcrypt'
 import { db } from '../configs/db.configs'
 import type { ServiceResponse, Iuser } from '../types'
+import logger from '../utils/logger.utils'
 
 // types for new user --> username and password only
 export type InewUser = Pick<Iuser, 'username' | 'email' | 'password'>
@@ -33,7 +34,7 @@ const RegisterNewUser = async (userInfo: InewUser): Promise<ServiceResponse> => 
       data: reigisterStatus.rows[0]
     }
   } catch (err) {
-    console.log(err)
+    logger.error(err, 'Error while registering new user')
     return {
       success: false,
       message: 'Error while registering new user'

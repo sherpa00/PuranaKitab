@@ -11,7 +11,7 @@ const ForgotPasswordOne = async (req: Request, res: Response, next: NextFunction
     // validation error
     const ValidationError = validationResult(req)
     if (!ValidationError.isEmpty()) {
-      const error = new CustomError('Invalidation Error', 403)
+      const error = new CustomError('Validation Error', 403)
       throw error
     }
 
