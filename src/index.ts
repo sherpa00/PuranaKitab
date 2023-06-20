@@ -2,6 +2,7 @@ import express, { type Application, type Request, type Response } from 'express'
 import morgan from 'morgan'
 import pinoHTTP from 'pino-http'
 import StatusCode from 'http-status-codes'
+import cors from 'cors'
 import logger from './utils/logger.utils'
 import { registerRouter } from './routes/register.route'
 import { loginRouter } from './routes/login.route'
@@ -23,6 +24,9 @@ const app: Application = express()
 // middlewares for server handling
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
+// cors config
+app.use(cors())
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))

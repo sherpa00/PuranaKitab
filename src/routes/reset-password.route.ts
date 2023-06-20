@@ -1,6 +1,7 @@
 import express from 'express'
 import { body, param } from 'express-validator'
 import { ResetPasswordOne } from '../controllers/reset-password.controller'
+import { resettPasswordAccountLimit } from '../utils/rateLimiters'
 
 const router = express.Router()
 
@@ -12,6 +13,8 @@ router.post(
     .withMessage('Body Passoword should not be empty')
     .isLength({ min: 5 })
     .withMessage('Password length should not be less than 5.'),
+  // rate limiter
+  resettPasswordAccountLimit,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   ResetPasswordOne
 )

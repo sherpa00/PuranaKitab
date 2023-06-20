@@ -12,8 +12,9 @@
     "project": ["./tsconfig.json"]
   },
   "rules": {
-    "semi": "off",
-    "no-console": "warn"
+    "semi": "warn",
+    "no-console": "warn",
+    "quotes": "warn"
   },
   "plugins": ["@typescript-eslint"]
 }
