@@ -1,40 +1,40 @@
-import type { Request, Response, NextFunction } from 'express';
-import { validationResult } from 'express-validator';
-import { StatusCodes } from 'http-status-codes';
-import CustomError from '../utils/custom-error';
-import type { ServiceResponse } from '../types';
-import { ResetPassword } from '../services/reset-password.service';
+import type { Request, Response, NextFunction } from 'express'
+import { validationResult } from 'express-validator'
+import { StatusCodes } from 'http-status-codes'
+import CustomError from '../utils/custom-error'
+import type { ServiceResponse } from '../types'
+import { ResetPassword } from '../services/reset-password.service'
 
 // contorller for resetting password
 const ResetPasswordOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // validation error
-    const ValidationError = validationResult(req);
+    const ValidationError = validationResult(req)
     if (!ValidationError.isEmpty()) {
-      const error = new CustomError('Invalidation Error', 403);
-      throw error;
+      const error = new CustomError('Invalidation Error', 403)
+      throw error
     }
 
     // req params for reset token
-    const resetToken: string = req.params.token;
+    const resetToken: string = req.params.token
     // req body for new password
-    const newPassword: string = req.body.password;
+    const newPassword: string = req.body.password
 
     // call reset password service
-    const resetPasswordStatus: ServiceResponse = await ResetPassword(resetToken, newPassword);
+    const resetPasswordStatus: ServiceResponse = await ResetPassword(resetToken, newPassword)
 
     if (!resetPasswordStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
-        ...resetPasswordStatus,
-      });
+        ...resetPasswordStatus
+      })
     }
 
     res.status(StatusCodes.OK).json({
-      ...resetPasswordStatus,
-    });
+      ...resetPasswordStatus
+    })
   } catch (err) {
-    next(err);
+    next(err)
   }
-};
+}
 
-export { ResetPasswordOne };
+export { ResetPasswordOne }

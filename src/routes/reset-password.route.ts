@@ -1,8 +1,8 @@
-import express from 'express';
-import { body, param } from 'express-validator';
-import { ResetPasswordOne } from '../controllers/reset-password.controller';
+import express from 'express'
+import { body, param } from 'express-validator'
+import { ResetPasswordOne } from '../controllers/reset-password.controller'
 
-const router = express.Router();
+const router = express.Router()
 
 router.post(
   '/:token',
@@ -13,7 +13,7 @@ router.post(
     .isLength({ min: 5 })
     .withMessage('Password length should not be less than 5.'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  ResetPasswordOne,
-);
+  ResetPasswordOne
+)
 
-export { router as ResetPasswordRouter };
+export { router as ResetPasswordRouter }

@@ -1,13 +1,13 @@
-import pino from 'pino';
+import pino from 'pino'
 
 const logger = pino({
   timestamp: pino.stdTimeFunctions.isoTime,
   transport: {
     target: 'pino-pretty',
     options: {
-      colorize: true,
-    },
-  },
-});
+      colorize: true
+    }
+  }
+})
 
-export default logger;
+export default logger

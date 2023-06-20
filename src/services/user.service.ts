@@ -1,7 +1,7 @@
-import { compare, hash } from 'bcrypt';
-import { db } from '../configs/db.configs';
-import type { ServiceResponse } from '../types';
-import logger from '../utils/logger.utils';
+import { compare, hash } from 'bcrypt'
+import { db } from '../configs/db.configs'
+import type { ServiceResponse } from '../types'
+import logger from '../utils/logger.utils'
 
 // service for get  user's data
 const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse> => {
@@ -9,149 +9,149 @@ const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse
     // get the user data from db
     const userData = await db.query(
       'SELECT username,userid,email,role,last_logout,createat FROM users WHERE users.userid = $1',
-      [authenticatedUserid],
-    );
+      [authenticatedUserid]
+    )
 
     if (userData.rowCount <= 0) {
       return {
         success: false,
-        message: 'No user found',
-      };
+        message: 'No user found'
+      }
     }
 
     return {
       success: true,
       message: 'Get User Data successful',
-      data: userData.rows[0],
-    };
+      data: userData.rows[0]
+    }
   } catch (err) {
-    logger.error(err, 'Error while getting user data');
+    logger.error(err, 'Error while getting user data')
     return {
       success: false,
-      message: 'Error occured while getting user data',
-    };
+      message: 'Error occured while getting user data'
+    }
   }
-};
+}
 
 // service for updating user's userame
 const UpdateUsername = async (authenticatedUserId: number, newUsername: string): Promise<ServiceResponse> => {
   try {
     const updateStatus = await db.query(
       'UPDATE users SET username = $1 WHERE users.userid = $2 RETURNING userid,username,email',
-      [newUsername, authenticatedUserId],
-    );
+      [newUsername, authenticatedUserId]
+    )
 
     if (updateStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating username in query',
-      };
+        message: 'Error while updating username in query'
+      }
     }
 
     return {
       success: true,
       message: 'Updated username Successfully',
-      data: updateStatus.rows[0],
-    };
+      data: updateStatus.rows[0]
+    }
   } catch (err) {
-    logger.error(err, 'Error while updating username');
+    logger.error(err, 'Error while updating username')
     return {
       success: false,
-      message: 'Error while updating username',
-    };
+      message: 'Error while updating username'
+    }
   }
-};
+}
 
 // service for updating user's email
 const UpdateEmail = async (authenticatedUserId: number, newEmail: string): Promise<ServiceResponse> => {
   try {
     const updateStatus = await db.query(
       'UPDATE users SET email = $1 WHERE users.userid = $2 RETURNING userid,username,email',
-      [newEmail, authenticatedUserId],
-    );
+      [newEmail, authenticatedUserId]
+    )
 
     if (updateStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating email in query',
-      };
+        message: 'Error while updating email in query'
+      }
     }
 
     return {
       success: true,
       message: 'Updated email Successfully',
-      data: updateStatus.rows[0],
-    };
+      data: updateStatus.rows[0]
+    }
   } catch (err) {
-    logger.error(err, 'Error while updating user email');
+    logger.error(err, 'Error while updating user email')
     return {
       success: false,
-      message: 'Error while updating email',
-    };
+      message: 'Error while updating email'
+    }
   }
-};
+}
 
 // service for updating user's password
 const UpdatePassword = async (
   authenticatedUserId: number,
   oldPassword: string,
-  newPassword: string,
+  newPassword: string
 ): Promise<ServiceResponse> => {
   try {
     // get original password hash from db
     const originalUserPassData = await db.query('SELECT password,salt FROM users WHERE users.userid = $1', [
-      authenticatedUserId,
-    ]);
+      authenticatedUserId
+    ])
 
     if (originalUserPassData.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating password',
-      };
+        message: 'Error while updating password'
+      }
     }
 
-    const originalPasswordHash: string = originalUserPassData.rows[0].password;
-    const originalSalt: string = originalUserPassData.rows[0].salt;
+    const originalPasswordHash: string = originalUserPassData.rows[0].password
+    const originalSalt: string = originalUserPassData.rows[0].salt
 
     // first comparing old password
-    const isVerified: boolean = await compare(oldPassword, originalPasswordHash);
+    const isVerified: boolean = await compare(oldPassword, originalPasswordHash)
 
     if (!isVerified) {
       return {
         success: false,
-        message: 'Old Password incorrect',
-      };
+        message: 'Old Password incorrect'
+      }
     }
 
     // now prepare new password hash with old salt and new password
-    const newHashedPassword: string = await hash(newPassword, originalSalt);
+    const newHashedPassword: string = await hash(newPassword, originalSalt)
 
     // update db user password
     const updateStatus = await db.query(
       'UPDATE users SET password = $1 WHERE users.userid = $2 RETURNING userid,username,email',
-      [newHashedPassword, authenticatedUserId],
-    );
+      [newHashedPassword, authenticatedUserId]
+    )
 
     if (updateStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating password',
-      };
+        message: 'Error while updating password'
+      }
     }
 
     return {
       success: true,
       message: 'Updated Password successfully',
-      data: updateStatus.rows[0],
-    };
+      data: updateStatus.rows[0]
+    }
   } catch (err) {
-    logger.error(err, 'Error whil updating user password');
+    logger.error(err, 'Error whil updating user password')
     return {
       success: false,
-      message: 'Error while updating password',
-    };
+      message: 'Error while updating password'
+    }
   }
-};
+}
 
 // service for deleting user
 const DeleteUser = async (authenticatedUserId: number, password: string): Promise<ServiceResponse> => {
@@ -159,35 +159,35 @@ const DeleteUser = async (authenticatedUserId: number, password: string): Promis
     // first get the user for db
     const originalUserPassData = await db.query(
       'SELECT userid,email,username,password FROM users WHERE users.userid = $1',
-      [authenticatedUserId],
-    );
+      [authenticatedUserId]
+    )
 
     if (originalUserPassData.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while deleting user',
-      };
+        message: 'Error while deleting user'
+      }
     }
-    const originalPasswordHash: string = originalUserPassData.rows[0].password;
+    const originalPasswordHash: string = originalUserPassData.rows[0].password
 
     // then comparing the password
-    const isVerified: boolean = await compare(password, originalPasswordHash);
+    const isVerified: boolean = await compare(password, originalPasswordHash)
 
     if (!isVerified) {
       return {
         success: false,
-        message: 'Password is invalid',
-      };
+        message: 'Password is invalid'
+      }
     }
 
     // here delete user accoutn from db
-    const deleteStatus = await db.query('DELETE FROM users WHERE users.userid = $1', [authenticatedUserId]);
+    const deleteStatus = await db.query('DELETE FROM users WHERE users.userid = $1', [authenticatedUserId])
 
     if (deleteStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Erorr while deleting user',
-      };
+        message: 'Erorr while deleting user'
+      }
     }
 
     return {
@@ -197,18 +197,16 @@ const DeleteUser = async (authenticatedUserId: number, password: string): Promis
       data: {
         userid: originalUserPassData.rows[0].userid,
         username: originalUserPassData.rows[0].username,
-        email: originalUserPassData.rows[0].email,
-      },
-    };
+        email: originalUserPassData.rows[0].email
+      }
+    }
   } catch (err) {
-    logger.error(err, 'Error while deleting user');
+    logger.error(err, 'Error while deleting user')
     return {
       success: false,
-      message: 'Error while deleting user',
-    };
+      message: 'Error while deleting user'
+    }
   }
-};
+}
 
-export {
-  GetUserData, UpdateUsername, UpdateEmail, UpdatePassword, DeleteUser,
-};
+export { GetUserData, UpdateUsername, UpdateEmail, UpdatePassword, DeleteUser }

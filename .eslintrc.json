@@ -4,10 +4,7 @@
     "browser": true,
     "es2021": true
   },
-  "extends": [
-      "standard-with-typescript", 
-      "prettier"
-  ],
+  "extends": ["standard-with-typescript", "prettier"],
   "overrides": [],
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -18,7 +15,5 @@
     "semi": "off",
     "no-console": "warn"
   },
-  "plugins": [
-      "@typescript-eslint"
-  ]
+  "plugins": ["@typescript-eslint"]
 }

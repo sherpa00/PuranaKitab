@@ -1,15 +1,15 @@
-import express from 'express';
-import { body, param } from 'express-validator';
-import passport from '../configs/passport.config';
+import express from 'express'
+import { body, param } from 'express-validator'
+import passport from '../configs/passport.config'
 import {
   AddOneReview,
   GetAllOneBookReview,
   RemoveAllOneBookReviews,
-  RemoveSingleOneBookReview,
-} from '../controllers/reivew.controller';
-import { isAdmin } from '../middlewares/admin.middleware';
+  RemoveSingleOneBookReview
+} from '../controllers/reivew.controller'
+import { isAdmin } from '../middlewares/admin.middleware'
 
-const router: express.IRouter = express.Router();
+const router: express.IRouter = express.Router()
 
 // get all reviews
 router.get(
@@ -20,8 +20,8 @@ router.get(
     .isNumeric()
     .withMessage('Body bookid should be an integer'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  GetAllOneBookReview,
-);
+  GetAllOneBookReview
+)
 
 // post review
 router.post(
@@ -44,8 +44,8 @@ router.post(
   // user authencticatin
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  AddOneReview,
-);
+  AddOneReview
+)
 
 // get single reviews
 router.delete(
@@ -56,8 +56,8 @@ router.delete(
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  RemoveSingleOneBookReview,
-);
+  RemoveSingleOneBookReview
+)
 
 // get all reviews
 router.delete(
@@ -72,7 +72,7 @@ router.delete(
   // admin authorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  RemoveAllOneBookReviews,
-);
+  RemoveAllOneBookReviews
+)
 
-export { router as ReviewRouter };
+export { router as ReviewRouter }

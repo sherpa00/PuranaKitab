@@ -1,8 +1,8 @@
-import express, { type Request, type Response } from 'express';
-import { StatusCodes } from 'http-status-codes';
-import logger from '../utils/logger.utils';
+import express, { type Request, type Response } from 'express'
+import { StatusCodes } from 'http-status-codes'
+import logger from '../utils/logger.utils'
 
-const router = express.Router();
+const router = express.Router()
 
 // health check info
 export interface IHealthCheckInfo {
@@ -18,18 +18,18 @@ router.get('/', (req: Request, res: Response): void => {
     uptime: process.uptime(),
     responsetime: process.hrtime(),
     message: 'Good Health',
-    timestamp: Date.now(),
-  };
+    timestamp: Date.now()
+  }
 
   try {
     res.status(StatusCodes.OK).json({
-      ...healthCheckInfo,
-    });
+      ...healthCheckInfo
+    })
   } catch (err: Error | any) {
-    logger.error(err);
-    healthCheckInfo.message = err.message;
-    res.status(StatusCodes.SERVICE_UNAVAILABLE).json({});
+    logger.error(err)
+    healthCheckInfo.message = err.message
+    res.status(StatusCodes.SERVICE_UNAVAILABLE).json({})
   }
-});
+})
 
-export { router as HealthCheckRouter };
+export { router as HealthCheckRouter }

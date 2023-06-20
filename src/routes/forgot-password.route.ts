@@ -1,8 +1,8 @@
-import express from 'express';
-import { body } from 'express-validator';
-import { ForgotPasswordOne } from '../controllers/forgot-password.controller';
+import express from 'express'
+import { body } from 'express-validator'
+import { ForgotPasswordOne } from '../controllers/forgot-password.controller'
 
-const router = express.Router();
+const router = express.Router()
 
 router.post(
   '/',
@@ -12,7 +12,7 @@ router.post(
     .isEmail()
     .withMessage('Should use correct email'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  ForgotPasswordOne,
-);
+  ForgotPasswordOne
+)
 
-export { router as ForgotPasswordRouter };
+export { router as ForgotPasswordRouter }
