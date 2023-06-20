@@ -1,7 +1,7 @@
 import passport from 'passport'
 import * as dotenv from 'dotenv'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import { type Secret, type JwtPayload } from 'jsonwebtoken'
+import { type JwtPayload } from 'jsonwebtoken'
 import { type Request } from 'express'
 import { db } from './db.configs'
 import logger from '../utils/logger.utils'
@@ -17,14 +17,15 @@ export interface userPayload {
 dotenv.config()
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const SECRET: Secret = process.env.SECRET!
+const PUBLIC_KEY: string = process.env.PUBLIC_KEY!
 
 passport.use(
   new Strategy(
     {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: SECRET,
-      passReqToCallback: true
+      secretOrKey: PUBLIC_KEY,
+      passReqToCallback: true,
+      algorithms: ['RS256']
     },
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     async (req: Request, payload: JwtPayload, done: any): Promise<void> => {

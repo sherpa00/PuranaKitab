@@ -1,5 +1,5 @@
 import { compareSync } from 'bcrypt'
-import { type Secret, sign } from 'jsonwebtoken'
+import { sign } from 'jsonwebtoken'
 import * as dotenv from 'dotenv'
 import { db } from '../configs/db.configs'
 import { type InewUser } from './register.service'
@@ -15,7 +15,7 @@ export interface loginPayload {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const SECRET: Secret = process.env.SECRET!
+const PRIVATE_KEY: string = process.env.PRIVATE_KEY!
 
 const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promise<loginPayload> => {
   try {
@@ -39,12 +39,13 @@ const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promis
       }
     }
 
-    // sign new token
+    // sign new token with rsa256 algo
     const token: string = sign(
       { sub: foundUser.rows[0].userid, subRole: foundUser.rows[0].role, subPass: foundUser.rows[0].password },
-      SECRET,
+      PRIVATE_KEY,
       {
-        expiresIn: '1h'
+        expiresIn: '1h',
+        algorithm: 'RS256'
       }
     )
 
