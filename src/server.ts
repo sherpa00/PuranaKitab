@@ -58,3 +58,5 @@ process.on('uncaughtException', err => {
 })
 
 export { server }
+
+// cross-env NODE_ENV=development nodemon src/server.ts

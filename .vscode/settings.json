@@ -2,5 +2,6 @@
   "jest.autoRevealOutput": "off",
   "jest.autoRun": {
     "watch": false
-  }
+  },
+  "git.ignoreLimitWarning": true
 }
