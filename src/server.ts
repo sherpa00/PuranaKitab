@@ -12,7 +12,7 @@ const PORT: number = parseInt(process.env.PORT!)
 // start server with db
 const server = app.listen(PORT, (async (): Promise<void> => {
   try {
-    logger.info('\n -- SERVER CONNECTION: SUCCESS --\n')
+    logger.info(`\n -- SERVER CONNECTION ON PORT ${PORT} : SUCCESS --\n`)
     // connect to db
     await connectToDb()
   } catch (err) {
