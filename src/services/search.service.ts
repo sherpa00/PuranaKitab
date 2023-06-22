@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import { db } from '../configs/db.configs'
 import logger from '../utils/logger.utils'
 import type { ServiceResponse } from '../types'
@@ -5,20 +6,20 @@ import type { ServiceResponse } from '../types'
 // service for searching books
 const SearchBooks = async (searchQuery: string, searchBy: string): Promise<ServiceResponse> => {
   try {
-    // get if exits -> search query, search by
-    const queryString: string = searchQuery !== null && searchQuery !== undefined ? searchQuery : ''
-    const searchingBy: string = searchBy !== null && searchBy !== undefined ? searchBy : 'title'
-
     // db search with search query and search by
     let searchResults: any
-    if (searchingBy === 'title') {
-      searchResults = await db.query("SELECT * FROM books WHERE books.title LIKE '%$1%'", [queryString])
-    } else if (searchingBy === 'author') {
-      searchResults = await db.query("SELECT * FROM books WHERE books.author LIKE '%$1%'", [queryString])
-    } else if (searchingBy === 'description') {
+    if (searchBy === 'title') {
+      searchResults = await db.query(`SELECT * FROM books WHERE books.title ILIKE '%' || $1 || '%'`, [searchQuery])
+    } else if (searchBy === 'author') {
+      // search in authors
       searchResults = await db.query(
-        "SELECT * FROM books WHERE to_tsvector('simple', description) @@ to_tsquery('simple', $1)",
-        [queryString]
+        `SELECT * FROM books INNER JOIN authors ON books.authorid = authors.authorid WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%'`,
+        [searchQuery]
+      )
+    } else if (searchBy === 'description') {
+      searchResults = await db.query(
+        `SELECT * FROM books WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1)`,
+        [searchQuery]
       )
     } else {
       return {
@@ -36,7 +37,7 @@ const SearchBooks = async (searchQuery: string, searchBy: string): Promise<Servi
 
     return {
       success: true,
-      message: 'Successfully search books',
+      message: 'Successfully searched books',
       data: searchResults.rows
     }
   } catch (err) {

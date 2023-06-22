@@ -21,7 +21,7 @@ const SearchBooksOne = async (req: Request, res: Response, next: NextFunction): 
     // call search books service
     const searchBooksStatus: ServiceResponse = await SearchBooks(searchQuery, searchBy)
 
-    if (searchBooksStatus.success) {
+    if (!searchBooksStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
         ...searchBooksStatus
       })
