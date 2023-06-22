@@ -17,6 +17,7 @@ import { ReviewRouter } from './routes/review.route'
 import { HealthCheckRouter } from './routes/healthCheck'
 import { ForgotPasswordRouter } from './routes/forgot-password.route'
 import { ResetPasswordRouter } from './routes/reset-password.route'
+import { SearchRouter } from './routes/search.route'
 
 // server application
 const app: Application = express()
@@ -99,6 +100,9 @@ app.use('/reset-password', ResetPasswordRouter)
 
 // book routes
 app.use('/books', BookRouter)
+
+// search books routes
+app.use('/search', SearchRouter)
 
 // cart routes
 app.use('/carts', CartRouter)
