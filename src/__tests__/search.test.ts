@@ -97,7 +97,7 @@ describe('Testing books search routes', () => {
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
-    expect(reqBody.body.data.length).toEqual(2)
+    expect(reqBody.body.data.results.length).toEqual(2)
   })
 
   it('Should also return searched books for correct search query and correct search by title', async () => {
@@ -109,8 +109,8 @@ describe('Testing books search routes', () => {
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
-    expect(reqBody.body.data.length).toEqual(1)
-    expect(reqBody.body.data[0].title).toEqual(tempBookPayload1.title)
+    expect(reqBody.body.data.results.length).toEqual(1)
+    expect(reqBody.body.data.results[0].title).toEqual(tempBookPayload1.title)
   })
 
   it('Should also return searched books for correct search query and correct search by description', async () => {
@@ -121,8 +121,8 @@ describe('Testing books search routes', () => {
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
-    expect(reqBody.body.data).toBeDefined()
-    expect(reqBody.body.data.length).toEqual(2)
+    expect(reqBody.body.data.results).toBeDefined()
+    expect(reqBody.body.data.results.length).toEqual(2)
   })
 
   it('Should return searched books for correct search query and correct search by method author', async () => {
@@ -133,8 +133,8 @@ describe('Testing books search routes', () => {
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
-    expect(reqBody.body.data).toBeDefined()
-    expect(reqBody.body.data.length).toEqual(2)
+    expect(reqBody.body.data.results).toBeDefined()
+    expect(reqBody.body.data.results.length).toEqual(2)
   })
 
   it('Should return searched books for empty correct search query and correct search by title', async () => {
@@ -145,8 +145,8 @@ describe('Testing books search routes', () => {
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
-    expect(reqBody.body.data).toBeDefined()
-    expect(reqBody.body.data.length).toEqual(2)
+    expect(reqBody.body.data.results).toBeDefined()
+    expect(reqBody.body.data.results.length).toEqual(2)
   })
 
   it('Should not return searched books for incorrect search query and incorrect search by', async () => {
