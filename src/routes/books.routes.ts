@@ -45,6 +45,7 @@ router.post(
   body('available_quantity').notEmpty().withMessage('Book Available Quantity Should not be empty'),
   body('isbn').notEmpty().withMessage('Book isbn Should not be empty'),
   body('description').optional().isString().withMessage('Book description Should should be string'),
+  body('genre').isString().withMessage('Book genre should be a string'),
   body('authorFirstname').notEmpty().withMessage('Book author firstname Should not be empty'),
   body('authorLastname').notEmpty().withMessage('Book author lastname Should not be empty'),
   // user authorization

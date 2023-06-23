@@ -131,9 +131,21 @@ const AddBook = async (
       currentAuthorid = getAuthorStatus.rows[0].authorid
     }
 
+    // now add book genres if available or not
+    const getBookGenresStatus = await db.query(`SELECT * FROM genres WHERE genres.title = $1`,[bookData.genre])
+    let currentGenreId: number
+    // genre exits 
+    if (getBookGenresStatus.rowCount > 0) {
+      currentGenreId = getBookGenresStatus.rows[0].genre_id
+    } else {
+      // genre doesn't exist so add new genre
+      const addBookNewGenre = await db.query(`INSERT INTO genres (title) VALUES ($1) RETURNING *`,[bookData.genre])
+      currentGenreId = addBookNewGenre.rows[0].genre_id
+    }
+
     // now add new book with authorid and payload
     const addBookStatus = await db.query(
-      'INSERT INTO books (authorid, title, price, publication_date, book_type, book_condition, available_quantity, isbn, description) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',
+      'INSERT INTO books (authorid, title, price, publication_date, book_type, book_condition, available_quantity, isbn, description, genre_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *',
       [
         currentAuthorid,
         bookData.title,
@@ -143,7 +155,8 @@ const AddBook = async (
         bookData.book_condition,
         bookData.available_quantity,
         bookData.isbn,
-        bookData.description
+        bookData.description,
+        currentGenreId
       ]
     )
 

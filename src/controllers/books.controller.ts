@@ -108,6 +108,7 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
       available_quantity,
       isbn,
       description,
+      genre,
       authorFirstname,
       authorLastname
     } = req.body
@@ -122,7 +123,8 @@ const addOneNewBook = async (req: Request, res: Response, next: NextFunction): P
         book_condition,
         available_quantity,
         isbn,
-        description
+        description,
+        genre
       },
       authorFirstname,
       authorLastname

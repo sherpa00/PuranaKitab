@@ -20,6 +20,7 @@ export interface IBook {
   available_quantity: number
   isbn: string
   description: string
+  genre: string
   createdat: string
 }
 
