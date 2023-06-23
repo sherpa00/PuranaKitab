@@ -8,8 +8,8 @@ describe('Testing book routes', () => {
   // assign temporary user
   const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing4',
-    email: 'testing9508329045328@gmail.com',
-    password: 'testing4'
+    email: 'testing9509kjb40329045328@gmail.com',
+    password: 'testing4klj'
   }
 
   // temporary jwttoken
@@ -22,8 +22,8 @@ describe('Testing book routes', () => {
   // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing1289423',
-    email: 'testing183598023809548390920@gmail.com',
-    password: 'testing48249032'
+    email: 'test238095483hg90920@gmail.com',
+    password: 'testing489032'
   }
 
   let tempAdminUserid: number
@@ -93,6 +93,7 @@ describe('Testing book routes', () => {
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.results).toBeDefined()
   })
 
   it('Should get all books for guest user too', async () => {
@@ -100,6 +101,19 @@ describe('Testing book routes', () => {
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.results).toBeDefined()
+  })
+
+  it('Should get all books using pagination', async () => {
+    const tempPage: number = 1
+    const tempSize: number = 3
+
+    const reqBody = await request(app).get(`/books?page=${tempPage}&size=${tempSize}`)
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.results).toBeDefined()
   })
 
   it('Should get a book with correct bookid for authorized user', async () => {

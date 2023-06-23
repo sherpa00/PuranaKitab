@@ -16,9 +16,14 @@ import multerStorage from '../utils/multer.utils'
 
 const router = express.Router()
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-router.get('/', GetAllOneBooks)
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
+router.get(
+  '/',
+  query('page').optional().isInt().withMessage('Query page should be an integer'),
+  query('size').optional().isInt().withMessage('Query size should be an integere'),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  GetAllOneBooks
+)
+
 router.get(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
@@ -81,7 +86,7 @@ router.patch(
 router.patch(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
-  body('title').optional().isAlphanumeric().withMessage('Book Title Should be string'),
+  body('title').optional().isString().withMessage('Book Title Should be string'),
   body('price').optional().isInt().withMessage('Book Price Should be integer'),
   body('publication_date').optional().trim().isDate().withMessage('Book Publication Date Should be valid date'),
   body('book_type').optional().isAlpha().withMessage('Book Type should be string'),

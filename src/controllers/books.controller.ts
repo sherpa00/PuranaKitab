@@ -18,8 +18,31 @@ import CustomError from '../utils/custom-error'
 // controller for getting all books
 const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    // call get all books service
-    const getAllBooksStatus: ServiceResponse = await GetAllBooks()
+    // invalidation error
+    const validationError = validationResult(req)
+    if (!validationError.isEmpty()) {
+      const error = new CustomError('Validation Error', 403)
+      throw error
+    }
+
+    // get books results
+    let getAllBooksStatus: ServiceResponse
+
+    if (
+      (req.query.page === null || req.query.page === undefined) &&
+      (req.query.size === null || req.query.size === undefined)
+    ) {
+      // pagination is not provied
+      // call get all books without pagination
+      getAllBooksStatus = await GetAllBooks()
+    } else {
+      // pagination provided either page or limt or both
+      const page: number = req.query.page !== null && req.query.page !== undefined ? Number(req.query.page) : 1
+      const size: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
+
+      // call get all books service with pagination
+      getAllBooksStatus = await GetAllBooks(page, size)
+    }
 
     if (!getAllBooksStatus.success) {
       const error = new CustomError('No Books found', 403)

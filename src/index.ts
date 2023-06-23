@@ -39,9 +39,9 @@ if (process.env.NODE_ENV === 'production') {
       logger,
       serializers: {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        req: req => `> ${req.method} ${req.url}`,
+        req: req => `-> ${req.method} ${req.url}`,
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        res: res => `< ${res.statusCode} ${res.headers['content-type']}`
+        res: res => `<- ${res.statusCode} ${res.headers['content-type']}`
       }
     })
   )

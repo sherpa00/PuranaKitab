@@ -28,3 +28,11 @@ export interface ServiceResponse {
   message: string
   data?: any
 }
+
+export interface IPaginationMetadata {
+  total_results: number
+  total_pages: number
+  current_page: number
+  has_next_page: boolean
+  has_previous_page: boolean
+}

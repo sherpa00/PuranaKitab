@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import { db } from '../configs/db.configs'
 import {
   uploadImageToCloud,
@@ -5,28 +6,59 @@ import {
   updateImageToCloud,
   removeImageFromCloud
 } from '../utils/cloudinary.utils'
-import type { ServiceResponse, IBook } from '../types'
+import type { ServiceResponse, IBook, IPaginationMetadata } from '../types'
 import logger from '../utils/logger.utils'
+import generatePaginationMetadata from '../helpers/generatePaginationMetadata'
 
 export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>
 
 // service for getting all books
-const GetAllBooks = async (): Promise<ServiceResponse> => {
+const GetAllBooks = async (page?: number, size?: number): Promise<ServiceResponse> => {
   try {
-    const getBooksStatus = await db.query('SELECT * FROM books')
+    // get all book status
+    let getBooksStatus: any
 
-    if (getBooksStatus.rowCount <= 0) {
+    // pagination required
+    if (page != null && page !== undefined && size != null && size !== undefined) {
+      // get books with page and size
+      getBooksStatus = await db.query(`SELECT * FROM books LIMIT $1 OFFSET ($2 - 1) * $3`, [size, page, size])
+    } else {
+      // pagination not required
+      getBooksStatus = await db.query('SELECT * FROM books')
+    }
+
+    const countGetAllBooks = await db.query(`SELECT COUNT(*) FROM books`)
+
+    if (countGetAllBooks.rowCount < 0) {
       return {
-        success: true,
-        message: 'No Books found',
-        data: []
+        success: false,
+        message: 'Failed to get all books'
       }
     }
+
+    if (getBooksStatus.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to get all books'
+      }
+    }
+
+    // paginatioon metdadata for get all books
+    const getBooksPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
+      countGetAllBooks.rows[0].count,
+      page !== undefined ? page : 1,
+      size !== undefined ? size : countGetAllBooks.rows[0].count
+    )
 
     return {
       success: true,
       message: 'Successfully got all books',
-      data: getBooksStatus.rows
+      data: {
+        pagination: {
+          ...getBooksPaginationMetadata
+        },
+        results: getBooksStatus.rows
+      }
     }
   } catch (err) {
     logger.error(err, 'Error while getting all books')
