@@ -11,6 +11,9 @@ router.get(
   query('search_by')
     .isIn(['title', 'author', 'description'])
     .withMessage('Search by must be either title, author or description'),
+  query('genre')
+    .optional()
+    .isString().withMessage('Query genre should be a string'),
   query('page').optional().isInt().withMessage('Query page should be an integer'),
   query('size').optional().isInt().withMessage('Query size should be an integer'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises

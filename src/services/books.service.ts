@@ -132,14 +132,14 @@ const AddBook = async (
     }
 
     // now add book genres if available or not
-    const getBookGenresStatus = await db.query(`SELECT * FROM genres WHERE genres.title = $1`,[bookData.genre])
+    const getBookGenresStatus = await db.query(`SELECT * FROM genres WHERE genres.genre_name = $1`,[bookData.genre])
     let currentGenreId: number
     // genre exits 
     if (getBookGenresStatus.rowCount > 0) {
       currentGenreId = getBookGenresStatus.rows[0].genre_id
     } else {
       // genre doesn't exist so add new genre
-      const addBookNewGenre = await db.query(`INSERT INTO genres (title) VALUES ($1) RETURNING *`,[bookData.genre])
+      const addBookNewGenre = await db.query(`INSERT INTO genres (genre_name) VALUES ($1) RETURNING *`,[bookData.genre])
       currentGenreId = addBookNewGenre.rows[0].genre_id
     }
 
