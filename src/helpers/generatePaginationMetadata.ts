@@ -2,7 +2,7 @@ import { type IPaginationMetadata } from '../types/index'
 
 // helper function to generate pagination metadata
 const generatePaginationMetadata = (totalResult: number, currentPage: number, size: number): IPaginationMetadata => {
-  const totalPages: number = Math.ceil(totalResult / size)
+  const totalPages: number = totalResult === size ? 1 : Math.ceil(totalResult / size)
   const hasNextPage: boolean = currentPage < totalPages
   const hasPreviousPage: boolean = currentPage > 1
 

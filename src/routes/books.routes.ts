@@ -20,6 +20,7 @@ const router = express.Router()
 
 router.get(
   '/',
+  query('genre').optional().isString().withMessage('Query genre should be a string'),
   query('page').optional().isInt().withMessage('Query page should be an integer'),
   query('size').optional().isInt().withMessage('Query size should be an integere'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises

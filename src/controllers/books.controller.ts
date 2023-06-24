@@ -27,6 +27,9 @@ const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): 
       throw error
     }
 
+    // req.query genre
+    const bookGenre: any = req.query.genre
+
     // get books results
     let getAllBooksStatus: ServiceResponse
 
@@ -36,14 +39,14 @@ const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): 
     ) {
       // pagination is not provied
       // call get all books without pagination
-      getAllBooksStatus = await GetAllBooks()
+      getAllBooksStatus = await GetAllBooks(bookGenre)
     } else {
       // pagination provided either page or limt or both
       const page: number = req.query.page !== null && req.query.page !== undefined ? Number(req.query.page) : 1
       const size: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
 
       // call get all books service with pagination
-      getAllBooksStatus = await GetAllBooks(page, size)
+      getAllBooksStatus = await GetAllBooks(bookGenre, page, size)
     }
 
     if (!getAllBooksStatus.success) {
