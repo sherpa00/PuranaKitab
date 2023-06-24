@@ -82,8 +82,7 @@ describe('Testing book routes', () => {
     book_condition: 'GOOD',
     available_quantity: 8,
     isbn: '12345234',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscitennec a lacus est.',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscitennec a lacus est.',
     genre: 'test',
     authorFirstname: 'testfirstname',
     authorLastname: 'testlastname'
@@ -340,7 +339,7 @@ describe('Testing book routes', () => {
       tempBookPayload.authorLastname
     ])
     // clear genre
-    await db.query('DELETE FROM genres WHERE genres.genre_name = $1',[tempBookPayload.genre])
+    await db.query('DELETE FROM genres WHERE genres.genre_name = $1', [tempBookPayload.genre])
     // clear book
     await db.query('DELETE FROM books WHERE books.isbn = $1', [tempBookPayload.isbn])
     tempJwt = ''

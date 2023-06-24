@@ -11,7 +11,8 @@ import {
   AddBookImg,
   UpdateBookImg,
   DeleteBookImage,
-  UpdateBookGenre
+  UpdateBookGenre,
+  UpdateBookAuthor
 } from '../services/books.service'
 import type { ServiceResponse } from '../types'
 import CustomError from '../utils/custom-error'
@@ -176,32 +177,69 @@ const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): P
 }
 
 // controller for updating book genre
-const UpdateOneBookGenre = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try { 
+const UpdateOneBookAuthor = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
     // validation error
-     const validationError = validationResult(req)
-     if (!validationError.isEmpty()) {
+    const validationError = validationResult(req)
+    if (!validationError.isEmpty()) {
       const error = new CustomError('Validation Error', 403)
       throw error
-     }
+    }
 
-     // req.params and req.body
-     const bookid: number = Number(req.params.bookid)
-     const newGenre: string = req.body.genre
+    // req.params and req.body
+    const bookid: number = Number(req.params.bookid)
+    const newAuthorFirstname: string = req.body.firstname
+    const newAuthorLastname: string = req.body.lastname
 
-     // call update book genre
-     const updateBookGenreStatus: ServiceResponse = await UpdateBookGenre(newGenre, bookid)
+    // call update book author
+    const updateBookAuthorStatus: ServiceResponse = await UpdateBookAuthor(
+      newAuthorFirstname,
+      newAuthorLastname,
+      bookid
+    )
 
-     if (!updateBookGenreStatus.success) {
+    if (!updateBookAuthorStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...updateBookAuthorStatus
+      })
+      return
+    }
+
+    res.status(StatusCodes.OK).json({
+      ...updateBookAuthorStatus
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+// controller for updating book genre
+const UpdateOneBookGenre = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // validation error
+    const validationError = validationResult(req)
+    if (!validationError.isEmpty()) {
+      const error = new CustomError('Validation Error', 403)
+      throw error
+    }
+
+    // req.params and req.body
+    const bookid: number = Number(req.params.bookid)
+    const newGenre: string = req.body.genre
+
+    // call update book genre
+    const updateBookGenreStatus: ServiceResponse = await UpdateBookGenre(newGenre, bookid)
+
+    if (!updateBookGenreStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
         ...updateBookGenreStatus
       })
       return
-     }
+    }
 
-     res.status(StatusCodes.OK).json({
+    res.status(StatusCodes.OK).json({
       ...updateBookGenreStatus
-     })
+    })
   } catch (err) {
     next(err)
   }
@@ -344,6 +382,7 @@ export {
   GetAllOneBooks,
   GetBookById,
   UpdateOneBook,
+  UpdateOneBookAuthor,
   UpdateOneBookGenre,
   RemoveOneBook,
   AddBookImage,

@@ -23,7 +23,13 @@ const SearchBooksOne = async (req: Request, res: Response, next: NextFunction): 
     const searchSize: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
 
     // call search books service
-    const searchBooksStatus: ServiceResponse = await SearchBooks(searchQuery, searchBy,searchGenre, searchPage, searchSize)
+    const searchBooksStatus: ServiceResponse = await SearchBooks(
+      searchQuery,
+      searchBy,
+      searchGenre,
+      searchPage,
+      searchSize
+    )
 
     if (!searchBooksStatus.success) {
       res.status(StatusCodes.BAD_REQUEST).json({

@@ -132,14 +132,16 @@ const AddBook = async (
     }
 
     // now add book genres if available or not
-    const getBookGenresStatus = await db.query(`SELECT * FROM genres WHERE genres.genre_name = $1`,[bookData.genre])
+    const getBookGenresStatus = await db.query(`SELECT * FROM genres WHERE genres.genre_name = $1`, [bookData.genre])
     let currentGenreId: number
-    // genre exits 
+    // genre exits
     if (getBookGenresStatus.rowCount > 0) {
       currentGenreId = getBookGenresStatus.rows[0].genre_id
     } else {
       // genre doesn't exist so add new genre
-      const addBookNewGenre = await db.query(`INSERT INTO genres (genre_name) VALUES ($1) RETURNING *`,[bookData.genre])
+      const addBookNewGenre = await db.query(`INSERT INTO genres (genre_name) VALUES ($1) RETURNING *`, [
+        bookData.genre
+      ])
       currentGenreId = addBookNewGenre.rows[0].genre_id
     }
 
@@ -237,29 +239,92 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
 }
 
 // service for updating book genre
+const UpdateBookAuthor = async (firstname: string, lastname: string, bookid: number): Promise<ServiceResponse> => {
+  try {
+    // new genre_id
+    let newAuthorid: number
+
+    // verify if Genre exists or not
+    const foundBookAuthor = await db.query(
+      'SELECT * FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2',
+      [firstname, lastname]
+    )
+    // error while db query
+    if (foundBookAuthor.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to update book author'
+      }
+    } else if (foundBookAuthor.rowCount === 0) {
+      // book genre not avaiable
+      // create new book genre
+      const createNewBookAuthorStatus = await db.query(
+        'INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *',
+        [firstname, lastname]
+      )
+      newAuthorid = createNewBookAuthorStatus.rows[0].authorid
+    } else {
+      // book genre available
+      newAuthorid = foundBookAuthor.rows[0].authorid
+    }
+
+    // update book with new genre_id
+    const updateBookAuthor = await db.query('UPDATE books SET authorid = $1 WHERE bookid = $2 RETURNING *', [
+      newAuthorid,
+      bookid
+    ])
+    if (updateBookAuthor.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to update book genre'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully Update Book Author',
+      data: updateBookAuthor.rows[0]
+    }
+  } catch (err) {
+    logger.error(err, 'Error while updating book author')
+    return {
+      success: false,
+      message: 'Error while updating book author'
+    }
+  }
+}
+
+// service for updating book genre
 const UpdateBookGenre = async (genre: string, bookid: number): Promise<ServiceResponse> => {
   try {
     // new genre_id
     let newGenreId: number
 
     // verify if Genre exists or not
-    const foundBookGenre = await db.query('SELECT * FROM genres WHERE genres.genre_name = $1',[genre])
+    const foundBookGenre = await db.query('SELECT * FROM genres WHERE genres.genre_name = $1', [genre])
     // error while db query
     if (foundBookGenre.rowCount < 0) {
       return {
         success: false,
         message: 'Failed to update book genre'
       }
-    } else if (foundBookGenre.rowCount === 0) { // book genre not avaiable
+    } else if (foundBookGenre.rowCount === 0) {
+      // book genre not avaiable
       // create new book genre
-      const createNewBookGenreStatus = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *',[genre])
-      newGenreId = createNewBookGenreStatus.rows[0].genre_id 
-    } else { // book genre available
+      const createNewBookGenreStatus = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *', [
+        genre
+      ])
+      newGenreId = createNewBookGenreStatus.rows[0].genre_id
+    } else {
+      // book genre available
       newGenreId = foundBookGenre.rows[0].genre_id
     }
-    
+
     // update book with new genre_id
-    const updateBookGenre = await db.query('UPDATE books SET genre_id = $1 WHERE bookid = $2 RETURNING *',[newGenreId, bookid])
+    const updateBookGenre = await db.query('UPDATE books SET genre_id = $1 WHERE bookid = $2 RETURNING *', [
+      newGenreId,
+      bookid
+    ])
     if (updateBookGenre.rowCount <= 0) {
       return {
         success: false,
@@ -272,7 +337,6 @@ const UpdateBookGenre = async (genre: string, bookid: number): Promise<ServiceRe
       message: 'Successfully Update Boook Genre',
       data: updateBookGenre.rows[0]
     }
-
   } catch (err) {
     logger.error(err, 'Error while updating book genre')
     return {
@@ -555,6 +619,7 @@ export {
   GetOnlyOneBook,
   AddBook,
   UpdateBook,
+  UpdateBookAuthor,
   UpdateBookGenre,
   RemoveBookWithId,
   AddBookImg,

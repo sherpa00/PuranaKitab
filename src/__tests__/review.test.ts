@@ -125,7 +125,7 @@ describe('Testing book reviews routes', () => {
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phaseljhjk hhl kjhjlus faucibus libero id facilisis mollis. Mauris eu sollicitudin risus. Nulla posuere euismod mauris at facilisis. Curabitur sagittis dictum massa, at tempor metus feugiat ut. Nunc tincidunt sem non ex molestie, vel congue quam cursus. Sed non nunc bibendum, consequat purus ac, efficitur sem. Cras eget enim ac turpis aliquam consequat in in nulla. In auctor bibendum tellus at dictum.Nullam in feugiat mauris. Quisque in elit sem. Fusce rutrum mi ac tincidunt aliquam. Proin sed enim id leo varius cursus. Morbi placerat magna a metus ultrices dapibus. Aenean lacinia pellentesque odio, id ultricies quam tincidunt et. Curabitur iaculis urna a urna auctor, at cursus dolor eleifend. Suspendisse potenti. Donec condimentum, dolor nec viverra hendrerit, lacus risus consectetur justo, eget ullamcorper elit nulla id enim. Vivamus sollicitudin malesuada magna ac efficitur. Sed vitae nulla nec eros rhoncus ultrices. Donec a lacus est.',
     genre: 'test',
-      authorFirstname: 'test1firstname',
+    authorFirstname: 'test1firstname',
     authorLastname: 'test1lastname'
   }
 
@@ -605,7 +605,7 @@ describe('Testing book reviews routes', () => {
       tempBookPayload1.authorLastname
     ])
     // clear genre
-    await db.query('DELETE FROM genres WHERE genres.genre_name = $1',[tempBookPayload1.genre])
+    await db.query('DELETE FROM genres WHERE genres.genre_name = $1', [tempBookPayload1.genre])
     // clear book
     await db.query('DELETE FROM books WHERE books.bookid = $1 AND books.isbn = $2', [
       tempAddBookid,

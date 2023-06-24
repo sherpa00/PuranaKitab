@@ -9,7 +9,8 @@ import {
   AddBookImage,
   UploadBookImage,
   RemoveBookImage,
-  UpdateOneBookGenre
+  UpdateOneBookGenre,
+  UpdateOneBookAuthor
 } from '../controllers/books.controller'
 import { isAdmin } from '../middlewares/admin.middleware'
 import passport from '../configs/passport.config'
@@ -108,11 +109,36 @@ router.patch(
 )
 
 router.patch(
+  '/:bookid/author',
+  param('bookid').isInt().withMessage('Param bookid should be integer'),
+  body('firstname')
+    .notEmpty()
+    .withMessage('Body firsname should not be empty')
+    .isString()
+    .withMessage('Body firstname should be a string'),
+  body('lastname')
+    .notEmpty()
+    .withMessage('Body lastname should not be empty')
+    .isString()
+    .withMessage('Body lastname should be a string'),
+  // user authentication
+  passport.authenticate('jwt', { session: false }),
+  // admin authrorization
+  isAdmin,
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  UpdateOneBookAuthor
+)
+
+router.patch(
   '/:bookid/genre',
   param('bookid').isInt().withMessage('Param bookid should be integer'),
-  body('genre').notEmpty().withMessage('Body genre should not be empty').isString().withMessage('Body genre should be a string'),
+  body('genre')
+    .notEmpty()
+    .withMessage('Body genre should not be empty')
+    .isString()
+    .withMessage('Body genre should be a string'),
   // user authentication
-  passport.authenticate('jwt', {session: false}),
+  passport.authenticate('jwt', { session: false }),
   // admin authrorization
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
