@@ -8,7 +8,8 @@ import {
   addOneNewBook,
   AddBookImage,
   UploadBookImage,
-  RemoveBookImage
+  RemoveBookImage,
+  UpdateOneBookGenre
 } from '../controllers/books.controller'
 import { isAdmin } from '../middlewares/admin.middleware'
 import passport from '../configs/passport.config'
@@ -104,6 +105,18 @@ router.patch(
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneBook
+)
+
+router.patch(
+  '/:bookid/genre',
+  param('bookid').isInt().withMessage('Param bookid should be integer'),
+  body('genre').notEmpty().withMessage('Body genre should not be empty').isString().withMessage('Body genre should be a string'),
+  // user authentication
+  passport.authenticate('jwt', {session: false}),
+  // admin authrorization
+  isAdmin,
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  UpdateOneBookGenre
 )
 
 router.delete(

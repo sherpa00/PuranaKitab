@@ -21,6 +21,7 @@ export interface IBook {
   isbn: string
   description: string
   genre: string
+  genre_id: number
   createdat: string
 }
 

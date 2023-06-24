@@ -10,7 +10,7 @@ import type { ServiceResponse, IBook, IPaginationMetadata } from '../types'
 import logger from '../utils/logger.utils'
 import generatePaginationMetadata from '../helpers/generatePaginationMetadata'
 
-export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid'>
+export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid' | 'genre_id'>
 
 // service for getting all books
 const GetAllBooks = async (page?: number, size?: number): Promise<ServiceResponse> => {
@@ -232,6 +232,52 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
     return {
       success: false,
       message: 'Error while updating book'
+    }
+  }
+}
+
+// service for updating book genre
+const UpdateBookGenre = async (genre: string, bookid: number): Promise<ServiceResponse> => {
+  try {
+    // new genre_id
+    let newGenreId: number
+
+    // verify if Genre exists or not
+    const foundBookGenre = await db.query('SELECT * FROM genres WHERE genres.genre_name = $1',[genre])
+    // error while db query
+    if (foundBookGenre.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to update book genre'
+      }
+    } else if (foundBookGenre.rowCount === 0) { // book genre not avaiable
+      // create new book genre
+      const createNewBookGenreStatus = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *',[genre])
+      newGenreId = createNewBookGenreStatus.rows[0].genre_id 
+    } else { // book genre available
+      newGenreId = foundBookGenre.rows[0].genre_id
+    }
+    
+    // update book with new genre_id
+    const updateBookGenre = await db.query('UPDATE books SET genre_id = $1 WHERE bookid = $2 RETURNING *',[newGenreId, bookid])
+    if (updateBookGenre.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to update book genre'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully Update Boook Genre',
+      data: updateBookGenre.rows[0]
+    }
+
+  } catch (err) {
+    logger.error(err, 'Error while updating book genre')
+    return {
+      success: false,
+      message: 'Error while updating book genre'
     }
   }
 }
@@ -509,6 +555,7 @@ export {
   GetOnlyOneBook,
   AddBook,
   UpdateBook,
+  UpdateBookGenre,
   RemoveBookWithId,
   AddBookImg,
   UpdateBookImg,

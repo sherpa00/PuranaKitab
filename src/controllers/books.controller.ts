@@ -10,7 +10,8 @@ import {
   RemoveBookWithId,
   AddBookImg,
   UpdateBookImg,
-  DeleteBookImage
+  DeleteBookImage,
+  UpdateBookGenre
 } from '../services/books.service'
 import type { ServiceResponse } from '../types'
 import CustomError from '../utils/custom-error'
@@ -174,6 +175,38 @@ const UpdateOneBook = async (req: Request, res: Response, next: NextFunction): P
   }
 }
 
+// controller for updating book genre
+const UpdateOneBookGenre = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try { 
+    // validation error
+     const validationError = validationResult(req)
+     if (!validationError.isEmpty()) {
+      const error = new CustomError('Validation Error', 403)
+      throw error
+     }
+
+     // req.params and req.body
+     const bookid: number = Number(req.params.bookid)
+     const newGenre: string = req.body.genre
+
+     // call update book genre
+     const updateBookGenreStatus: ServiceResponse = await UpdateBookGenre(newGenre, bookid)
+
+     if (!updateBookGenreStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        ...updateBookGenreStatus
+      })
+      return
+     }
+
+     res.status(StatusCodes.OK).json({
+      ...updateBookGenreStatus
+     })
+  } catch (err) {
+    next(err)
+  }
+}
+
 // controller for removing a book
 const RemoveOneBook = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -311,6 +344,7 @@ export {
   GetAllOneBooks,
   GetBookById,
   UpdateOneBook,
+  UpdateOneBookGenre,
   RemoveOneBook,
   AddBookImage,
   UploadBookImage,
