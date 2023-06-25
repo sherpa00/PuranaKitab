@@ -54,7 +54,7 @@ const GetAllBookAuthors = async (page?: number, size?: number): Promise<ServiceR
         pagination: {
           ...getBookAuthorsPaginationMetadata
         },
-        result: getBookAuthorsStatus.rows
+        results: getBookAuthorsStatus.rows
       }
     }
   } catch (err) {
