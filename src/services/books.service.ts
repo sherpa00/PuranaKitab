@@ -13,7 +13,11 @@ import generatePaginationMetadata from '../helpers/generatePaginationMetadata'
 export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid' | 'genre_id'>
 
 // service for getting all books
-const GetAllBooks = async ( genre: string | null | undefined, page?: number, size?: number): Promise<ServiceResponse> => {
+const GetAllBooks = async (
+  genre: string | null | undefined,
+  page?: number,
+  size?: number
+): Promise<ServiceResponse> => {
   try {
     // get all book status
     let getBooksStatus: any
@@ -21,13 +25,22 @@ const GetAllBooks = async ( genre: string | null | undefined, page?: number, siz
     // pagination required
     if (page != null && page !== undefined && size != null && size !== undefined) {
       // get books with page and size
-      getBooksStatus = await db.query(`SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL LIMIT $2 OFFSET ($3 - 1) * $2`, [genre, size, page])
+      getBooksStatus = await db.query(
+        `SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL LIMIT $2 OFFSET ($3 - 1) * $2`,
+        [genre, size, page]
+      )
     } else {
       // pagination not required
-      getBooksStatus = await db.query('SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL',[genre])
+      getBooksStatus = await db.query(
+        'SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL',
+        [genre]
+      )
     }
 
-    const countGetAllBooks = await db.query('SELECT COUNT(*) FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL',[genre])
+    const countGetAllBooks = await db.query(
+      'SELECT COUNT(*) FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL',
+      [genre]
+    )
 
     if (countGetAllBooks.rowCount < 0) {
       return {
