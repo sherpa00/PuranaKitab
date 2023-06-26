@@ -25,8 +25,8 @@ describe('Testing book authors routes', () => {
             tempBookAuthorPayload1.lastname
         ])
         const tempAddBookAuthor2 = await db.query('INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *',[
-            tempBookAuthorPayload1.firstname,
-            tempBookAuthorPayload1.lastname
+            tempBookAuthorPayload2.firstname,
+            tempBookAuthorPayload2.lastname
         ])
 
         currentBookAuthorId1 = tempAddBookAuthor1.rows[0].authorid

@@ -66,4 +66,56 @@ const GetAllBookAuthors = async (page?: number, size?: number): Promise<ServiceR
   }
 }
 
-export { GetAllBookAuthors }
+// service for adding new book authors
+const AddNewBookAuthor = async (firstname: string, lastname: string): Promise<ServiceResponse> => {
+    try {
+
+        // verify if book authors already exists or not
+        const foundBookAuthor = await db.query('SELECT * FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2',[
+            firstname,
+            lastname
+        ])
+
+        if (foundBookAuthor.rowCount < 0) {
+            return {
+                success: false,
+                message: 'Failed to add new book authors'
+            }
+        }
+
+        if (foundBookAuthor.rowCount > 0) {
+            return {
+                success: false,
+                message: 'Book Author already exists'
+            }
+        }
+
+
+        // add new book authors
+        const addNewBookAuthorStatus = await db.query('INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *',[
+            firstname,
+            lastname
+        ])
+
+        if (addNewBookAuthorStatus.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Failed to add new book author'
+            }
+        }
+
+        return {
+            success: true,
+            message: 'Successfully added new book author',
+            data: addNewBookAuthorStatus.rows[0]
+        }
+    } catch (err) {
+        logger.error(err, 'Error while adding new book author')
+        return {
+            success: false,
+            message: 'Error while adding new book author'
+        }
+    }
+}
+
+export { GetAllBookAuthors, AddNewBookAuthor }

@@ -2,8 +2,13 @@ import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import { type ServiceResponse } from '../types'
-import { GetAllBookAuthors } from '../services/authors.service'
+import { AddNewBookAuthor, GetAllBookAuthors } from '../services/authors.service'
 import { StatusCodes } from 'http-status-codes'
+
+// funciton to capitalize
+const capitalize = <T extends string>(word: T): string => {
+    return word[0].toUpperCase() + word.slice(1)
+}
 
 // controller for getting all book authors
 const GetAllBookOneAuthors = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -48,4 +53,37 @@ const GetAllBookOneAuthors = async (req: Request, res: Response, next: NextFunct
   }
 }
 
-export { GetAllBookOneAuthors }
+// controller for adding new book author
+const AddNewBookOneAuthor = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // validation error 
+        const validationError = validationResult(req)
+        if (!validationError.isEmpty()) {
+            const error = new CustomError('Validation Error', 403)
+            throw error
+        }
+
+        // req body -> sanitize it to lowercase and capitalize
+        const firsname: string = capitalize(((String(req.body.firstname)).toLowerCase()))
+        const lastname: string = capitalize((String(req.body.lastname).toLowerCase()))
+
+        // call add new book author service
+        const addNewBookAuthorStatus: ServiceResponse = await AddNewBookAuthor(firsname, lastname)
+
+        if (!addNewBookAuthorStatus.success) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                ...addNewBookAuthorStatus
+            })
+            return
+        }
+
+        res.status(StatusCodes.OK).json({
+            ...addNewBookAuthorStatus
+        })
+
+    } catch (err) {
+        next(err)
+    }
+}
+
+export { GetAllBookOneAuthors, AddNewBookOneAuthor }
