@@ -6,7 +6,7 @@ import { AddNewBookAuthor, GetAllBookAuthors } from '../services/authors.service
 import { StatusCodes } from 'http-status-codes'
 
 // funciton to capitalize
-const capitalize = <T extends string>(word: T): string => {
+export const capitalize = <T extends string>(word: T): string => {
     return word[0].toUpperCase() + word.slice(1)
 }
 
