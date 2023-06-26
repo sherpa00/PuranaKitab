@@ -8,7 +8,7 @@ import { capitalize } from '../controllers/authors.controller'
 describe('Testing book authors routes', () => {
     // temp author payload
     const tempBookAuthorPayload1 = {
-        firstname: 'testing',
+        firstname: 'testing83',
         lastname: 'author'
     }
 
@@ -28,7 +28,7 @@ describe('Testing book authors routes', () => {
     // assign temporary user
   const tempAdminUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing2',
-    email: 'testing2@gmail.com',
+    email: 'testing2409382094832@gmail.com',
     password: 'testing3'
   }
 
@@ -204,6 +204,94 @@ describe('Testing book authors routes', () => {
         expect(reqBody.body.data).toBeUndefined()
     })
 
+    it('Should update author for corect param authorid and correct body firstname and lastname for authorized admin user', async () => {
+        const newFirstname: string = 'thisistester'
+        const newLastname: string = 'forauthor'
+
+        const reqBody = await request(app)
+            .patch(`/authors/${currentBookAuthorId1}`)
+            .set('Authorization', 'Bearer ' + tempAdminJwt)
+            .send({
+                firstname: newFirstname,
+                lastname: newLastname
+            })
+
+        expect(reqBody.statusCode).toBe(200)
+        expect(reqBody.body.success).toBeTruthy()
+        expect(reqBody.body.data).toBeDefined()
+        expect(reqBody.body.data.authorid).toEqual(currentBookAuthorId1)
+        expect(reqBody.body.data.firstname).toStrictEqual(capitalize(newFirstname.toLowerCase()))
+        expect(reqBody.body.data.lastname).toStrictEqual(capitalize(newLastname.toLowerCase()))
+    })
+    
+    it('Should update author for corect param authorid and correct body firstname for authorized admin user', async () => {
+        const newFirstname: string = 'thisistester'
+
+        const reqBody = await request(app)
+            .patch(`/authors/${currentBookAuthorId1}`)
+            .set('Authorization', 'Bearer ' + tempAdminJwt)
+            .send({
+                firstname: newFirstname
+            })
+
+        expect(reqBody.statusCode).toBe(200)
+        expect(reqBody.body.success).toBeTruthy()
+        expect(reqBody.body.data).toBeDefined()
+        expect(reqBody.body.data.authorid).toEqual(currentBookAuthorId1)
+        expect(reqBody.body.data.firstname).toStrictEqual(capitalize(newFirstname.toLowerCase()))
+        expect(reqBody.body.data.lastname).toStrictEqual(tempBookAuthorPayload1.lastname)
+    })
+
+    it('Should not update author for incorect param authorid and correct body firstname and lastname for authorized admin user', async () => {
+        const newFirstname: string = 'thisistester'
+        const newLastname: string = 'forauthor'
+
+        const reqBody = await request(app)
+            .patch('/authors/432989337')
+            .set('Authorization', 'Bearer ' + tempAdminJwt)
+            .send({
+                firstname: newFirstname,
+                lastname: newLastname
+            })
+
+        expect(reqBody.statusCode).toBe(400)
+        expect(reqBody.body.success).toBeFalsy()
+        expect(reqBody.body.data).toBeUndefined()
+    })
+
+    it('Should not update author for corect param authorid and incorrect body firstname and lastname for authorized admin user', async () => {
+        const newFirstname: number = 348390
+        const newLastname: string = 'forauthor'
+
+        const reqBody = await request(app)
+            .patch(`/authors/${currentBookAuthorId1}`)
+            .set('Authorization', 'Bearer ' + tempAdminJwt)
+            .send({
+                firstname: newFirstname,
+                lastname: newLastname
+            })
+
+        expect(reqBody.statusCode).toBe(403)
+        expect(reqBody.body.success).toBeFalsy()
+        expect(reqBody.body.data).toBeUndefined()
+    })
+
+    it('Should not update author for corect param authorid and correct body firstname and lastname for unauthorized admin user', async () => {
+        const newFirstname: string = 'thisistester'
+        const newLastname: string = 'forauthor'
+
+        const reqBody = await request(app)
+            .patch(`/authors/${currentBookAuthorId1}`)
+            .set('Authorization', 'Bearer ' + 'invalidJWT')
+            .send({
+                firstname: newFirstname,
+                lastname: newLastname
+            })
+
+        expect(reqBody.statusCode).toBe(401)
+        expect(reqBody.body.data).toBeUndefined()
+    })
+
     afterEach(async() => {
         // clear book authors
         await db.query('DELETE FROM authors WHERE authors.authorid = $1',[currentBookAuthorId1])
@@ -213,7 +301,7 @@ describe('Testing book authors routes', () => {
             capitalize(String(tempLastname).toLowerCase())
         ])
         // clear admin user
-        await db.query('DELETE FROM users WHERE users.userid = $1',[currAdminUserId])
+        await db.query('DELETE FROM users WHERE userid = $1',[currAdminUserId])
         currentBookAuthorId1 = 0
         currentBookAuthorId2 = 0
         tempAdminJwt = ''
