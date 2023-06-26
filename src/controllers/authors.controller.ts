@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import { type ServiceResponse } from '../types'
-import { AddNewBookAuthor, GetAllBookAuthors } from '../services/authors.service'
+import { AddNewBookAuthor, GetAllBookAuthors , UpdateAuthor } from '../services/authors.service'
 import { StatusCodes } from 'http-status-codes'
 
 // funciton to capitalize
@@ -86,4 +86,48 @@ const AddNewBookOneAuthor = async (req: Request, res: Response, next: NextFuncti
     }
 }
 
-export { GetAllBookOneAuthors, AddNewBookOneAuthor }
+// controller for updating book author
+const UpdateOneAuthor = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // validation error
+        const validationError = validationResult(req)
+        if (!validationError.isEmpty()) {
+            const error = new CustomError('Validation Error', 403)
+            throw error
+        }
+
+        // req.params
+        const authorID: number = Number(req.params.authorid)
+
+        // req body -> capitalize if defined
+        let newFirstname = req.body.firstname
+        let newLastname = req.body.lastname
+
+        if (req.body.firstname !== null && req.body.firstname !== undefined) {
+            newFirstname = capitalize(String(newFirstname).toLowerCase())
+        }
+
+        if (req.body.lastname !== null && req.body.lastname !== undefined) {
+            newLastname = capitalize(String(newLastname).toLowerCase())
+        }
+
+        // call update book author service
+        const updateBookAuthorStatus: ServiceResponse = await UpdateAuthor(authorID, newFirstname, newLastname)
+
+        if (!updateBookAuthorStatus.success) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                ...updateBookAuthorStatus
+            })
+            return
+        }
+
+        res.status(StatusCodes.OK).json({
+            ...updateBookAuthorStatus
+        })
+
+    } catch (err) {
+        next(err)
+    }
+}
+
+export { GetAllBookOneAuthors, AddNewBookOneAuthor, UpdateOneAuthor }

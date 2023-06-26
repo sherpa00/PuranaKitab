@@ -118,4 +118,61 @@ const AddNewBookAuthor = async (firstname: string, lastname: string): Promise<Se
     }
 }
 
-export { GetAllBookAuthors, AddNewBookAuthor }
+// service to update book authors
+const UpdateAuthor = async (authorid: number, firstname: string, lastname: string): Promise<ServiceResponse> => {
+    try {
+
+
+        // verify if book authors already exists or not
+        const foundBookAuthor = await db.query('SELECT * FROM authors WHERE authors.authorid = $1',[
+            authorid
+        ])
+
+        if (foundBookAuthor.rowCount < 0) {
+            return {
+                success: false,
+                message: 'Failed to update book author'
+            }
+        }
+
+        if (foundBookAuthor.rowCount === 0) {
+            return {
+                success: false,
+                message: 'Book author is not avialable'
+            }
+        }
+
+        // set missing values
+        const newFirstname: string = (firstname !== null && firstname !== undefined) ? firstname : foundBookAuthor.rows[0].firstname
+        const newLastname: string = (lastname !== null && lastname !== undefined) ? lastname : foundBookAuthor.rows[0].lastname
+
+        // update book author
+        const updateBookAuthorStatus = await db.query(`UPDATE authors SET firstname = $1, lastname = $2 WHERE authors.authorid = $3 RETURNING *`,[
+            newFirstname,
+            newLastname,
+            authorid
+        ])
+
+        if (updateBookAuthorStatus.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Failed to update book author'
+            }
+        }
+
+        return {
+            success: true,
+            message: 'Successfully updated book author',
+            data: updateBookAuthorStatus.rows[0]
+        }
+
+    } catch (err) {
+        logger.error(err, 'Error while updating book author')
+        return {
+            success: false,
+            message: 'Error while updating book author'
+        }
+    }
+}
+
+export { GetAllBookAuthors, AddNewBookAuthor, UpdateAuthor }
