@@ -4,6 +4,7 @@ import { hash, genSalt } from 'bcrypt'
 import app from '../../index'
 import { db } from '../../configs/db.configs'
 import { type Iuser } from '../../types'
+import { capitalize } from '../../controllers/authors.controller'
 
 
 describe('Testing book genres routes', () => {
@@ -120,6 +121,64 @@ describe('Testing book genres routes', () => {
     
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should add new book genre with correct body genre name for authorized admin user', async () => {
+
+    const reqBody = await request(app)
+        .post('/genres')
+        .set('Authorization', 'Bearer ' + tempAdminJwt)
+        .send({
+            genre: tempGenresPayload1.genre_name
+        })
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.genre_name).toEqual(capitalize(tempGenresPayload1.genre_name))
+  })
+
+  it('Should not add new book genre with incorrect body genre name for authorized admin user', async () => {
+
+    const reqBody = await request(app)
+        .post('/genres')
+        .set('Authorization', 'Bearer ' + tempAdminJwt)
+        .send({
+            genre: 13439492
+        })
+
+    expect(reqBody.statusCode).toBe(403)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not add new book genre having already existed genre with correct body genre name for authorized admin user', async () => {
+    // add temp genre
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload1.genre_name])
+
+    const reqBody = await request(app)
+        .post('/genres')
+        .set('Authorization', 'Bearer ' + tempAdminJwt)
+        .send({
+            genre: tempGenresPayload1.genre_name
+        })
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not add new book genre with correct body genre name for unauthorized admin user', async () => {
+
+    const reqBody = await request(app)
+        .post('/genres')
+        .set('Authorization', 'Bearer ' + 'invalidJWT')
+        .send({
+            genre: tempGenresPayload1.genre_name
+        })
+
+    expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.data).toBeUndefined()
   })
 

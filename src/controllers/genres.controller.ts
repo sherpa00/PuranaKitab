@@ -2,8 +2,9 @@ import type { Request, Response,NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import { type ServiceResponse } from '../types'
-import { GetBookGenres } from '../services/genres.service'
+import { AddBookGenre, GetBookGenres } from '../services/genres.service'
 import { StatusCodes } from 'http-status-codes'
+import { capitalize } from './authors.controller'
 
 // controller for getting all book genres
 const GetBookOneGenres = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -51,4 +52,36 @@ const GetBookOneGenres = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
-export {GetBookOneGenres}
+// controller for getting all book genres
+const AddBookOneGenre = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // validation error
+        const validationError = validationResult(req)
+        if (!validationError.isEmpty()) {
+            const error = new CustomError('Validation Error', 403)
+            throw error
+        }
+
+        // req body -> capitalize
+        const genreName: string = capitalize(req.body.genre)
+
+        // call add book genre service
+        const addBookGenreStatus: ServiceResponse = await AddBookGenre(genreName)
+
+        if (!addBookGenreStatus.success) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                ...addBookGenreStatus
+            })
+            return
+        }
+
+        res.status(StatusCodes.OK).json({
+            ...addBookGenreStatus
+        })
+        
+    } catch (err) {
+        next(err)
+    }
+}
+
+export {GetBookOneGenres, AddBookOneGenre}

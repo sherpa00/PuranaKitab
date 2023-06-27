@@ -57,4 +57,48 @@ const GetBookGenres = async(page?: number, size?: number): Promise<ServiceRespon
     }
 }
 
-export {GetBookGenres}
+// service to add new book genre
+const AddBookGenre = async (genreName: string): Promise<ServiceResponse> => {
+    try {
+        // verify if book genre already exists or not
+        const foundBookGenre = await db.query('SELECT COUNT(*) FROM genres WHERE genres.genre_name = $1',[genreName])
+
+        if (foundBookGenre.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Failed to add book genre'
+            }
+        }
+
+        if (foundBookGenre.rows[0].count > 0) {
+            return {
+                success: false,
+                message: 'Book genre is already available'
+            }
+        }
+
+        // add genre
+        const addBookGenreStatus = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *',[genreName])
+
+        if (addBookGenreStatus.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Failed to add book genre'
+            }
+        }
+
+        return {
+            success: true,
+            message: 'Successfully added book genre',
+            data: addBookGenreStatus.rows[0]
+        }
+    } catch (err) {
+        logger.error(err, 'Error while adding new book genre')
+        return {
+            success: false,
+            message: 'Error while adding new book genre'
+        }
+    }
+}
+
+export {GetBookGenres, AddBookGenre}
