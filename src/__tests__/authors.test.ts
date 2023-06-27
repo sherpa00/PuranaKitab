@@ -292,6 +292,92 @@ describe('Testing book authors routes', () => {
         expect(reqBody.body.data).toBeUndefined()
     })
 
+    it('Should delete book author for correct param authorid for authorized admin user', async() => {
+        // temp add author
+        const tempAddAuthor1 = await request(app)
+            .post('/authors')
+            .set('Authorization', 'Bearer ' + tempAdminJwt)
+            .send({
+                firstname: tempFirstname,
+                lastname: tempLastname
+            })
+
+        const reqBody = await request(app)
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            .delete(`/authors/${tempAddAuthor1.body.data.authorid}`)
+            .set('Auhthorization', 'Bearer ' + tempAdminJwt)
+        
+        expect(reqBody.statusCode).toBe(200)
+        expect(reqBody.body.success).toBeTruthy()
+        expect(reqBody.body.data).toBeDefined()
+        expect(reqBody.body.data.authorid).toEqual(tempAddAuthor1.body.data.authorid)
+        expect(reqBody.body.data.firstname).toStrictEqual(tempAddAuthor1.body.data.firstname)
+        expect(reqBody.body.data.lastname).toStrictEqual(tempAddAuthor1.body.data.lastname)
+    })
+
+    it('Should not delete book author for incorrect type param authorid for authorized admin user', async() => {
+        // temp add author
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const tempAddAuthor1 = await request(app)
+            .post('/authors')
+            .set('Authorization', 'Bearer ' + tempAdminJwt)
+            .send({
+                firstname: tempFirstname,
+                lastname: tempLastname
+            })
+
+        const reqBody = await request(app)
+            .delete('/authors/invalidtype')
+            .set('Auhthorization', 'Bearer ' + tempAdminJwt)
+        
+        expect(reqBody.statusCode).toBe(403)
+        expect(reqBody.body.success).toBeFalsy()
+        expect(reqBody.body.data).toBeUndefined()
+    })
+
+    it('Should not delete book author for incorrect param authorid for authorized admin user', async() => {
+        // temp add author
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const tempAddAuthor1 = await request(app)
+            .post('/authors')
+            .set('Authorization', 'Bearer ' + tempAdminJwt)
+            .send({
+                firstname: tempFirstname,
+                lastname: tempLastname
+            })
+
+        const reqBody = await request(app)
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            .delete('/authors/12453784')
+            .set('Auhthorization', 'Bearer ' + tempAdminJwt)
+        
+        expect(reqBody.statusCode).toBe(400)
+        expect(reqBody.body.success).toBeFalsy()
+        expect(reqBody.body.data).toBeUndefined()
+    })
+
+    it('Should not delete book author for correct param authorid for unauthorized admin user', async() => {
+        // temp add author
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const tempAddAuthor1 = await request(app)
+            .post('/authors')
+            .set('Authorization', 'Bearer ' + tempAdminJwt)
+            .send({
+                firstname: tempFirstname,
+                lastname: tempLastname
+            })
+
+        const reqBody = await request(app)
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            .delete(`/authors/${tempAddAuthor1.body.data.authorid}`)
+            .set('Auhthorization', 'Bearer ' + 'invalidJWT')
+        
+        expect(reqBody.statusCode).toBe(401)
+        expect(reqBody.body.data).toBeUndefined()
+    })
+
+
+
     afterEach(async() => {
         // clear book authors
         await db.query('DELETE FROM authors WHERE authors.authorid = $1',[currentBookAuthorId1])
