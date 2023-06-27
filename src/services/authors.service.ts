@@ -68,111 +68,149 @@ const GetAllBookAuthors = async (page?: number, size?: number): Promise<ServiceR
 
 // service for adding new book authors
 const AddNewBookAuthor = async (firstname: string, lastname: string): Promise<ServiceResponse> => {
-    try {
+  try {
+    // verify if book authors already exists or not
+    const foundBookAuthor = await db.query(
+      'SELECT * FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2',
+      [firstname, lastname]
+    )
 
-        // verify if book authors already exists or not
-        const foundBookAuthor = await db.query('SELECT * FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2',[
-            firstname,
-            lastname
-        ])
-
-        if (foundBookAuthor.rowCount < 0) {
-            return {
-                success: false,
-                message: 'Failed to add new book authors'
-            }
-        }
-
-        if (foundBookAuthor.rowCount > 0) {
-            return {
-                success: false,
-                message: 'Book Author already exists'
-            }
-        }
-
-
-        // add new book authors
-        const addNewBookAuthorStatus = await db.query('INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *',[
-            firstname,
-            lastname
-        ])
-
-        if (addNewBookAuthorStatus.rowCount <= 0) {
-            return {
-                success: false,
-                message: 'Failed to add new book author'
-            }
-        }
-
-        return {
-            success: true,
-            message: 'Successfully added new book author',
-            data: addNewBookAuthorStatus.rows[0]
-        }
-    } catch (err) {
-        logger.error(err, 'Error while adding new book author')
-        return {
-            success: false,
-            message: 'Error while adding new book author'
-        }
+    if (foundBookAuthor.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to add new book authors'
+      }
     }
+
+    if (foundBookAuthor.rowCount > 0) {
+      return {
+        success: false,
+        message: 'Book Author already exists'
+      }
+    }
+
+    // add new book authors
+    const addNewBookAuthorStatus = await db.query(
+      'INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *',
+      [firstname, lastname]
+    )
+
+    if (addNewBookAuthorStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to add new book author'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully added new book author',
+      data: addNewBookAuthorStatus.rows[0]
+    }
+  } catch (err) {
+    logger.error(err, 'Error while adding new book author')
+    return {
+      success: false,
+      message: 'Error while adding new book author'
+    }
+  }
 }
 
 // service to update book authors
 const UpdateAuthor = async (authorid: number, firstname: string, lastname: string): Promise<ServiceResponse> => {
-    try {
+  try {
+    // verify if book authors already exists or not
+    const foundBookAuthor = await db.query('SELECT * FROM authors WHERE authors.authorid = $1', [authorid])
 
-
-        // verify if book authors already exists or not
-        const foundBookAuthor = await db.query('SELECT * FROM authors WHERE authors.authorid = $1',[
-            authorid
-        ])
-
-        if (foundBookAuthor.rowCount < 0) {
-            return {
-                success: false,
-                message: 'Failed to update book author'
-            }
-        }
-
-        if (foundBookAuthor.rowCount === 0) {
-            return {
-                success: false,
-                message: 'Book author is not avialable'
-            }
-        }
-
-        // set missing values
-        const newFirstname: string = (firstname !== null && firstname !== undefined) ? firstname : foundBookAuthor.rows[0].firstname
-        const newLastname: string = (lastname !== null && lastname !== undefined) ? lastname : foundBookAuthor.rows[0].lastname
-
-        // update book author
-        const updateBookAuthorStatus = await db.query(`UPDATE authors SET firstname = $1, lastname = $2 WHERE authors.authorid = $3 RETURNING *`,[
-            newFirstname,
-            newLastname,
-            authorid
-        ])
-
-        if (updateBookAuthorStatus.rowCount <= 0) {
-            return {
-                success: false,
-                message: 'Failed to update book author'
-            }
-        }
-
-        return {
-            success: true,
-            message: 'Successfully updated book author',
-            data: updateBookAuthorStatus.rows[0]
-        }
-
-    } catch (err) {
-        logger.error(err, 'Error while updating book author')
-        return {
-            success: false,
-            message: 'Error while updating book author'
-        }
+    if (foundBookAuthor.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to update book author'
+      }
     }
+
+    if (foundBookAuthor.rowCount === 0) {
+      return {
+        success: false,
+        message: 'Book author is not avialable'
+      }
+    }
+
+    // set missing values
+    const newFirstname: string =
+      firstname !== null && firstname !== undefined ? firstname : foundBookAuthor.rows[0].firstname
+    const newLastname: string =
+      lastname !== null && lastname !== undefined ? lastname : foundBookAuthor.rows[0].lastname
+
+    // update book author
+    const updateBookAuthorStatus = await db.query(
+      `UPDATE authors SET firstname = $1, lastname = $2 WHERE authors.authorid = $3 RETURNING *`,
+      [newFirstname, newLastname, authorid]
+    )
+
+    if (updateBookAuthorStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to update book author'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully updated book author',
+      data: updateBookAuthorStatus.rows[0]
+    }
+  } catch (err) {
+    logger.error(err, 'Error while updating book author')
+    return {
+      success: false,
+      message: 'Error while updating book author'
+    }
+  }
 }
 
-export { GetAllBookAuthors, AddNewBookAuthor, UpdateAuthor }
+// service for removing book author
+const RemoveAuthor = async (authorid: number): Promise<ServiceResponse> => {
+  try {
+    // verify if book author exist or not
+    const foundBookAuthor = await db.query('SELECT * FROM authors WHERE authors.authorid = $1', [authorid])
+
+    if (foundBookAuthor.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to remove book author'
+      }
+    }
+
+    if (foundBookAuthor.rowCount === 0) {
+      return {
+        success: false,
+        message: 'Book Author is not available'
+      }
+    }
+
+    // remove author
+    const removeAuthorStatus = await db.query('DELETE FROM authors WHERE authors.authorid = $1 RETURNING *', [authorid])
+
+    if (removeAuthorStatus.rowCount <= 0) {
+      return {
+        success: false,
+        message: 'Failed to remove book author'
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Successfully removed book author',
+      data: removeAuthorStatus.rows[0]
+    }
+  } catch (err) {
+    logger.error(err, 'Error while removing book author')
+    return {
+      success: false,
+      message: 'Error while removing book author'
+    }
+  }
+}
+
+export { GetAllBookAuthors, AddNewBookAuthor, UpdateAuthor, RemoveAuthor }
