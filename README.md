@@ -14,15 +14,6 @@ A REST api for book store where you can buy used (purana) books (kitab).
 
 - **Database:** postgresql
 
-## Installation
-
-Install my-project with npm
-
-```bash
-  npm install my-project
-  cd my-project
-```
-
 ## Run Locally
 
 Clone the project
