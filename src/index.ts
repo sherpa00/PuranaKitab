@@ -18,6 +18,7 @@ import { HealthCheckRouter } from './routes/healthCheck'
 import { ForgotPasswordRouter } from './routes/forgot-password.route'
 import { ResetPasswordRouter } from './routes/reset-password.route'
 import { SearchRouter } from './routes/search.route'
+import { AuthorsRouter } from './routes/authors.routes'
 
 // server application
 const app: Application = express()
@@ -109,6 +110,9 @@ app.use('/carts', CartRouter)
 
 // book reviews
 app.use('/reviews', ReviewRouter)
+
+// book authors
+app.use('/authors', AuthorsRouter)
 
 // custom erorr handler middlewares
 app.use(errorLogger)
