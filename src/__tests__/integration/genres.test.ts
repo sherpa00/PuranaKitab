@@ -68,7 +68,7 @@ describe('Testing book genres routes', () => {
     expect(reqBody.body.data).toBeDefined()
     expect(reqBody.body.data.pagination).toBeDefined()
     expect(reqBody.body.data.results).toBeDefined()
-    expect(reqBody.body.data.results.length).toEqual(reqBody.body.data.pagination.total_results)
+    expect(reqBody.body.data.results.length).toEqual(Number(reqBody.body.data.pagination.total_results))
   })
 
   it('Should get all book genres with correct page query and correct size query', async () => {

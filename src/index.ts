@@ -19,6 +19,7 @@ import { ForgotPasswordRouter } from './routes/forgot-password.route'
 import { ResetPasswordRouter } from './routes/reset-password.route'
 import { SearchRouter } from './routes/search.route'
 import { AuthorsRouter } from './routes/authors.routes'
+import { GenresRouter } from './routes/genres.routes'
 
 // server application
 const app: Application = express()
@@ -113,6 +114,9 @@ app.use('/reviews', ReviewRouter)
 
 // book authors
 app.use('/authors', AuthorsRouter)
+
+// book genres
+app.use('/genres', GenresRouter)
 
 // custom erorr handler middlewares
 app.use(errorLogger)
