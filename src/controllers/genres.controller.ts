@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import { type ServiceResponse } from '../types'
-import { AddBookGenre, GetBookGenres, UpdateGenre } from '../services/genres.service'
+import { AddBookGenre, DeleteGenre, GetBookGenres, UpdateGenre } from '../services/genres.service'
 import { StatusCodes } from 'http-status-codes'
 import { capitalize } from './authors.controller'
 
@@ -48,7 +48,7 @@ const GetBookOneGenres = async (req: Request, res: Response, next: NextFunction)
   }
 }
 
-// controller for getting all book genres
+// controller for adding book genres
 const AddBookOneGenre = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // validation error
@@ -79,7 +79,7 @@ const AddBookOneGenre = async (req: Request, res: Response, next: NextFunction):
   }
 }
 
-// controller for getting all book genres
+// controller for updating book genres
 const UpdateOneGenre = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     // validation error
@@ -95,7 +95,7 @@ const UpdateOneGenre = async (req: Request, res: Response, next: NextFunction): 
     // req body -> capitalize
     const newGenreName: string = capitalize(req.body.genre)
 
-    // call add book genre service
+    // call update book genre service
     const updateBookGenreStatus: ServiceResponse = await UpdateGenre(genreID, newGenreName)
 
     if (!updateBookGenreStatus.success) {
@@ -113,4 +113,35 @@ const UpdateOneGenre = async (req: Request, res: Response, next: NextFunction): 
   }
 }
 
-export { GetBookOneGenres, AddBookOneGenre, UpdateOneGenre }
+// controller for deleting book genres
+const DeleteOneGenre = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // validation error
+      const validationError = validationResult(req)
+      if (!validationError.isEmpty()) {
+        const error = new CustomError('Validation Error', 403)
+        throw error
+      }
+  
+      // req query
+      const genreID: number = Number(req.params.genreid)
+  
+      // call delete book genre service
+      const deleteBookGenreStatus: ServiceResponse = await DeleteGenre(genreID)
+  
+      if (!deleteBookGenreStatus.success) {
+        res.status(StatusCodes.BAD_REQUEST).json({
+          ...deleteBookGenreStatus
+        })
+        return
+      }
+  
+      res.status(StatusCodes.OK).json({
+        ...deleteBookGenreStatus
+      })
+    } catch (err) {
+      next(err)
+    }
+  }
+
+export { GetBookOneGenres, AddBookOneGenre, UpdateOneGenre, DeleteOneGenre }

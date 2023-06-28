@@ -147,4 +147,50 @@ const UpdateGenre = async (genreId: number, genreName: string): Promise<ServiceR
   }
 }
 
-export { GetBookGenres, AddBookGenre, UpdateGenre }
+// service to delete book genre
+const DeleteGenre = async (genreId: number): Promise<ServiceResponse> => {
+    try {
+      // verify if book genre already exists or not
+      const foundBookGenre = await db.query('SELECT * FROM genres WHERE genres.genre_id = $1', [genreId])
+  
+      if (foundBookGenre.rowCount < 0) {
+        return {
+          success: false,
+          message: 'Failed to update book genre'
+        }
+      }
+  
+      if (foundBookGenre.rowCount === 0) {
+        return {
+          success: false,
+          message: 'Book genre is not available'
+        }
+      }
+  
+      // delete genre
+      const updateBookGenreStatus = await db.query('DELETE FROM genres WHERE genre_id = $1 RETURNING *', [
+        genreId
+      ])
+  
+      if (updateBookGenreStatus.rowCount <= 0) {
+        return {
+          success: false,
+          message: 'Failed to remove book genre'
+        }
+      }
+  
+      return {
+        success: true,
+        message: 'Successfully removed book genre',
+        data: updateBookGenreStatus.rows[0]
+      }
+    } catch (err) {
+      logger.error(err, 'Error while removing book genre')
+      return {
+        success: false,
+        message: 'Error while removing book genre'
+      }
+    }
+  }
+
+export { GetBookGenres, AddBookGenre, UpdateGenre, DeleteGenre }

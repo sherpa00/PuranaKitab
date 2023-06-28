@@ -1,6 +1,6 @@
 import express, { type IRouter } from 'express'
 import { body, param, query } from 'express-validator'
-import { AddBookOneGenre, GetBookOneGenres, UpdateOneGenre } from '../controllers/genres.controller'
+import { AddBookOneGenre, DeleteOneGenre, GetBookOneGenres, UpdateOneGenre } from '../controllers/genres.controller'
 import passport from '../configs/passport.config'
 import { isAdmin } from '../middlewares/admin.middleware'
 
@@ -48,5 +48,20 @@ router.patch(
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneGenre
 )
+
+router.delete(
+    '/:genreid',
+    param('genreid')
+      .notEmpty()
+      .withMessage('Param genreid should not be empty')
+      .isInt()
+      .withMessage('Param genreid should be an integer'),
+    // user authentication
+    passport.authenticate('jwt', { session: false }),
+    // admin authorization
+    isAdmin,
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    DeleteOneGenre
+  )
 
 export { router as GenresRouter }
