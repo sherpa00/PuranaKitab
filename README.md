@@ -46,11 +46,9 @@ Start the server
   npm run start
 ```
 
-
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
-
 
 `PORT`
 
@@ -112,7 +110,7 @@ The REST API example is given below.
         ...
       ]
     }
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-

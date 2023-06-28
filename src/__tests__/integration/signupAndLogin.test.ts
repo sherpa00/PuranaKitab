@@ -1,8 +1,8 @@
 import request from 'supertest'
-import app from '../index'
-import { type Iuser } from '../types'
-import { db } from '../configs/db.configs'
-import logger from '../utils/logger.utils'
+import app from '../../index'
+import { type Iuser } from '../../types'
+import { db } from '../../configs/db.configs'
+import logger from '../../utils/logger.utils'
 
 describe('Testing for Login and Register routes', () => {
   // asssing new userdata

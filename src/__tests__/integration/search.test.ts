@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import request from 'supertest'
 import { hash, genSalt } from 'bcrypt'
-import { db } from '../configs/db.configs'
-import app from '../index'
-import { type Iuser } from '../types/index'
+import { db } from '../../configs/db.configs'
+import app from '../../index'
+import { type Iuser } from '../../types/index'
 
 describe('Testing books search routes', () => {
   // asssing new admin userdata

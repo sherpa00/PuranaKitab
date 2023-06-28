@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from '../index'
+import app from '../../index'
 
 describe('Testing the root route for api server aliveness', () => {
   it('Should return success true and success message', async () => {

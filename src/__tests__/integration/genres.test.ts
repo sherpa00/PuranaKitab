@@ -6,17 +6,18 @@ import { db } from '../../configs/db.configs'
 import { type Iuser } from '../../types'
 import { capitalize } from '../../controllers/authors.controller'
 
-
 describe('Testing book genres routes', () => {
+  // temp genres payload
+  const tempGenresPayload1 = {
+    genre_name: 'Testing123094328'
+  }
 
-    // temp genres payload
-    const tempGenresPayload1 = {
-        genre_name: '293480923testing123094328'
-    }
+  const tempGenresPayload2 = {
+    genre_name: 'Testing248903280'
+  }
 
-    const tempGenresPayload2 = {
-        genre_name: '384989893729479testing248903280'
-    }
+  // new update temp genre
+  const tempNewUpdateGenre: any = 'UpdatedNewGenre3493'
 
   // assign temporary user
   const tempAdminUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
@@ -58,12 +59,11 @@ describe('Testing book genres routes', () => {
 
   it('Should get all book genres without any quiries', async () => {
     // add genres by db
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload1.genre_name])
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload2.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload1.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload2.genre_name])
 
-    const reqBody = await request(app)
-        .get('/genres')
-    
+    const reqBody = await request(app).get('/genres')
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -74,16 +74,15 @@ describe('Testing book genres routes', () => {
 
   it('Should get all book genres with correct page query and correct size query', async () => {
     // add genres by db
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload1.genre_name])
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload2.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload1.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload2.genre_name])
 
     // temp req queries
     const tempPage: number = 1
     const tempSize: number = 2
-    
-    const reqBody = await request(app)
-        .get(`/genres?page=${tempPage}&size=${tempSize}`)
-    
+
+    const reqBody = await request(app).get(`/genres?page=${tempPage}&size=${tempSize}`)
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -94,15 +93,14 @@ describe('Testing book genres routes', () => {
 
   it('Should not get all book genres for incorrect query page and correct query size', async () => {
     // add genres by db
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload1.genre_name])
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload2.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload1.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload2.genre_name])
 
     const tempPage: string = 'invalidpage'
     const tempSize: number = 2
-    
-    const reqBody = await request(app)
-        .get(`/genres?page=${tempPage}&size=${tempSize}`)
-    
+
+    const reqBody = await request(app).get(`/genres?page=${tempPage}&size=${tempSize}`)
+
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
@@ -110,28 +108,26 @@ describe('Testing book genres routes', () => {
 
   it('Should not get all book genres for correct query page and incorrect query size', async () => {
     // add genres by db
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload1.genre_name])
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload2.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload1.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload2.genre_name])
 
     const tempPage: number = 1
     const tempSize: string = 'invalidsize'
-    
-    const reqBody = await request(app)
-        .get(`/genres?page=${tempPage}&size=${tempSize}`)
-    
+
+    const reqBody = await request(app).get(`/genres?page=${tempPage}&size=${tempSize}`)
+
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
   })
 
   it('Should add new book genre with correct body genre name for authorized admin user', async () => {
-
     const reqBody = await request(app)
-        .post('/genres')
-        .set('Authorization', 'Bearer ' + tempAdminJwt)
-        .send({
-            genre: tempGenresPayload1.genre_name
-        })
+      .post('/genres')
+      .set('Authorization', 'Bearer ' + tempAdminJwt)
+      .send({
+        genre: tempGenresPayload1.genre_name
+      })
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -140,13 +136,12 @@ describe('Testing book genres routes', () => {
   })
 
   it('Should not add new book genre with incorrect body genre name for authorized admin user', async () => {
-
     const reqBody = await request(app)
-        .post('/genres')
-        .set('Authorization', 'Bearer ' + tempAdminJwt)
-        .send({
-            genre: 13439492
-        })
+      .post('/genres')
+      .set('Authorization', 'Bearer ' + tempAdminJwt)
+      .send({
+        genre: 13439492
+      })
 
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
@@ -155,14 +150,14 @@ describe('Testing book genres routes', () => {
 
   it('Should not add new book genre having already existed genre with correct body genre name for authorized admin user', async () => {
     // add temp genre
-    await db.query('INSERT INTO genres (genre_name) VALUES ($1)',[tempGenresPayload1.genre_name])
+    await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload1.genre_name])
 
     const reqBody = await request(app)
-        .post('/genres')
-        .set('Authorization', 'Bearer ' + tempAdminJwt)
-        .send({
-            genre: tempGenresPayload1.genre_name
-        })
+      .post('/genres')
+      .set('Authorization', 'Bearer ' + tempAdminJwt)
+      .send({
+        genre: tempGenresPayload1.genre_name
+      })
 
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
@@ -170,29 +165,121 @@ describe('Testing book genres routes', () => {
   })
 
   it('Should not add new book genre with correct body genre name for unauthorized admin user', async () => {
-
     const reqBody = await request(app)
-        .post('/genres')
-        .set('Authorization', 'Bearer ' + 'invalidJWT')
-        .send({
-            genre: tempGenresPayload1.genre_name
-        })
+      .post('/genres')
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .send({
+        genre: tempGenresPayload1.genre_name
+      })
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.data).toBeUndefined()
   })
 
-  afterEach(async() => {
+  it('Should update book genre with correct query genreid and correct body genre for authorized admin user', async () => {
+    // add temp genre
+    const addTempGenre = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *', [
+      tempGenresPayload1.genre_name
+    ])
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/genres/${addTempGenre.rows[0].genre_id}`)
+      .set('Authorization', 'Bearer ' + tempAdminJwt)
+      .send({
+        genre: tempNewUpdateGenre
+      })
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.genre_id).toEqual(addTempGenre.rows[0].genre_id)
+    expect(reqBody.body.data.genre_name).toEqual(tempNewUpdateGenre)
+  })
+
+  it('Should not update book genre with incorrect type query genreid and correct body genre for authorized admin user', async () => {
+    // add temp genre
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const addTempGenre = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *', [
+      tempGenresPayload1.genre_name
+    ])
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/genres/invalidGenreID`)
+      .set('Authorization', 'Bearer ' + tempAdminJwt)
+      .send({
+        genre: tempNewUpdateGenre
+      })
+
+    expect(reqBody.statusCode).toBe(403)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not update book genre with not found genre for correct query genreid and correct body genre for authorized admin user', async () => {
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/genres/2308983`)
+      .set('Authorization', 'Bearer ' + tempAdminJwt)
+      .send({
+        genre: tempNewUpdateGenre
+      })
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not update book genre with correct query genreid and incorrect type body genre for authorized admin user', async () => {
+    // add temp genre
+    const addTempGenre = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *', [
+      tempGenresPayload1.genre_name
+    ])
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/genres/${addTempGenre.rows[0].genre_id}`)
+      .set('Authorization', 'Bearer ' + tempAdminJwt)
+      .send({
+        genre: 234892379
+      })
+
+    expect(reqBody.statusCode).toBe(403)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not update book genre with correct query genreid and correct body genre for unauthorized admin user', async () => {
+    // add temp genre
+    const addTempGenre = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *', [
+      tempGenresPayload1.genre_name
+    ])
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .patch(`/genres/${addTempGenre.rows[0].genre_id}`)
+      .set('Authorization', 'Bearer ' + 'invalidJWT')
+      .send({
+        genre: tempNewUpdateGenre
+      })
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  afterEach(async () => {
     // clear book genres
-    await db.query('DELETE FROM genres WHERE genres.genre_name = $1',[tempGenresPayload1.genre_name])
-    await db.query('DELETE FROM genres WHERE genres.genre_name = $1',[tempGenresPayload2.genre_name])
+    await db.query('DELETE FROM genres WHERE genres.genre_name = $1', [tempGenresPayload1.genre_name])
+    await db.query('DELETE FROM genres WHERE genres.genre_name = $1', [tempGenresPayload2.genre_name])
+    await db.query('DELETE FROM genres WHERE genres.genre_name = $1', [tempNewUpdateGenre])
     // clear admin user
     await db.query('DELETE FROM users WHERE users.userid = $1', [currAdminUserId])
     tempAdminJwt = ''
     currAdminUserId = 0
   })
 
-  afterAll(async() => {
+  afterAll(async () => {
     await db.end()
   })
 })
