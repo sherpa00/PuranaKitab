@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable quotes */
 import { db } from '../configs/db.configs'
 import {
@@ -15,6 +16,7 @@ export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid' | '
 // service for getting all books
 const GetAllBooks = async (
   genre: string | null | undefined,
+  author: string | null | undefined,
   page?: number,
   size?: number
 ): Promise<ServiceResponse> => {
@@ -26,20 +28,33 @@ const GetAllBooks = async (
     if (page != null && page !== undefined && size != null && size !== undefined) {
       // get books with page and size
       getBooksStatus = await db.query(
-        `SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL LIMIT $2 OFFSET ($3 - 1) * $2`,
-        [genre, size, page]
+        `SELECT * FROM books
+          LEFT JOIN genres ON books.genre_id = genres.genre_id
+          LEFT JOIN authors ON books.authorid = authors.authorid
+            WHERE genres.genre_name = $1 OR $1 IS NULL 
+            AND CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL
+              LIMIT $3 OFFSET ($4 - 1) * $3`,
+        [genre,author, size, page]
       )
     } else {
       // pagination not required
       getBooksStatus = await db.query(
-        'SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL',
-        [genre]
+        `SELECT * FROM books
+          LEFT JOIN genres ON books.genre_id = genres.genre_id
+          LEFT JOIN authors ON books.authorid = authors.authorid
+            WHERE (genres.genre_name = $1 OR $1 IS NULL)
+            AND (CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL)`,
+        [genre,author]
       )
     }
 
     const countGetAllBooks = await db.query(
-      'SELECT COUNT(*) FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE genres.genre_name = $1 OR $1 IS NULL',
-      [genre]
+      `SELECT COUNT(*) FROM books
+        LEFT JOIN genres ON books.genre_id = genres.genre_id
+        LEFT JOIN authors ON books.authorid = authors.authorid
+         WHERE (genres.genre_name = $1 OR $1 IS NULL)
+         AND (CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL)`,
+      [genre, author]
     )
 
     if (countGetAllBooks.rowCount < 0) {
@@ -59,8 +74,8 @@ const GetAllBooks = async (
     // paginatioon metdadata for get all books
     const getBooksPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
       countGetAllBooks.rows[0].count,
-      page !== undefined && page !== null ? page : 1,
-      size !== undefined && size !== null ? size : countGetAllBooks.rows[0].count
+      page ?? 1,
+      size ?? countGetAllBooks.rows[0].count
     )
 
     return {

@@ -373,6 +373,8 @@ describe('Testing book authors routes', () => {
     expect(reqBody.body.data).toBeUndefined()
   })
 
+
+
   afterEach(async () => {
     // clear book authors
     await db.query('DELETE FROM authors WHERE authors.authorid = $1', [currentBookAuthorId1])

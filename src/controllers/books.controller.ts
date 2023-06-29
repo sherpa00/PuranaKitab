@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
@@ -16,6 +17,8 @@ import {
 } from '../services/books.service'
 import type { ServiceResponse } from '../types'
 import CustomError from '../utils/custom-error'
+import { convertToAcceptableFullname } from '../helpers/textManipulation'
+import { capitalize } from './authors.controller'
 
 // controller for getting all books
 const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -27,8 +30,12 @@ const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): 
       throw error
     }
 
-    // req.query genre
-    const bookGenre: any = req.query.genre
+    // req.query genre and author
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    const bookGenre = (req.query.genre !== null && req.query.genre !== undefined) ? capitalize(String(req.query.genre).toLowerCase()) : req.query.genre
+
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    const bookAuthor = (req.query.author !== null && req.query.author !== undefined) ? convertToAcceptableFullname(String(req.query.author)) : req.query.author
 
     // get books results
     let getAllBooksStatus: ServiceResponse
@@ -39,14 +46,14 @@ const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): 
     ) {
       // pagination is not provied
       // call get all books without pagination
-      getAllBooksStatus = await GetAllBooks(bookGenre)
+      getAllBooksStatus = await GetAllBooks(bookGenre, bookAuthor)
     } else {
       // pagination provided either page or limt or both
       const page: number = req.query.page !== null && req.query.page !== undefined ? Number(req.query.page) : 1
       const size: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
 
       // call get all books service with pagination
-      getAllBooksStatus = await GetAllBooks(bookGenre, page, size)
+      getAllBooksStatus = await GetAllBooks(bookGenre,bookAuthor, page, size)
     }
 
     if (!getAllBooksStatus.success) {
