@@ -1,21 +1,21 @@
 {
   "GUEST": {
-    "GET": ["/", "/healthCheck", "/books", "/books/:bookid"],
+    "GET": ["/", "/healthCheck", "/books", "/books?page&size", "/books/:bookid", "/authors", "/authors?page&size", "/genres", "/genres?page&size"],
     "POST": ["/forgot-password", "/reset-password"],
     "PATCH": [],
     "DELETE": []
   },
 
   "CUSTOMER": {
-    "GET": ["/user", "/logout", "/books", "/carts", "/carts/cartid", "/books/:bookid"],
+    "GET": ["/user", "/logout", "/books", "/books?page&size", "/carts", "/carts/cartid", "/books/:bookid", "/authors", "/authors?page&size", "/genres", "/genres?page&size"],
     "POST": ["/carts", "/reviews"],
     "PATCH": ["/user/username", "/user/email", "/user/password", "/carts/:cartid"],
     "DELETE": ["/user", "/carts/:cartid", "/carts"]
   },
   "ADMIN": {
-    "GET": ["/user", "/logout", "/books", "/books/:bookid", "/carts/:cartid", "/carts"],
-    "POST": ["/books", "/carts"],
-    "PATCH": ["/books/:bookid", "/carts/:cartid"],
-    "DELETE": ["/user", "/books/:bookid", "/carts", "/carts/:cartid", "/reviews:reviewid", "reviews"]
+    "GET": ["/user", "/logout", "/books", "/books?page&size", "/books/:bookid", "/carts/:cartid", "/carts", "/authors", "/authors?page&size", "/genres", "/genres?page&size"],
+    "POST": ["/books", "/carts", "/genres", "/authors"],
+    "PATCH": ["/books/:bookid", "/carts/:cartid", "/genres/:genreid", "/authors/:authorid"],
+    "DELETE": ["/user", "/books/:bookid", "/carts", "/carts/:cartid", "/reviews:reviewid", "reviews", "/genres/:genreid", "/authors/:authorid"]
   }
 }
