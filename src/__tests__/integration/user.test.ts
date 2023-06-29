@@ -1,8 +1,8 @@
 import request from 'supertest'
 import { genSalt, hash } from 'bcrypt'
-import app from '../index'
-import { type Iuser } from '../types'
-import { db } from '../configs/db.configs'
+import app from '../../index'
+import { type Iuser } from '../../types'
+import { db } from '../../configs/db.configs'
 
 describe('Testing user route for logic in user info', () => {
   // assign temporary user

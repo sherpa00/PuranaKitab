@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import request from 'supertest'
 import { genSalt, hash } from 'bcrypt'
-import { ExpressValidator } from 'express-validator'
-import app from '../index'
-import { db } from '../configs/db.configs'
-import type { Iuser } from '../types'
+import app from '../../index'
+import { db } from '../../configs/db.configs'
+import type { Iuser } from '../../types'
 
 describe('Testing book reviews routes', () => {
   // assign temporary user

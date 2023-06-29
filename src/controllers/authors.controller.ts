@@ -30,7 +30,7 @@ const GetAllBookOneAuthors = async (req: Request, res: Response, next: NextFunct
       // call get all books authors without pagination
       getAllBooksAuthorsStatus = await GetAllBookAuthors()
     } else {
-      // pagination provided either page or limt or both
+      // pagination provided either page or size or both
       const page: number = req.query.page !== null && req.query.page !== undefined ? Number(req.query.page) : 1
       const size: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
 
