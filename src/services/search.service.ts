@@ -30,7 +30,7 @@ const SearchBooks = async (
             WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)`,
         [searchQuery, searchGenre]
       )
-
+      
       searchResults = await db.query(
         `SELECT books.* ${orderByJson.select_by} FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id

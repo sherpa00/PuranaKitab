@@ -65,6 +65,23 @@ export const convertToDbOrderBy = (sortBy: string): ISortByToOrderBy => {
                     order_by: 'ORDER BY books.price ASC'
                 }
                 break
+            case 'newest':
+                resultOrderBy = {
+                    select_by: '',
+                    left_join: '',
+                    group_by: '',
+                    order_by: 'ORDER BY books.createdat DESC'
+                }
+                break
+            case 'oldest':
+                resultOrderBy = {
+                    select_by: '',
+                    left_join: '',
+                    group_by: '',
+                    order_by: 'ORDER BY books.createdat ASC'
+                }
+                break
+            
         }
 
         return resultOrderBy
