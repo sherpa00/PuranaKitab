@@ -1,21 +1,70 @@
 {
   "GUEST": {
-    "GET": ["/", "/healthCheck", "/books", "/books?page&size", "/books/:bookid", "/authors", "/authors?page&size", "/genres", "/genres?page&size"],
+    "GET": [
+      "/",
+      "/healthCheck",
+      "/books",
+      "/books?author&genre&page&size",
+      "/books/:bookid",
+      "/authors",
+      "/authors?page&size",
+      "/genres",
+      "/genres?page&size",
+      "/search",
+      "/search?query&search_by&page&size&sort_by"
+    ],
     "POST": ["/forgot-password", "/reset-password"],
     "PATCH": [],
     "DELETE": []
   },
 
   "CUSTOMER": {
-    "GET": ["/user", "/logout", "/books", "/books?page&size", "/carts", "/carts/cartid", "/books/:bookid", "/authors", "/authors?page&size", "/genres", "/genres?page&size"],
+    "GET": [
+      "/user",
+      "/logout",
+      "/books",
+      "/books?author&genre&page&size",
+      "/carts",
+      "/carts/cartid",
+      "/books/:bookid",
+      "/authors",
+      "/authors?page&size",
+      "/genres",
+      "/genres?page&size",
+      "/search",
+      "/search?query&search_by&page&size&sort_by"
+    ],
     "POST": ["/carts", "/reviews"],
     "PATCH": ["/user/username", "/user/email", "/user/password", "/carts/:cartid"],
     "DELETE": ["/user", "/carts/:cartid", "/carts"]
   },
   "ADMIN": {
-    "GET": ["/user", "/logout", "/books", "/books?page&size", "/books/:bookid", "/carts/:cartid", "/carts", "/authors", "/authors?page&size", "/genres", "/genres?page&size"],
+    "GET": [
+      "/user",
+      "/logout",
+      "/books",
+      "/books?author&genre&page&size",
+      "/books/:bookid",
+      "/carts/:cartid",
+      "/carts",
+      "/authors",
+      "/authors?page&size",
+      "/genres",
+      "/genres?page&size",
+      "/search",
+      "/search?query&search_by&page&size&sort_by"
+    ],
     "POST": ["/books", "/carts", "/genres", "/authors"],
     "PATCH": ["/books/:bookid", "/carts/:cartid", "/genres/:genreid", "/authors/:authorid"],
-    "DELETE": ["/user", "/books/:bookid", "/carts", "/carts/:cartid", "/reviews:reviewid", "reviews", "/genres/:genreid", "/authors/:authorid"]
+    "DELETE": [
+      "/user",
+      "/books/:bookid",
+      "/carts",
+      "/carts/:cartid",
+      "/reviews:reviewid",
+      "reviews",
+      "/genres/:genreid",
+      "/authors/:authorid"
+    ]
   }
 }

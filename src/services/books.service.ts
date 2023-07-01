@@ -34,7 +34,7 @@ const GetAllBooks = async (
             WHERE genres.genre_name = $1 OR $1 IS NULL 
             AND CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL
               LIMIT $3 OFFSET ($4 - 1) * $3`,
-        [genre,author, size, page]
+        [genre, author, size, page]
       )
     } else {
       // pagination not required
@@ -44,7 +44,7 @@ const GetAllBooks = async (
           LEFT JOIN authors ON books.authorid = authors.authorid
             WHERE (genres.genre_name = $1 OR $1 IS NULL)
             AND (CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL)`,
-        [genre,author]
+        [genre, author]
       )
     }
 

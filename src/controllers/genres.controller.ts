@@ -115,33 +115,33 @@ const UpdateOneGenre = async (req: Request, res: Response, next: NextFunction): 
 
 // controller for deleting book genres
 const DeleteOneGenre = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      // validation error
-      const validationError = validationResult(req)
-      if (!validationError.isEmpty()) {
-        const error = new CustomError('Validation Error', 403)
-        throw error
-      }
-  
-      // req query
-      const genreID: number = Number(req.params.genreid)
-  
-      // call delete book genre service
-      const deleteBookGenreStatus: ServiceResponse = await DeleteGenre(genreID)
-  
-      if (!deleteBookGenreStatus.success) {
-        res.status(StatusCodes.BAD_REQUEST).json({
-          ...deleteBookGenreStatus
-        })
-        return
-      }
-  
-      res.status(StatusCodes.OK).json({
+  try {
+    // validation error
+    const validationError = validationResult(req)
+    if (!validationError.isEmpty()) {
+      const error = new CustomError('Validation Error', 403)
+      throw error
+    }
+
+    // req query
+    const genreID: number = Number(req.params.genreid)
+
+    // call delete book genre service
+    const deleteBookGenreStatus: ServiceResponse = await DeleteGenre(genreID)
+
+    if (!deleteBookGenreStatus.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
         ...deleteBookGenreStatus
       })
-    } catch (err) {
-      next(err)
+      return
     }
+
+    res.status(StatusCodes.OK).json({
+      ...deleteBookGenreStatus
+    })
+  } catch (err) {
+    next(err)
   }
+}
 
 export { GetBookOneGenres, AddBookOneGenre, UpdateOneGenre, DeleteOneGenre }

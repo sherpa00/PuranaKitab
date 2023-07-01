@@ -270,13 +270,15 @@ describe('Testing book genres routes', () => {
 
   it('Should delete book genre for correct param genreid for authorized admin user', async () => {
     // add temp genres
-    const addTempGenre = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *',[tempGenresPayload1.genre_name])
+    const addTempGenre = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *', [
+      tempGenresPayload1.genre_name
+    ])
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .delete(`/genres/${addTempGenre.rows[0].genre_id}`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
-      
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -285,24 +287,22 @@ describe('Testing book genres routes', () => {
   })
 
   it('Should not delete not available book genre for correct param genreid for authorized admin user', async () => {
-
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .delete(`/genres/192379819`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
-      
+
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
   })
 
   it('Should not delete book genre for incorrect type param genreid for authorized admin user', async () => {
-
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .delete(`/genres/invalidGenreid`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
-      
+
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
@@ -310,13 +310,15 @@ describe('Testing book genres routes', () => {
 
   it('Should not delete book genre for correct param genreid for unauthorized admin user', async () => {
     // add temp genres
-    const addTempGenre = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *',[tempGenresPayload1.genre_name])
+    const addTempGenre = await db.query('INSERT INTO genres (genre_name) VALUES ($1) RETURNING *', [
+      tempGenresPayload1.genre_name
+    ])
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       .delete(`/genres/${addTempGenre.rows[0].genre_id}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
-      
+
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.data).toBeUndefined()
   })

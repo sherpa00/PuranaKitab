@@ -32,10 +32,16 @@ const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): 
 
     // req.query genre and author
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    const bookGenre = (req.query.genre !== null && req.query.genre !== undefined) ? capitalize(String(req.query.genre).toLowerCase()) : req.query.genre
+    const bookGenre =
+      req.query.genre !== null && req.query.genre !== undefined
+        ? capitalize(String(req.query.genre).toLowerCase())
+        : req.query.genre
 
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    const bookAuthor = (req.query.author !== null && req.query.author !== undefined) ? convertToAcceptableFullname(String(req.query.author)) : req.query.author
+    const bookAuthor =
+      req.query.author !== null && req.query.author !== undefined
+        ? convertToAcceptableFullname(String(req.query.author))
+        : req.query.author
 
     // get books results
     let getAllBooksStatus: ServiceResponse
@@ -53,7 +59,7 @@ const GetAllOneBooks = async (req: Request, res: Response, next: NextFunction): 
       const size: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
 
       // call get all books service with pagination
-      getAllBooksStatus = await GetAllBooks(bookGenre,bookAuthor, page, size)
+      getAllBooksStatus = await GetAllBooks(bookGenre, bookAuthor, page, size)
     }
 
     if (!getAllBooksStatus.success) {

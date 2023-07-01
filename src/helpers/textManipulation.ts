@@ -7,4 +7,4 @@ const convertToAcceptableFullname = (unProcessedFullname: string): string => {
     return processedFullname
   }
 
-export { convertToAcceptableFullname}
+export { convertToAcceptableFullname, capitalize }
