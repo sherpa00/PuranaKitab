@@ -43,7 +43,7 @@ describe('Testing cart routes', () => {
       'CUSTOMER'
     ])
 
-    const loginResponse = await request(app).post('/login').send({
+    const loginResponse = await request(app).post('/api/login').send({
       email: tempUser.email,
       password: tempUser.password
     })
@@ -64,7 +64,7 @@ describe('Testing cart routes', () => {
       'ADMIN'
     ])
 
-    const loginAdminResponse = await request(app).post('/login').send({
+    const loginAdminResponse = await request(app).post('/api/login').send({
       email: tempAdminUserData.email,
       password: tempAdminUserData.password
     })
@@ -85,7 +85,7 @@ describe('Testing cart routes', () => {
     isbn: '123456789',
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phaseljhjk hhl kjhjlus faucibus libero id facilisis mollis. Mauris eu sollicitudin risus. Nulla posuere euismod mauris at facilisis. Curabitur sagittis dictum massa, at tempor metus feugiat ut. Nunc tincidunt sem non ex molestie, vel congue quam cursus. Sed non nunc bibendum, consequat purus ac, efficitur sem. Cras eget enim ac turpis aliquam consequat in in nulla. In auctor bibendum tellus at dictum.Nullam in feugiat mauris. Quisque in elit sem. Fusce rutrum mi ac tincidunt aliquam. Proin sed enim id leo varius cursus. Morbi placerat magna a metus ultrices dapibus. Aenean lacinia pellentesque odio, id ultricies quam tincidunt et. Curabitur iaculis urna a urna auctor, at cursus dolor eleifend. Suspendisse potenti. Donec condimentum, dolor nec viverra hendrerit, lacus risus consectetur justo, eget ullamcorper elit nulla id enim. Vivamus sollicitudin malesuada magna ac efficitur. Sed vitae nulla nec eros rhoncus ultrices. Donec a lacus est.',
-    genre: 'test',
+    genre: 'testGenre',
     authorFirstname: 'test1firstname',
     authorLastname: 'test1lastname'
   }
@@ -101,7 +101,7 @@ describe('Testing cart routes', () => {
     isbn: '135791011',
     description:
       'Lorem ipsum dolor sit amet, consectekjlhjk jkhkjh jkhljk hkjlhjktur adipiscing elit. Phaseljhjk hhl kjhjlus faucibus libero id facilisis mollis. Mauris eu sollicitudin risus. Nulla posuere euismod mauris at facilisis. Curabitur sagittis dictum massa, at tempor metus feugiat ut. Nunc tincidunt sem non ex molestie, vel congue quam cursus. Sed non nunc bibendum, consequat purus ac, efficitur sem. Cras eget enim ac turpis aliquam consequat in in nulla. In auctor bibendum tellus at dictum.Nullam in feugiat mauris. Quisque in elit sem. Fusce rutrum mi ac tincidunt aliquam. Proin sed enim id leo varius cursus. Morbi placerat magna a metus ultrices dapibus. Aenean lacinia pellentesque odio, id ultricies quam tincidunt et. Curabitur iaculis urna a urna auctor, at cursus dolor eleifend. Suspendisse potenti. Donec condimentum, dolor nec viverra hendrerit, lacus risus consectetur justo, eget ullamcorper elit nulla id enim. Vivamus sollicitudin malesuada magna ac efficitur. Sed vitae nulla nec eros rhoncus ultrices. Donec a lacus est.',
-    genre: 'test',
+    genre: 'testGenre2',
     authorFirstname: 'test2firstname',
     authorLastname: 'test2lastname'
   }
@@ -109,7 +109,7 @@ describe('Testing cart routes', () => {
   it('Should get all cart for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
@@ -117,14 +117,14 @@ describe('Testing cart routes', () => {
 
     // tempory add cart
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
         quantity: 5
       })
 
-    const reqBody = await request(app).get('/carts').set('Authorization', `Bearer ${tempJwt}`)
+    const reqBody = await request(app).get('/api/carts').set('Authorization', `Bearer ${tempJwt}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -135,7 +135,7 @@ describe('Testing cart routes', () => {
 
   it('Should not get all cart for unauthorized customer user', async () => {
     const reqBody = await request(app)
-      .get('/carts')
+      .get('/api/carts')
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     expect(reqBody.statusCode).toBe(401)
@@ -145,14 +145,14 @@ describe('Testing cart routes', () => {
   it('Should add new cart for correct bookid and quantity for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const reqBody = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -168,13 +168,13 @@ describe('Testing cart routes', () => {
   it('Should not add new cart for incorrect bookid and quantity for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
-    const reqBody = await request(app).post('/carts').set('Authorization', `Bearer ${tempJwt}`).send({
+    const reqBody = await request(app).post('/api/carts').set('Authorization', `Bearer ${tempJwt}`).send({
       bookid: 2343848747,
       quantity: 5
     })
@@ -186,14 +186,14 @@ describe('Testing cart routes', () => {
   it('Should not add new cart for correct bookid and incorrect quantity for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const reqBody = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -207,14 +207,14 @@ describe('Testing cart routes', () => {
   it('Should not add new cart for correct bookid and quantity for unauthorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const reqBody = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -228,14 +228,14 @@ describe('Testing cart routes', () => {
   it('Should update cart for correct cartid and quantity for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -246,7 +246,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/carts/${tempAddCart.body.data.cartid}`)
+      .patch(`/api/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         quantity: tempBookQuantity
@@ -265,14 +265,14 @@ describe('Testing cart routes', () => {
   it('Should not update cart for incorrect cartid and quantity for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -283,7 +283,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch('/carts/487928832')
+      .patch('/api/carts/487928832')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         quantity: tempBookQuantity
@@ -297,14 +297,14 @@ describe('Testing cart routes', () => {
   it('Should update cart for correct cartid and incorrect quantity for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -315,7 +315,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/carts/${tempAddCart.body.data.cartid}`)
+      .patch(`/api/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         quantity: tempBookQuantity
@@ -329,14 +329,14 @@ describe('Testing cart routes', () => {
   it('Should not update cart for incorrect type cartid and quantity for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -347,7 +347,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch('/carts/invalidcartid')
+      .patch('/api/carts/invalidcartid')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         quantity: tempBookQuantity
@@ -360,14 +360,14 @@ describe('Testing cart routes', () => {
   it('Should not update cart for correct cartid and quantity for unauthorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -378,7 +378,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/carts/${tempAddCart.body.data.cartid}`)
+      .patch(`/api/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         quantity: tempBookQuantity
@@ -391,14 +391,14 @@ describe('Testing cart routes', () => {
   it('Should delete cart with correct cartid for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -407,7 +407,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/carts/${tempAddCart.body.data.cartid}`)
+      .delete(`/api/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', `Bearer ${tempJwt}`)
 
     expect(reqBody.statusCode).toBe(200)
@@ -418,14 +418,14 @@ describe('Testing cart routes', () => {
   it('Should not delete cart with incorrect cartid for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -434,7 +434,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete('/carts/4932892')
+      .delete('/api/carts/4932892')
       .set('Authorization', `Bearer ${tempJwt}`)
 
     expect(reqBody.statusCode).toBe(400)
@@ -445,14 +445,14 @@ describe('Testing cart routes', () => {
   it('Should not delete cart with incorrect type cartid for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -461,7 +461,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete('/carts/invalidcartid')
+      .delete('/api/carts/invalidcartid')
       .set('Authorization', `Bearer ${tempJwt}`)
 
     expect(reqBody.statusCode).toBe(403)
@@ -471,14 +471,14 @@ describe('Testing cart routes', () => {
   it('Should not delete cart with correct cartid for unauthorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddCart = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -487,7 +487,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/carts/${tempAddCart.body.data.cartid}`)
+      .delete(`/api/carts/${tempAddCart.body.data.cartid}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     expect(reqBody.statusCode).toBe(401)
@@ -497,21 +497,21 @@ describe('Testing cart routes', () => {
   it('Should delete all cart for authorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddBook2 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload2
       })
 
     const tempAddCart1 = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -519,7 +519,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart2 = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook2.body.data.bookid),
@@ -528,10 +528,10 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete('/carts')
+      .delete('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
 
-    const tempGetCart = await request(app).get('/carts').set('Authorization', `Bearer ${tempJwt}`)
+    const tempGetCart = await request(app).get('/api/carts').set('Authorization', `Bearer ${tempJwt}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -542,21 +542,21 @@ describe('Testing cart routes', () => {
   it('Should not delete all cart for unauthorized customer user', async () => {
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
       })
 
     const tempAddBook2 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload2
       })
 
     const tempAddCart1 = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook1.body.data.bookid),
@@ -564,7 +564,7 @@ describe('Testing cart routes', () => {
       })
 
     const tempAddCart2 = await request(app)
-      .post('/carts')
+      .post('/api/carts')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         bookid: parseInt(tempAddBook2.body.data.bookid),
@@ -573,7 +573,7 @@ describe('Testing cart routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete('/carts')
+      .delete('/api/carts')
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     const tempGetCart = await request(app).get('/carts').set('Authorization', `Bearer ${tempJwt}`)
@@ -602,12 +602,12 @@ describe('Testing cart routes', () => {
       tempBookPayload2.authorFirstname,
       tempBookPayload2.authorLastname
     ])
-    // clear genre
-    await db.query('DELETE FROM genres WHERE genres.genre_name = $1', [tempBookPayload1.genre])
-    await db.query('DELETE FROM genres WHERE genres.genre_name = $1', [tempBookPayload2.genre])
     // clear book
     await db.query('DELETE FROM books WHERE books.isbn = $1', [tempBookPayload1.isbn])
     await db.query('DELETE FROM books WHERE books.isbn = $1', [tempBookPayload2.isbn])
+    // clear genre
+    await db.query('DELETE FROM genres WHERE genres.genre_name ILIKE $1', [tempBookPayload1.genre])
+    await db.query('DELETE FROM genres WHERE genres.genre_name ILIKE $1', [tempBookPayload2.genre])
     tempJwt = ''
     currUserId = 0
   })

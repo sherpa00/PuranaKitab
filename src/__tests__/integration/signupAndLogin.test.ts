@@ -15,13 +15,13 @@ describe('Testing for Login and Register routes', () => {
   let tempUserid: number
 
   it('Should return success when registering new user', async () => {
-    const reqBody = await request(app).post('/register').send(tempUserData)
+    const reqBody = await request(app).post('/api/register').send(tempUserData)
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
   })
 
   it('Should return false whne registering with empty username', async () => {
-    const reqBody = await request(app).post('/register').send({
+    const reqBody = await request(app).post('/api/register').send({
       username: '',
       email: tempUserData.email,
       password: tempUserData.password
@@ -31,7 +31,7 @@ describe('Testing for Login and Register routes', () => {
   })
 
   it('Should return false whne registering with empty email', async () => {
-    const reqBody = await request(app).post('/register').send({
+    const reqBody = await request(app).post('/api/register').send({
       username: tempUserData.username,
       email: '',
       password: tempUserData.password
@@ -41,7 +41,7 @@ describe('Testing for Login and Register routes', () => {
   })
 
   it('Should return false whne registering with empty password', async () => {
-    const reqBody = await request(app).post('/register').send({
+    const reqBody = await request(app).post('/api/register').send({
       username: tempUserData.username,
       email: tempUserData.password,
       password: ''
@@ -51,7 +51,7 @@ describe('Testing for Login and Register routes', () => {
   })
 
   it('Should return false whne registering with invalid email', async () => {
-    const reqBody = await request(app).post('/register').send({
+    const reqBody = await request(app).post('/api/register').send({
       username: tempUserData.username,
       email: 'incorrectEmail.com',
       password: tempUserData.password
@@ -61,7 +61,7 @@ describe('Testing for Login and Register routes', () => {
   })
 
   it('Should return false whne registering with invalid password', async () => {
-    const reqBody = await request(app).post('/register').send({
+    const reqBody = await request(app).post('/api/register').send({
       username: tempUserData.username,
       email: tempUserData.email,
       password: 'test' // length is only 4
@@ -71,7 +71,7 @@ describe('Testing for Login and Register routes', () => {
   })
 
   it('Should return token when login in with correct data', async () => {
-    const reqBody = await request(app).post('/login').send({
+    const reqBody = await request(app).post('/api/login').send({
       email: tempUserData.email,
       password: tempUserData.password
     })
@@ -82,7 +82,7 @@ describe('Testing for Login and Register routes', () => {
   })
 
   it('Should return false when loggin in with incorrect email', async () => {
-    const reqBody = await request(app).post('/login').send({
+    const reqBody = await request(app).post('/api/login').send({
       email: 'incorrect@gmail.com',
       password: tempUserData.password
     })
@@ -91,7 +91,7 @@ describe('Testing for Login and Register routes', () => {
   })
 
   it('Should return false when loggin in with incorrect password', async () => {
-    const reqBody = await request(app).post('/login').send({
+    const reqBody = await request(app).post('/api/login').send({
       email: tempUserData.email,
       password: 'incorrect'
     })

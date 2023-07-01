@@ -65,7 +65,7 @@ describe('Testing book authors routes', () => {
       'ADMIN'
     ])
 
-    const loginAdminResponse = await request(app).post('/login').send({
+    const loginAdminResponse = await request(app).post('/api/login').send({
       email: tempAdminUser.email,
       password: tempAdminUser.password
     })
@@ -76,7 +76,7 @@ describe('Testing book authors routes', () => {
   })
 
   it('Should get all book authors without any queries', async () => {
-    const reqBody = await request(app).get('/authors')
+    const reqBody = await request(app).get('/api/authors')
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -91,7 +91,7 @@ describe('Testing book authors routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line quotes
-      .get(`/authors?page=${tempPage}&size=${tempSize}`)
+      .get(`/api/authors?page=${tempPage}&size=${tempSize}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -105,7 +105,7 @@ describe('Testing book authors routes', () => {
     const tempPage: string = 'invalidPage'
     const tempSize: number = 1
 
-    const reqBody = await request(app).get(`/authors?page=${tempPage}&size=${tempSize}`)
+    const reqBody = await request(app).get(`/api/authors?page=${tempPage}&size=${tempSize}`)
 
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.data).toBeUndefined()
@@ -115,7 +115,7 @@ describe('Testing book authors routes', () => {
     const tempPage: number = 1
     const tempSize: string = 'invalidSize'
 
-    const reqBody = await request(app).get(`/authors?page=${tempPage}&size=${tempSize}`)
+    const reqBody = await request(app).get(`/api/authors?page=${tempPage}&size=${tempSize}`)
 
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.data).toBeUndefined()
@@ -123,7 +123,7 @@ describe('Testing book authors routes', () => {
 
   it('Should add new book authors for correct body firstname and correct body lastname for authorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: tempFirstname,
@@ -139,7 +139,7 @@ describe('Testing book authors routes', () => {
 
   it('Should not add new book authors for incorrect body firstname and correct body lastname for authorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: 123,
@@ -152,7 +152,7 @@ describe('Testing book authors routes', () => {
 
   it('Should not add new book authors for correct body firstname and incorrect body lastname for authorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: tempFirstname,
@@ -165,7 +165,7 @@ describe('Testing book authors routes', () => {
 
   it('Should not add new book authors for no body firstname and correct body lastname for authorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         lastname: tempLastname
@@ -177,7 +177,7 @@ describe('Testing book authors routes', () => {
 
   it('Should not add new book authors for correct body firstname and no body lastname for authorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: tempFirstname
@@ -189,7 +189,7 @@ describe('Testing book authors routes', () => {
 
   it('Should not add new book authors for correct body firstname and correct body lastname for unauthorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + 'invalidAdminJWT')
       .send({
         firstname: tempFirstname,
@@ -206,7 +206,7 @@ describe('Testing book authors routes', () => {
     const newLastname: string = 'forauthor'
 
     const reqBody = await request(app)
-      .patch(`/authors/${currentBookAuthorId1}`)
+      .patch(`/api/authors/${currentBookAuthorId1}`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: newFirstname,
@@ -225,7 +225,7 @@ describe('Testing book authors routes', () => {
     const newFirstname: string = 'thisistester'
 
     const reqBody = await request(app)
-      .patch(`/authors/${currentBookAuthorId1}`)
+      .patch(`/api/authors/${currentBookAuthorId1}`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: newFirstname
@@ -244,7 +244,7 @@ describe('Testing book authors routes', () => {
     const newLastname: string = 'forauthor'
 
     const reqBody = await request(app)
-      .patch('/authors/432989337')
+      .patch('/api/authors/432989337')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: newFirstname,
@@ -261,7 +261,7 @@ describe('Testing book authors routes', () => {
     const newLastname: string = 'forauthor'
 
     const reqBody = await request(app)
-      .patch(`/authors/${currentBookAuthorId1}`)
+      .patch(`/api/authors/${currentBookAuthorId1}`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: newFirstname,
@@ -278,7 +278,7 @@ describe('Testing book authors routes', () => {
     const newLastname: string = 'forauthor'
 
     const reqBody = await request(app)
-      .patch(`/authors/${currentBookAuthorId1}`)
+      .patch(`/api/authors/${currentBookAuthorId1}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         firstname: newFirstname,
@@ -292,7 +292,7 @@ describe('Testing book authors routes', () => {
   it('Should delete book author for correct param authorid for authorized admin user', async () => {
     // temp add author
     const tempAddAuthor1 = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: tempFirstname,
@@ -301,7 +301,7 @@ describe('Testing book authors routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/authors/${tempAddAuthor1.body.data.authorid}`)
+      .delete(`/api/authors/${tempAddAuthor1.body.data.authorid}`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
 
     expect(reqBody.statusCode).toBe(200)
@@ -316,7 +316,7 @@ describe('Testing book authors routes', () => {
     // temp add author
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const tempAddAuthor1 = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: tempFirstname,
@@ -324,7 +324,7 @@ describe('Testing book authors routes', () => {
       })
 
     const reqBody = await request(app)
-      .delete('/authors/invalidtype')
+      .delete('/api/authors/invalidtype')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
 
     expect(reqBody.statusCode).toBe(403)
@@ -336,7 +336,7 @@ describe('Testing book authors routes', () => {
     // temp add author
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const tempAddAuthor1 = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: tempFirstname,
@@ -345,7 +345,7 @@ describe('Testing book authors routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete('/authors/12453784')
+      .delete('/api/authors/12453784')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
 
     expect(reqBody.statusCode).toBe(400)
@@ -357,7 +357,7 @@ describe('Testing book authors routes', () => {
     // temp add author
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const tempAddAuthor1 = await request(app)
-      .post('/authors')
+      .post('/api/authors')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         firstname: tempFirstname,
@@ -366,7 +366,7 @@ describe('Testing book authors routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/authors/${tempAddAuthor1.body.data.authorid}`)
+      .delete(`/api/authors/${tempAddAuthor1.body.data.authorid}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     expect(reqBody.statusCode).toBe(401)

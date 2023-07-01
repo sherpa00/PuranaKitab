@@ -40,7 +40,7 @@ describe('Testing for /isadmin route to showcase admin authorization', () => {
       'ADMIN'
     ])
 
-    const loginAdminResponse = await request(app).post('/login').send({
+    const loginAdminResponse = await request(app).post('/api/login').send({
       email: tempAdminUserData.email,
       password: tempAdminUserData.password
     })
@@ -61,7 +61,7 @@ describe('Testing for /isadmin route to showcase admin authorization', () => {
       'CUSTOMER'
     ])
 
-    const loginCustomerResponse = await request(app).post('/login').send({
+    const loginCustomerResponse = await request(app).post('/api/login').send({
       email: tempCustomerUserData.email,
       password: tempCustomerUserData.password
     })
@@ -72,7 +72,7 @@ describe('Testing for /isadmin route to showcase admin authorization', () => {
   })
 
   it('Should return success for route /isadmin when using correct admin user token', async () => {
-    const reqBody = await request(app).get('/isadmin').set('Authorization', `Bearer ${tempAdminJWT}`)
+    const reqBody = await request(app).get('/api/isadmin').set('Authorization', `Bearer ${tempAdminJWT}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -80,7 +80,7 @@ describe('Testing for /isadmin route to showcase admin authorization', () => {
 
   it('Should return false for route /isadmin when using incorrect admin user token', async () => {
     const reqBody = await request(app)
-      .get('/isadmin')
+      .get('/api/isadmin')
       .set('Authorization', 'Bearer ' + 'invalidAdminJWT')
 
     expect(reqBody.statusCode).toBe(401)
@@ -88,7 +88,7 @@ describe('Testing for /isadmin route to showcase admin authorization', () => {
   })
 
   it('Should return false for route /isadmin when using correct customer user token', async () => {
-    const reqBody = await request(app).get('/isadmin').set('Authorization', `Bearer ${tempCustomerJWT}`)
+    const reqBody = await request(app).get('/api/isadmin').set('Authorization', `Bearer ${tempCustomerJWT}`)
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.success).toBeFalsy()

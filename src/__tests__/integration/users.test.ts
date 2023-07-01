@@ -30,7 +30,7 @@ describe('Testing user route for logic in user info', () => {
       'CUSTOMER'
     ])
 
-    const loginResponse = await request(app).post('/login').send({
+    const loginResponse = await request(app).post('/api/login').send({
       email: tempUser.email,
       password: tempUser.password
     })
@@ -41,7 +41,7 @@ describe('Testing user route for logic in user info', () => {
   })
 
   it('Should get correct userdata for authenticated user', async () => {
-    const reqBody = await request(app).get('/users').set('Authorization', `Bearer ${tempJwt}`)
+    const reqBody = await request(app).get('/api/users').set('Authorization', `Bearer ${tempJwt}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -53,7 +53,7 @@ describe('Testing user route for logic in user info', () => {
   it('Should update username for authenticated user', async () => {
     const tempNewUsername: string = 'newTesting2'
 
-    const reqBody = await request(app).patch('/users/username').set('Authorization', `Bearer ${tempJwt}`).send({
+    const reqBody = await request(app).patch('/api/users/username').set('Authorization', `Bearer ${tempJwt}`).send({
       newusername: tempNewUsername
     })
     expect(reqBody.statusCode).toBe(200)
@@ -67,7 +67,7 @@ describe('Testing user route for logic in user info', () => {
     const tempNewUsername: string = 'newTesting2'
 
     const reqBody = await request(app)
-      .patch('/users/username')
+      .patch('/api/users/username')
       .set('Authorization', 'Bearer ' + 'wrongjwttoken')
       .send({
         newusername: tempNewUsername
@@ -78,7 +78,7 @@ describe('Testing user route for logic in user info', () => {
   it('Should update email for authenticated user', async () => {
     const tempNewEmail: string = 'newTesting2@gmail.com'
 
-    const reqBody = await request(app).patch('/users/email').set('Authorization', `Bearer ${tempJwt}`).send({
+    const reqBody = await request(app).patch('/api/users/email').set('Authorization', `Bearer ${tempJwt}`).send({
       newemail: tempNewEmail
     })
     expect(reqBody.statusCode).toBe(200)
@@ -92,7 +92,7 @@ describe('Testing user route for logic in user info', () => {
     const tempNewEmail: string = 'newTesting2@gmail.com'
 
     const reqBody = await request(app)
-      .patch('/users/email')
+      .patch('/api/users/email')
       .set('Authorization', 'Bearer ' + 'wrongjwttoken')
       .send({
         newemail: tempNewEmail
@@ -103,7 +103,7 @@ describe('Testing user route for logic in user info', () => {
   it('Should update password for authorized user with correct password', async () => {
     const tempNewPassword: string = 'newTestingPassword'
 
-    const reqBody = await request(app).patch('/users/password').set('Authorization', `Bearer ${tempJwt}`).send({
+    const reqBody = await request(app).patch('/api/users/password').set('Authorization', `Bearer ${tempJwt}`).send({
       oldpassword: tempUser.password,
       newpassword: tempNewPassword
     })
@@ -115,7 +115,7 @@ describe('Testing user route for logic in user info', () => {
   it('Should not update password for authorized user with incorrect password', async () => {
     const tempNewPassword: string = 'newTestingPassword'
 
-    const reqBody = await request(app).patch('/users/password').set('Authorization', `Bearer ${tempJwt}`).send({
+    const reqBody = await request(app).patch('/api/users/password').set('Authorization', `Bearer ${tempJwt}`).send({
       oldpassword: 'IncorrectPassword',
       newpassword: tempNewPassword
     })
@@ -127,7 +127,7 @@ describe('Testing user route for logic in user info', () => {
     const tempNewPassword: string = 'newTestingPassword'
 
     const reqBody = await request(app)
-      .patch('/users/password')
+      .patch('/api/users/password')
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         oldpassword: tempUser.password,
@@ -138,7 +138,7 @@ describe('Testing user route for logic in user info', () => {
   })
 
   it('Should delete user account for authorized user with correct password', async () => {
-    const reqBody = await request(app).delete('/users').set('Authorization', `Bearer ${tempJwt}`).send({
+    const reqBody = await request(app).delete('/api/users').set('Authorization', `Bearer ${tempJwt}`).send({
       password: tempUser.password
     })
     expect(reqBody.statusCode).toBe(200)
@@ -147,7 +147,7 @@ describe('Testing user route for logic in user info', () => {
   })
 
   it('Should not delete user account for authorized user with incorrect password', async () => {
-    const reqBody = await request(app).delete('/users').set('Authorization', `Bearer ${tempJwt}`).send({
+    const reqBody = await request(app).delete('/api/users').set('Authorization', `Bearer ${tempJwt}`).send({
       password: 'IncorrectPassword'
     })
     expect(reqBody.statusCode).toBe(400)
@@ -156,7 +156,7 @@ describe('Testing user route for logic in user info', () => {
 
   it('Should not delete user account for unauthorized user with correct password', async () => {
     const reqBody = await request(app)
-      .delete('/users')
+      .delete('/api/users')
       .set('Authorization', 'Bearer ' + 'InvalidJWT')
       .send({
         password: tempUser.password

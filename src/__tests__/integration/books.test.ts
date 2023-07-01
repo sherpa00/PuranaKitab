@@ -42,7 +42,7 @@ describe('Testing book routes', () => {
       'CUSTOMER'
     ])
 
-    const loginResponse = await request(app).post('/login').send({
+    const loginResponse = await request(app).post('/api/login').send({
       email: tempUser.email,
       password: tempUser.password
     })
@@ -63,7 +63,7 @@ describe('Testing book routes', () => {
       'ADMIN'
     ])
 
-    const loginAdminResponse = await request(app).post('/login').send({
+    const loginAdminResponse = await request(app).post('/api/login').send({
       email: tempAdminUserData.email,
       password: tempAdminUserData.password
     })
@@ -83,13 +83,13 @@ describe('Testing book routes', () => {
     available_quantity: 8,
     isbn: '12345234',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscitennec a lacus est.',
-    genre: 'test',
+    genre: 'testGenre',
     authorFirstname: 'testfirstname',
     authorLastname: 'testlastname'
   }
 
   it('Should get all books for authorized user', async () => {
-    const reqBody = await request(app).get('/books').set('Authorization', `Bearer ${tempJwt}`)
+    const reqBody = await request(app).get('/api/books').set('Authorization', `Bearer ${tempJwt}`)
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -97,7 +97,7 @@ describe('Testing book routes', () => {
   })
 
   it('Should get all books for guest user too', async () => {
-    const reqBody = await request(app).get('/books')
+    const reqBody = await request(app).get('/api/books')
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -108,7 +108,7 @@ describe('Testing book routes', () => {
     const tempPage: number = 1
     const tempSize: number = 3
 
-    const reqBody = await request(app).get(`/books?page=${tempPage}&size=${tempSize}`)
+    const reqBody = await request(app).get(`/api/books?page=${tempPage}&size=${tempSize}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -119,13 +119,13 @@ describe('Testing book routes', () => {
   it('Should get a book with correct bookid for authorized user', async () => {
     // add temporary book
     const tempBookAdd = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get(`/books/${tempBookAdd.body.data.bookid}`)
+      .get(`/api/books/${tempBookAdd.body.data.bookid}`)
       .set('Authorization', `Bearer ${tempJwt}`)
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -137,7 +137,7 @@ describe('Testing book routes', () => {
   it('Should not get a book with incorrect bookid for authorized user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get(`/books/${23434223}`)
+      .get(`/api/books/${23434223}`)
       .set('Authorization', `Bearer ${tempJwt}`)
     expect(reqBody.statusCode).toBe(404)
     expect(reqBody.body.success).toBeFalsy()
@@ -146,7 +146,7 @@ describe('Testing book routes', () => {
   it('Should not get a book with incorrect bookid of type String for authorized user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get('/books/thisisnotvalid')
+      .get('/api/books/thisisnotvalid')
       .set('Authorization', `Bearer ${tempJwt}`)
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
@@ -155,13 +155,13 @@ describe('Testing book routes', () => {
   it('Should get a book with correct bookid for guest user', async () => {
     // add temporary book
     const tempBookAdd = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .get(`/books/${tempBookAdd.body.data.bookid}`)
+      .get(`/api/books/${tempBookAdd.body.data.bookid}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -172,7 +172,7 @@ describe('Testing book routes', () => {
 
   it('Should return success for adding new book with authorized admin user and correct payload', async () => {
     const reqBody = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempBookPayload)
     expect(reqBody.statusCode).toBe(200)
@@ -183,7 +183,7 @@ describe('Testing book routes', () => {
 
   it('Should return false for adding new book with unauthorized admin user (CUSTOMER) and correct payload', async () => {
     const reqBody = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempJwt}`)
       .send({
         ...tempBookPayload
@@ -194,7 +194,7 @@ describe('Testing book routes', () => {
 
   it('Should return false for adding new book with authorized admin user and incorrect payload', async () => {
     const reqBody = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload,
@@ -211,13 +211,13 @@ describe('Testing book routes', () => {
 
     // add temporary book
     const tempBookAdd = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/books/${tempBookAdd.body.data.bookid}`)
+      .patch(`/api/books/${tempBookAdd.body.data.bookid}`)
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempNewBookInfo)
 
@@ -234,7 +234,7 @@ describe('Testing book routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch('/books/12862384')
+      .patch('/api/books/12862384')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempNewBookInfo)
 
@@ -249,13 +249,13 @@ describe('Testing book routes', () => {
 
     // add temporary book
     const tempBookAdd = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/books/${tempBookAdd.body.data.bookid}`)
+      .patch(`/api/books/${tempBookAdd.body.data.bookid}`)
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempNewBookInfo)
 
@@ -270,13 +270,13 @@ describe('Testing book routes', () => {
 
     // add temporary book
     const tempBookAdd = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/books/${tempBookAdd.body.data.bookid}`)
+      .patch(`/api/books/${tempBookAdd.body.data.bookid}`)
       .set('Authorization', `Bearer ${tempJwt}`)
       .send(tempNewBookInfo)
 
@@ -287,13 +287,13 @@ describe('Testing book routes', () => {
   it('Should remove a book with correct bookid for authorized admin user', async () => {
     // add temporary book
     const tempBookAdd = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/books/${tempBookAdd.body.data.bookid}`)
+      .delete(`/api/books/${tempBookAdd.body.data.bookid}`)
       .set('Authorization', `Bearer ${tempAdminJWT}`)
 
     expect(reqBody.statusCode).toBe(200)
@@ -304,7 +304,7 @@ describe('Testing book routes', () => {
   it('Should not remove a book with incorrect bookid for authorized admin user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete('/books/94849023')
+      .delete('/api/books/94849023')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
 
     expect(reqBody.statusCode).toBe(500)
@@ -314,13 +314,13 @@ describe('Testing book routes', () => {
   it('Should not remove a book with correct bookid for unauthorized admin user (CUSTOMER)', async () => {
     // add temporary book
     const tempBookAdd = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send(tempBookPayload)
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/books/${tempBookAdd.body.data.bookid}`)
+      .delete(`/api/books/${tempBookAdd.body.data.bookid}`)
       .set('Authorization', `Bearer ${tempJwt}`)
 
     expect(reqBody.statusCode).toBe(401)

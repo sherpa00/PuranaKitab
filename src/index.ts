@@ -50,7 +50,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // root rotue for checking server functioning
-app.get('/', (req: Request, res: Response): void => {
+app.get('/api', (req: Request, res: Response): void => {
   try {
     res.status(StatusCode.OK).json({
       success: true,
@@ -66,7 +66,7 @@ app.get('/', (req: Request, res: Response): void => {
 })
 
 // private route for testing authorizations
-app.get('/private', passport.authenticate('jwt', { session: false }), (req: Request, res: Response) => {
+app.get('/api/private', passport.authenticate('jwt', { session: false }), (req: Request, res: Response) => {
   res.status(StatusCode.OK).json({
     success: true,
     message: 'Authorization Success',
@@ -75,10 +75,10 @@ app.get('/private', passport.authenticate('jwt', { session: false }), (req: Requ
 })
 
 // health check
-app.use('/healthcheck', HealthCheckRouter)
+app.use('/api/healthcheck', HealthCheckRouter)
 
 // private route for admin
-app.get('/isadmin', passport.authenticate('jwt', { session: false }), isAdmin, (req: Request, res: Response) => {
+app.get('/api/isadmin', passport.authenticate('jwt', { session: false }), isAdmin, (req: Request, res: Response) => {
   res.status(StatusCode.OK).json({
     success: true,
     message: 'WELCOME ADMIN'
@@ -86,37 +86,37 @@ app.get('/isadmin', passport.authenticate('jwt', { session: false }), isAdmin, (
 })
 
 // register new user
-app.use('/register', registerRouter)
+app.use('/api/register', registerRouter)
 // login user
-app.use('/login', loginRouter)
+app.use('/api/login', loginRouter)
 // logout user
-app.use('/logout', LogoutRouter)
+app.use('/api/logout', LogoutRouter)
 
 // user routes
-app.use('/users', passport.authenticate('jwt', { session: false }), UserRouter)
+app.use('/api/users', passport.authenticate('jwt', { session: false }), UserRouter)
 
 // forgot passwrod routes
-app.use('/forgot-password', ForgotPasswordRouter)
+app.use('/api/forgot-password', ForgotPasswordRouter)
 // reset passoword routes
-app.use('/reset-password', ResetPasswordRouter)
+app.use('/api/reset-password', ResetPasswordRouter)
 
 // book routes
-app.use('/books', BookRouter)
+app.use('/api/books', BookRouter)
 
 // search books routes
-app.use('/search', SearchRouter)
+app.use('/api/search', SearchRouter)
 
 // cart routes
-app.use('/carts', CartRouter)
+app.use('/api/carts', CartRouter)
 
 // book reviews
-app.use('/reviews', ReviewRouter)
+app.use('/api/reviews', ReviewRouter)
 
 // book authors
-app.use('/authors', AuthorsRouter)
+app.use('/api/authors', AuthorsRouter)
 
 // book genres
-app.use('/genres', GenresRouter)
+app.use('/api/genres', GenresRouter)
 
 // custom erorr handler middlewares
 app.use(errorLogger)

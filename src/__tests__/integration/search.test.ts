@@ -68,7 +68,7 @@ describe('Testing books search routes', () => {
       'ADMIN'
     ])
 
-    const loginAdminResponse = await request(app).post('/login').send({
+    const loginAdminResponse = await request(app).post('/api/login').send({
       email: tempAdminUserData.email,
       password: tempAdminUserData.password
     })
@@ -77,7 +77,7 @@ describe('Testing books search routes', () => {
 
     // tempory add book
     const tempAddBook1 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload1
@@ -86,7 +86,7 @@ describe('Testing books search routes', () => {
     tempBookGenreid1 = tempAddBook1.body.data.genre_id
 
     const tempAddBook2 = await request(app)
-      .post('/books')
+      .post('/api/books')
       .set('Authorization', `Bearer ${tempAdminJWT}`)
       .send({
         ...tempBookPayload2
@@ -99,7 +99,7 @@ describe('Testing books search routes', () => {
     const tempSearchQuery: string = 'test'
     const tempSearchBy: string = 'title'
 
-    const reqBody = await request(app).get(`/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
+    const reqBody = await request(app).get(`/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -111,7 +111,7 @@ describe('Testing books search routes', () => {
     const tempSearchQuery: string = tempBookPayload1.title
     const tempSearchBy: string = 'title'
 
-    const reqBody = await request(app).get(`/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
+    const reqBody = await request(app).get(`/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -123,7 +123,7 @@ describe('Testing books search routes', () => {
     const tempSearchQuery: string = 'lorem'
     const tempSearchBy: string = 'description'
 
-    const reqBody = await request(app).get(`/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
+    const reqBody = await request(app).get(`/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -135,7 +135,7 @@ describe('Testing books search routes', () => {
     const tempSearchQuery: string = tempBookPayload2.authorFirstname
     const tempSearchBy: string = 'author'
 
-    const reqBody = await request(app).get(`/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
+    const reqBody = await request(app).get(`/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -147,7 +147,7 @@ describe('Testing books search routes', () => {
     const tempSearchQuery: string = ''
     const tempSearchBy: string = 'title'
 
-    const reqBody = await request(app).get(`/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
+    const reqBody = await request(app).get(`/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -159,7 +159,7 @@ describe('Testing books search routes', () => {
     const tempSearchQuery: string = ''
     const tempSearchBy: string = 'failure'
 
-    const reqBody = await request(app).get(`/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
+    const reqBody = await request(app).get(`/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}`)
 
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.data).toBeUndefined()
@@ -173,7 +173,7 @@ describe('Testing books search routes', () => {
     const tempSearchSize: number = 1
 
     const reqBody = await request(app).get(
-      `/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&page=${tempSearchPage}&size=${tempSearchSize}`
+      `/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&page=${tempSearchPage}&size=${tempSearchSize}`
     )
 
     expect(reqBody.statusCode).toBe(200)
@@ -193,7 +193,7 @@ describe('Testing books search routes', () => {
     const tempSearchSize: number = 1
 
     const reqBody = await request(app).get(
-      `/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&page=${tempSearchPage}&size=${tempSearchSize}`
+      `/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&page=${tempSearchPage}&size=${tempSearchSize}`
     )
 
     expect(reqBody.statusCode).toBe(403)
@@ -211,7 +211,7 @@ describe('Testing books search routes', () => {
     const tempSortBy: string = 'newest'
 
     const reqBody = await request(app).get(
-      `/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&page=${tempSearchPage}&size=${tempSearchSize}&sort_by=${tempSortBy}`
+      `/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&page=${tempSearchPage}&size=${tempSearchSize}&sort_by=${tempSortBy}`
     )
 
     expect(reqBody.statusCode).toBe(200)
@@ -233,7 +233,7 @@ describe('Testing books search routes', () => {
     const tempSortBy: number = 1
 
     const reqBody = await request(app).get(
-      `/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&page=${tempSearchPage}&size=${tempSearchSize}&sort_by=${tempSortBy}`
+      `/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&page=${tempSearchPage}&size=${tempSearchSize}&sort_by=${tempSortBy}`
     )
 
     expect(reqBody.statusCode).toBe(403)

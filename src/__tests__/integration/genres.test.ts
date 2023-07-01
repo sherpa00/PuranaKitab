@@ -47,7 +47,7 @@ describe('Testing book genres routes', () => {
       'ADMIN'
     ])
 
-    const loginAdminResponse = await request(app).post('/login').send({
+    const loginAdminResponse = await request(app).post('/api/login').send({
       email: tempAdminUser.email,
       password: tempAdminUser.password
     })
@@ -62,7 +62,7 @@ describe('Testing book genres routes', () => {
     await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload1.genre_name])
     await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload2.genre_name])
 
-    const reqBody = await request(app).get('/genres')
+    const reqBody = await request(app).get('/api/genres')
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -81,7 +81,7 @@ describe('Testing book genres routes', () => {
     const tempPage: number = 1
     const tempSize: number = 2
 
-    const reqBody = await request(app).get(`/genres?page=${tempPage}&size=${tempSize}`)
+    const reqBody = await request(app).get(`/api/genres?page=${tempPage}&size=${tempSize}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -99,7 +99,7 @@ describe('Testing book genres routes', () => {
     const tempPage: string = 'invalidpage'
     const tempSize: number = 2
 
-    const reqBody = await request(app).get(`/genres?page=${tempPage}&size=${tempSize}`)
+    const reqBody = await request(app).get(`/api/genres?page=${tempPage}&size=${tempSize}`)
 
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
@@ -114,7 +114,7 @@ describe('Testing book genres routes', () => {
     const tempPage: number = 1
     const tempSize: string = 'invalidsize'
 
-    const reqBody = await request(app).get(`/genres?page=${tempPage}&size=${tempSize}`)
+    const reqBody = await request(app).get(`/api/genres?page=${tempPage}&size=${tempSize}`)
 
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
@@ -123,7 +123,7 @@ describe('Testing book genres routes', () => {
 
   it('Should add new book genre with correct body genre name for authorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/genres')
+      .post('/api/genres')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         genre: tempGenresPayload1.genre_name
@@ -137,7 +137,7 @@ describe('Testing book genres routes', () => {
 
   it('Should not add new book genre with incorrect body genre name for authorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/genres')
+      .post('/api/genres')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         genre: 13439492
@@ -153,7 +153,7 @@ describe('Testing book genres routes', () => {
     await db.query('INSERT INTO genres (genre_name) VALUES ($1)', [tempGenresPayload1.genre_name])
 
     const reqBody = await request(app)
-      .post('/genres')
+      .post('/api/genres')
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         genre: tempGenresPayload1.genre_name
@@ -166,7 +166,7 @@ describe('Testing book genres routes', () => {
 
   it('Should not add new book genre with correct body genre name for unauthorized admin user', async () => {
     const reqBody = await request(app)
-      .post('/genres')
+      .post('/api/genres')
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         genre: tempGenresPayload1.genre_name
@@ -184,7 +184,7 @@ describe('Testing book genres routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/genres/${addTempGenre.rows[0].genre_id}`)
+      .patch(`/api/genres/${addTempGenre.rows[0].genre_id}`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         genre: tempNewUpdateGenre
@@ -206,7 +206,7 @@ describe('Testing book genres routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/genres/invalidGenreID`)
+      .patch(`/api/genres/invalidGenreID`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         genre: tempNewUpdateGenre
@@ -220,7 +220,7 @@ describe('Testing book genres routes', () => {
   it('Should not update book genre with not found genre for correct query genreid and correct body genre for authorized admin user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/genres/2308983`)
+      .patch(`/api/genres/2308983`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         genre: tempNewUpdateGenre
@@ -239,7 +239,7 @@ describe('Testing book genres routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/genres/${addTempGenre.rows[0].genre_id}`)
+      .patch(`/api/genres/${addTempGenre.rows[0].genre_id}`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
       .send({
         genre: 234892379
@@ -258,7 +258,7 @@ describe('Testing book genres routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .patch(`/genres/${addTempGenre.rows[0].genre_id}`)
+      .patch(`/api/genres/${addTempGenre.rows[0].genre_id}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
       .send({
         genre: tempNewUpdateGenre
@@ -276,7 +276,7 @@ describe('Testing book genres routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/genres/${addTempGenre.rows[0].genre_id}`)
+      .delete(`/api/genres/${addTempGenre.rows[0].genre_id}`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
 
     expect(reqBody.statusCode).toBe(200)
@@ -289,7 +289,7 @@ describe('Testing book genres routes', () => {
   it('Should not delete not available book genre for correct param genreid for authorized admin user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/genres/192379819`)
+      .delete(`/api/genres/192379819`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
 
     expect(reqBody.statusCode).toBe(400)
@@ -300,7 +300,7 @@ describe('Testing book genres routes', () => {
   it('Should not delete book genre for incorrect type param genreid for authorized admin user', async () => {
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/genres/invalidGenreid`)
+      .delete(`/api/genres/invalidGenreid`)
       .set('Authorization', 'Bearer ' + tempAdminJwt)
 
     expect(reqBody.statusCode).toBe(403)
@@ -316,7 +316,7 @@ describe('Testing book genres routes', () => {
 
     const reqBody = await request(app)
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      .delete(`/genres/${addTempGenre.rows[0].genre_id}`)
+      .delete(`/api/genres/${addTempGenre.rows[0].genre_id}`)
       .set('Authorization', 'Bearer ' + 'invalidJWT')
 
     expect(reqBody.statusCode).toBe(401)

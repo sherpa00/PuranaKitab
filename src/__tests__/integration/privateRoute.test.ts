@@ -31,7 +31,7 @@ describe('Testing the private route', () => {
       'CUSTOMER'
     ])
 
-    const loginResponse = await request(app).post('/login').send({
+    const loginResponse = await request(app).post('/api/login').send({
       email: tempUser.email,
       password: tempUser.password
     })
@@ -45,7 +45,7 @@ describe('Testing the private route', () => {
 
   // TESTING AUTHENTICATE SUCCESS WITH CORRECT TOKEN
   it('Should get return success for correct jwt token', async () => {
-    const reqBody = await request(app).get('/private').set('Authorization', `Bearer ${jwtToken}`)
+    const reqBody = await request(app).get('/api/private').set('Authorization', `Bearer ${jwtToken}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -55,7 +55,7 @@ describe('Testing the private route', () => {
   // TESTING AUTHENTICATE ERROR WITH INCORRECT TOKEN
   it('Should get return failure for incorrect jwt token', async () => {
     const reqBody = await request(app)
-      .get('/private')
+      .get('/api/private')
       .set('Authorization', 'Bearer ' + 'somewrongtoken')
 
     expect(reqBody.statusCode).toBe(401)
