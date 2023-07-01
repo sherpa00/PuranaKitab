@@ -5,6 +5,7 @@ import type { ServiceResponse } from '../types'
 import { SearchBooks } from '../services/search.service'
 import { StatusCodes } from 'http-status-codes'
 
+
 // contoller for searching books
 const SearchBooksOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -21,6 +22,7 @@ const SearchBooksOne = async (req: Request, res: Response, next: NextFunction): 
     const searchGenre: any = req.query.genre
     const searchPage: number = req.query.page !== null && req.query.page !== undefined ? Number(req.query.page) : 1
     const searchSize: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
+    const searchSortBy: string = req.query.sort_by != null && req.query.sort_by !== undefined ? String(req.query.sort_by) : 'most_reviewed'
 
     // call search books service
     const searchBooksStatus: ServiceResponse = await SearchBooks(
@@ -28,7 +30,8 @@ const SearchBooksOne = async (req: Request, res: Response, next: NextFunction): 
       searchBy,
       searchGenre,
       searchPage,
-      searchSize
+      searchSize,
+      searchSortBy
     )
 
     if (!searchBooksStatus.success) {

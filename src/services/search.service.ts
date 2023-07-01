@@ -3,6 +3,7 @@ import { db } from '../configs/db.configs'
 import logger from '../utils/logger.utils'
 import type { IPaginationMetadata, ServiceResponse } from '../types'
 import generatePaginationMetadata from '../helpers/generatePaginationMetadata'
+import { type ISortByToOrderBy, convertToDbOrderBy } from '../helpers/convertSortByToDbOrderBy'
 
 // service for searching books
 const SearchBooks = async (
@@ -10,42 +11,73 @@ const SearchBooks = async (
   searchBy: string,
   searchGenre: string | null | undefined,
   searchPage: number,
-  searchSize: number
+  searchSize: number,
+  searchSortBy: string
 ): Promise<ServiceResponse> => {
   try {
     // db search with search query and search by
     let searchResults: any
     let countSearchResults: any
 
+    // cover searchSort to db order by json values
+    const orderByJson: ISortByToOrderBy = convertToDbOrderBy(searchSortBy)
+
     if (searchBy === 'title') {
       // get total search results
       countSearchResults = await db.query(
-        `SELECT COUNT(*) FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)`,
+        `SELECT COUNT(*) FROM books
+          LEFT JOIN genres ON books.genre_id = genres.genre_id
+            WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)`,
         [searchQuery, searchGenre]
       )
+      
       searchResults = await db.query(
-        `SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL) LIMIT $3 OFFSET ($4 - 1) * $3`,
+        `SELECT books.* ${orderByJson.select_by} FROM books
+          LEFT JOIN genres ON books.genre_id = genres.genre_id
+          ${orderByJson.left_join}
+            WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)
+            ${orderByJson.group_by}
+              ${orderByJson.order_by}
+                LIMIT $3 OFFSET ($4 - 1) * $3`,
         [searchQuery, searchGenre, searchSize, searchPage]
       )
     } else if (searchBy === 'author') {
       // get total search results
       countSearchResults = await db.query(
-        `SELECT COUNT(*) FROM books INNER JOIN authors ON books.authorid = authors.authorid LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)`,
+        `SELECT COUNT(*) FROM books
+          INNER JOIN authors ON books.authorid = authors.authorid
+          LEFT JOIN genres ON books.genre_id = genres.genre_id 
+            WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)`,
         [searchQuery, searchGenre]
       )
       // search in authors
       searchResults = await db.query(
-        `SELECT books.* FROM books INNER JOIN authors ON books.authorid = authors.authorid LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL) LIMIT $3 OFFSET ($4 - 1) * $3`,
+        `SELECT books.* ${orderByJson.select_by} FROM books
+           INNER JOIN authors ON books.authorid = authors.authorid
+           LEFT JOIN genres ON books.genre_id = genres.genre_id 
+          ${orderByJson.left_join}
+            WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL) 
+            ${orderByJson.group_by}
+            ${orderByJson.order_by}
+              LIMIT $3 OFFSET ($4 - 1) * $3`,
         [searchQuery, searchGenre, searchSize, searchPage]
       )
     } else if (searchBy === 'description') {
       // get search results count
       countSearchResults = await db.query(
-        `SELECT COUNT(*) FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) AND (genres.genre_name = $2 OR $2 IS NULL)`,
+        `SELECT COUNT(*) FROM books 
+          LEFT JOIN genres ON books.genre_id = genres.genre_id 
+            WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) AND (genres.genre_name = $2 OR $2 IS NULL)`,
         [searchQuery, searchGenre]
       )
       searchResults = await db.query(
-        `SELECT * FROM books LEFT JOIN genres ON books.genre_id = genres.genre_id WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) AND (genres.genre_name = $2 OR $2 IS NULL) LIMIT $3 OFFSET ($4 - 1) * $3`,
+        `SELECT books.* ${orderByJson.select_by} FROM books 
+          LEFT JOIN genres ON books.genre_id = genres.genre_id
+          ${orderByJson.left_join}
+            WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) AND (genres.genre_name = $2 OR $2 IS NULL) 
+            ${orderByJson.group_by}
+            ${orderByJson.order_by}
+              LIMIT $3 OFFSET ($4 - 1) * $3`,
         [searchQuery, searchGenre, searchSize, searchPage]
       )
     } else {
