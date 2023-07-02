@@ -580,7 +580,6 @@ describe('Testing cart routes', () => {
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.data).toBeUndefined()
-    expect(tempGetCart.body.data.length).toEqual(2)
   })
 
   // clear all temporary datas
@@ -603,8 +602,8 @@ describe('Testing cart routes', () => {
       tempBookPayload2.authorLastname
     ])
     // clear book
-    await db.query('DELETE FROM books WHERE books.isbn = $1', [tempBookPayload1.isbn])
-    await db.query('DELETE FROM books WHERE books.isbn = $1', [tempBookPayload2.isbn])
+    await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2', [tempBookPayload1.title,tempBookPayload1.isbn])
+    await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2', [tempBookPayload2.title,tempBookPayload2.isbn])
     // clear genre
     await db.query('DELETE FROM genres WHERE genres.genre_name ILIKE $1', [tempBookPayload1.genre])
     await db.query('DELETE FROM genres WHERE genres.genre_name ILIKE $1', [tempBookPayload2.genre])

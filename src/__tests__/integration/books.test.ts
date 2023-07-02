@@ -88,6 +88,9 @@ describe('Testing book routes', () => {
     authorLastname: 'testlastname'
   }
 
+  // update title temp
+  const tempBookUpdateTitle: string = 'NewUpdatedTitle'
+
   it('Should get all books for authorized user', async () => {
     const reqBody = await request(app).get('/api/books').set('Authorization', `Bearer ${tempJwt}`)
     expect(reqBody.statusCode).toBe(200)
@@ -206,7 +209,7 @@ describe('Testing book routes', () => {
 
   it('Should update book with correct type and correct bookid for authorized admin user', async () => {
     const tempNewBookInfo = {
-      title: 'NewBookTitle'
+      title: tempBookUpdateTitle
     }
 
     // add temporary book
@@ -229,7 +232,7 @@ describe('Testing book routes', () => {
 
   it('Should return false for updating book with correct type and incorrect bookid for authorized admin user', async () => {
     const tempNewBookInfo = {
-      title: 'NewBookTitle'
+      title: tempBookUpdateTitle
     }
 
     const reqBody = await request(app)
@@ -265,7 +268,7 @@ describe('Testing book routes', () => {
 
   it('Should return false for updating book with correct type and correct bookid for unauthorized admin user (CUSTOMER)', async () => {
     const tempNewBookInfo = {
-      title: 'NewBookTitle'
+      title: tempBookUpdateTitle
     }
 
     // add temporary book
@@ -338,10 +341,12 @@ describe('Testing book routes', () => {
       tempBookPayload.authorFirstname,
       tempBookPayload.authorLastname
     ])
-    // clear genre
-    await db.query('DELETE FROM genres WHERE genres.genre_name = $1', [tempBookPayload.genre])
     // clear book
-    await db.query('DELETE FROM books WHERE books.isbn = $1', [tempBookPayload.isbn])
+    await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2', [tempBookPayload.title,tempBookPayload.isbn])
+    // clear update book
+    await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2',[tempBookUpdateTitle, tempBookPayload.isbn])
+    // clear genre
+    await db.query('DELETE FROM genres WHERE genres.genre_name ILIKE $1', [tempBookPayload.genre])
     tempJwt = ''
     currUserId = 0
   })

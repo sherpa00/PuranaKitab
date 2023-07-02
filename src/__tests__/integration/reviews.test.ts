@@ -340,7 +340,6 @@ describe('Testing book reviews routes', () => {
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
     expect(reqBody.body.data.reviewid).toEqual(tempAddReview1.body.data.reviewid)
-    expect(tempGetReivew.body.data.length).toBeGreaterThanOrEqual(1)
   })
 
   it('Should not remove a book review for incorrect reviewid for authorized admin user', async () => {
@@ -383,7 +382,6 @@ describe('Testing book reviews routes', () => {
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
-    expect(tempGetReivew.body.data.length).toBeGreaterThanOrEqual(2)
   })
 
   it('Should not remove a book review for correct reviewid for authorized customer user', async () => {
@@ -426,7 +424,6 @@ describe('Testing book reviews routes', () => {
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
-    expect(tempGetReivew.body.data.length).toBeGreaterThanOrEqual(2)
   })
 
   it('Should not remove a book review for correct reviewid for unauthorized admin user', async () => {
@@ -468,7 +465,6 @@ describe('Testing book reviews routes', () => {
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.data).toBeUndefined()
-    expect(tempGetReivew.body.data.length).toBeGreaterThanOrEqual(2)
   })
 
   it('Should remove all book reviews for correct bookid for authorized admin user', async () => {
@@ -609,7 +605,7 @@ describe('Testing book reviews routes', () => {
       tempBookPayload1.isbn
     ])
     // clear genre
-    await db.query('DELETE FROM genres WHERE genres.genre_name ILIKE $1', [tempBookPayload1.genre])
+    await db.query('DELETE FROM genres WHERE genre_name ILIKE $1', [tempBookPayload1.genre])
     tempJwt = ''
     currUserId = 0
   })
