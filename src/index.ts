@@ -7,7 +7,6 @@ import logger from './utils/logger.utils'
 import passport from './configs/passport.config'
 import { isAdmin } from './middlewares/admin.middleware'
 import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
-import { HealthCheckRouter } from './routes/guests/healthCheck'
 import { RootRouter } from './routes'
 
 // server application
@@ -63,9 +62,6 @@ app.get('/api/private', passport.authenticate('jwt', { session: false }), (req: 
   })
 })
 
-// health check
-app.use('/api/healthcheck', HealthCheckRouter)
-
 // private route for admin
 app.get('/api/isadmin', passport.authenticate('jwt', { session: false }), isAdmin, (req: Request, res: Response) => {
   res.status(StatusCode.OK).json({
@@ -73,41 +69,6 @@ app.get('/api/isadmin', passport.authenticate('jwt', { session: false }), isAdmi
     message: 'WELCOME ADMIN'
   })
 })
-
-/*
-// register new user
-app.use('/api/register', registerRouter)
-// login user
-app.use('/api/login', loginRouter)
-// logout user
-app.use('/api/logout', LogoutRouter)
-
-// user routes
-app.use('/api/users', passport.authenticate('jwt', { session: false }), UserRouter)
-
-// forgot passwrod routes
-app.use('/api/forgot-password', ForgotPasswordRouter)
-// reset passoword routes
-app.use('/api/reset-password', ResetPasswordRouter)
-
-// book routes
-app.use('/api/books', BookRouter)
-
-// search books routes
-app.use('/api/search', SearchRouter)
-
-// cart routes
-app.use('/api/carts', CartRouter)
-
-// book reviews
-app.use('/api/reviews', ReviewRouter)
-
-// book authors
-app.use('/api/authors', AuthorsRouter)
-
-// book genres
-app.use('/api/genres', GenresRouter)
-*/
 
 // root api router
 app.use('/', RootRouter)
