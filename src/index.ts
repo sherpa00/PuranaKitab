@@ -4,22 +4,11 @@ import pinoHTTP from 'pino-http'
 import StatusCode from 'http-status-codes'
 import cors from 'cors'
 import logger from './utils/logger.utils'
-import { registerRouter } from './routes/register.route'
-import { loginRouter } from './routes/login.route'
 import passport from './configs/passport.config'
-import { UserRouter } from './routes/user.route'
-import { BookRouter } from './routes/books.routes'
-import { LogoutRouter } from './routes/logout.route'
 import { isAdmin } from './middlewares/admin.middleware'
 import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
-import { CartRouter } from './routes/cart.route'
-import { ReviewRouter } from './routes/review.route'
-import { HealthCheckRouter } from './routes/healthCheck'
-import { ForgotPasswordRouter } from './routes/forgot-password.route'
-import { ResetPasswordRouter } from './routes/reset-password.route'
-import { SearchRouter } from './routes/search.route'
-import { AuthorsRouter } from './routes/authors.routes'
-import { GenresRouter } from './routes/genres.routes'
+import { HealthCheckRouter } from './routes/guests/healthCheck'
+import { RootRouter } from './routes'
 
 // server application
 const app: Application = express()
@@ -85,6 +74,7 @@ app.get('/api/isadmin', passport.authenticate('jwt', { session: false }), isAdmi
   })
 })
 
+/*
 // register new user
 app.use('/api/register', registerRouter)
 // login user
@@ -117,6 +107,10 @@ app.use('/api/authors', AuthorsRouter)
 
 // book genres
 app.use('/api/genres', GenresRouter)
+*/
+
+// root api router
+app.use('/', RootRouter)
 
 // custom erorr handler middlewares
 app.use(errorLogger)

@@ -1,7 +1,8 @@
 import express from 'express'
-import { LogOutOne } from '../controllers/logout.controller'
-import passport from '../configs/passport.config'
-import { logoutAccountLimit } from '../utils/rateLimiters'
+import passport from '../../configs/passport.config'
+import { logoutAccountLimit } from '../../utils/rateLimiters'
+import { LogOutOne } from '../../controllers/logout.controller'
+
 
 const router = express.Router()
 

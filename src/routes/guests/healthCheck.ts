@@ -1,6 +1,6 @@
 import express, { type Request, type Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import logger from '../utils/logger.utils'
+import logger from '../../utils/logger.utils'
 
 const router = express.Router()
 

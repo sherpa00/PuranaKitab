@@ -1,8 +1,6 @@
 import express from 'express'
 import { body, param, query } from 'express-validator'
 import {
-  GetAllOneBooks,
-  GetBookById,
   RemoveOneBook,
   UpdateOneBook,
   addOneNewBook,
@@ -11,29 +9,10 @@ import {
   RemoveBookImage,
   UpdateOneBookGenre,
   UpdateOneBookAuthor
-} from '../controllers/books.controller'
-import { isAdmin } from '../middlewares/admin.middleware'
-import passport from '../configs/passport.config'
-import multerStorage from '../utils/multer.utils'
+} from '../../controllers/books.controller'
+import multerStorage from '../../utils/multer.utils'
 
 const router = express.Router()
-
-router.get(
-  '/',
-  query('genre').optional().isString().withMessage('Query genre should be a string'),
-  query('author').optional().isString().withMessage('Query author should be a string'),
-  query('page').optional().isInt().withMessage('Query page should be an integer'),
-  query('size').optional().isInt().withMessage('Query size should be an integere'),
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  GetAllOneBooks
-)
-
-router.get(
-  '/:bookid',
-  param('bookid').isNumeric().withMessage('Param bookid should be integer'),
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  GetBookById
-)
 
 router.post(
   '/',
@@ -52,10 +31,6 @@ router.post(
   body('genre').isString().withMessage('Book genre should be a string'),
   body('authorFirstname').notEmpty().withMessage('Book author firstname Should not be empty'),
   body('authorLastname').notEmpty().withMessage('Book author lastname Should not be empty'),
-  // user authorization
-  passport.authenticate('jwt', { session: false }),
-  // admin authorization
-  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   addOneNewBook
 )
@@ -65,10 +40,6 @@ router.post(
   '/:bookid/image',
   param('bookid').isInt().withMessage('Param bookid must be integer'),
   query('type').isIn(['front', 'FRONT', 'back', 'BACK']).withMessage('Query must be either front or back'),
-  // user authorization
-  passport.authenticate('jwt', { session: false }),
-  // admin authorization
-  isAdmin,
   multerStorage.single('bookimage'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   AddBookImage
@@ -79,10 +50,6 @@ router.patch(
   '/:bookid/image',
   param('bookid').isInt().withMessage('Param bookid must be integer'),
   query('type').isIn(['front', 'FRONT', 'back', 'BACK']).withMessage('Query must be either front or back'),
-  // user authorization
-  passport.authenticate('jwt', { session: false }),
-  // admin authorization
-  isAdmin,
   multerStorage.single('bookimage'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UploadBookImage
@@ -102,10 +69,6 @@ router.patch(
   body('available_quantity').optional().isInt().withMessage('Book Available Quantity Should be integer'),
   body('isbn').optional().isAlphanumeric().withMessage('Book isbn Should should be string'),
   body('description').optional().isString().withMessage('Book description Should should be string'),
-  // user authorization
-  passport.authenticate('jwt', { session: false }),
-  // admin authorization
-  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneBook
 )
@@ -123,10 +86,6 @@ router.patch(
     .withMessage('Body lastname should not be empty')
     .isString()
     .withMessage('Body lastname should be a string'),
-  // user authentication
-  passport.authenticate('jwt', { session: false }),
-  // admin authrorization
-  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneBookAuthor
 )
@@ -139,10 +98,6 @@ router.patch(
     .withMessage('Body genre should not be empty')
     .isString()
     .withMessage('Body genre should be a string'),
-  // user authentication
-  passport.authenticate('jwt', { session: false }),
-  // admin authrorization
-  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneBookGenre
 )
@@ -150,10 +105,6 @@ router.patch(
 router.delete(
   '/:bookid',
   param('bookid').isNumeric().withMessage('Param bookid should be integer'),
-  // user authorization
-  passport.authenticate('jwt', { session: false }),
-  // admin authorization
-  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   RemoveOneBook
 )
@@ -162,12 +113,8 @@ router.delete(
   '/:bookid/image',
   param('bookid').isInt().withMessage('Param bookid must be integer'),
   query('type').isIn(['front', 'FRONT', 'back', 'BACK']).withMessage('Query must be either front or back'),
-  // user authorization
-  passport.authenticate('jwt', { session: false }),
-  // admin authorization
-  isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   RemoveBookImage
 )
 
-export { router as BookRouter }
+export { router as BookAdminRouter }

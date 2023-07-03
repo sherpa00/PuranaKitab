@@ -1,7 +1,7 @@
 import express from 'express'
 import { body } from 'express-validator'
-import LoginOne from '../controllers/login.controller'
-import { loginAccountLimit } from '../utils/rateLimiters'
+import LoginOne from '../../controllers/login.controller'
+import { loginAccountLimit } from '../../utils/rateLimiters'
 
 const router = express.Router()
 
@@ -16,4 +16,4 @@ router.post(
   LoginOne
 )
 
-export { router as loginRouter }
+export { router as LoginRouter }

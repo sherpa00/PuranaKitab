@@ -1,7 +1,7 @@
 import express from 'express'
 import { body } from 'express-validator'
-import registerOne from '../controllers/register.controller'
-import { createAccountLimit } from '../utils/rateLimiters'
+import registerOne from '../../controllers/register.controller'
+import { createAccountLimit } from '../../utils/rateLimiters'
 
 const router = express.Router()
 
@@ -24,4 +24,4 @@ router.post(
   registerOne
 )
 
-export { router as registerRouter }
+export { router as RegisterRouter }
