@@ -1,0 +1,122 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "REST API for the web app 'puranakitab'",
+        "version": "1.0.0",
+        "title": "PuranaKitab",
+        "contact": {
+            "github": "@sherpa00"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://choosealicense.com/licenses/mit/"
+        }
+    },
+    "schemas": ["http"],
+    "host": "localhost:3003",
+    "basePath": "/api",
+    "paths": {
+        "/register": {
+            "post": {
+                "summary": "Register new account user",
+                "description": "Register new account user",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "New Account User Object",
+                        "required": true,
+                        "schema": {
+                            "type": "Object",
+                            "properties": {
+                                "username": {
+                                    "type": "string",
+                                    "example": "jhondoe"
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "example":"jhondoe@gmail.com"
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "example": "thisispassword123"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfull Register operation of new account user",
+                        "schema": {
+                            "$ref": "#/components/schemas/Register_success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Register operation of new account user",
+                        "schema": {
+                            "type": "Object",
+                            "$ref": "#/components/schemas/Register_invalid"
+                        }
+                    },
+                    "403": {
+                        "description": "Invalid Validation Operation",
+                        "schema": {
+                            "type": "Object",
+                            "$ref": "#/components/schemas/Register_invalidation"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected Error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Register_success": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Successfully registered new user account"
+                    }
+                }
+            },
+            "Register_invalid": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Error while registering new user account"
+                    }
+                }
+            },
+            "Register_invalidation": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "error": {
+                        "properties": {
+                            "message": {
+                                "type": "string",
+                                "example": "Validation Error"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

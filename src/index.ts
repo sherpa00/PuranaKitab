@@ -1,8 +1,10 @@
+import fs from 'fs'
 import express, { type Application, type Request, type Response } from 'express'
 import morgan from 'morgan'
 import pinoHTTP from 'pino-http'
 import StatusCode from 'http-status-codes'
 import cors from 'cors'
+import swaggerUi from 'swagger-ui-express'
 import logger from './utils/logger.utils'
 import passport from './configs/passport.config'
 import { isAdmin } from './middlewares/admin.middleware'
@@ -69,6 +71,13 @@ app.get('/api/isadmin', passport.authenticate('jwt', { session: false }), isAdmi
     message: 'WELCOME ADMIN'
   })
 })
+
+// api docs
+const swaggerFile: any = (process.cwd() + '/src/swagger/swagger.json')
+const swaggerData: any = fs.readFileSync(swaggerFile, 'utf-8')
+const swaggerDocs: any = JSON.parse(swaggerData)
+
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 // root api router
 app.use('/', RootRouter)

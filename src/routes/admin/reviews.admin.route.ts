@@ -1,14 +1,8 @@
 import express from 'express'
 import { body, param } from 'express-validator'
-import {
-  RemoveAllOneBookReviews,
-  RemoveSingleOneBookReview
-} from '../../controllers/reivew.controller'
-
+import { RemoveAllOneBookReviews, RemoveSingleOneBookReview } from '../../controllers/reivew.controller'
 
 const router: express.IRouter = express.Router()
-
-
 
 // get single reviews
 router.delete(

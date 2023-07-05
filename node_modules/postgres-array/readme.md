@@ -1,4 +1,4 @@
-# postgres-array [![Build Status](https://travis-ci.org/bendrucker/postgres-array.svg?branch=master)](https://travis-ci.org/bendrucker/postgres-array)
+# postgres-array [![tests](https://github.com/bendrucker/postgres-array/workflows/tests/badge.svg)](https://github.com/bendrucker/postgres-array/actions?query=workflow%3Atests)
 
 > Parse postgres array columns
 
@@ -6,16 +6,16 @@
 ## Install
 
 ```
-$ npm install --save postgres-array
+npm install --save postgres-array
 ```
 
 
 ## Usage
 
 ```js
-var postgresArray = require('postgres-array')
+const { parse } = require('postgres-array')
 
-postgresArray.parse('{1,2,3}', (value) => parseInt(value, 10))
+parse('{1,2,3}', (value) => parseInt(value, 10))
 //=> [1, 2, 3]
 ```
 

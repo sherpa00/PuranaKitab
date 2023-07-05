@@ -3,7 +3,6 @@ import { body, param } from 'express-validator'
 import { resettPasswordAccountLimit } from '../../utils/rateLimiters'
 import { ResetPasswordOne } from '../../controllers/reset-password.controller'
 
-
 const router = express.Router()
 
 router.post(

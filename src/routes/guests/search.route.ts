@@ -2,7 +2,6 @@ import express, { type IRouter } from 'express'
 import { query } from 'express-validator'
 import { SearchBooksOne } from '../../controllers/search.controller'
 
-
 const router: IRouter = express.Router()
 
 // search book routes

@@ -342,9 +342,15 @@ describe('Testing book routes', () => {
       tempBookPayload.authorLastname
     ])
     // clear book
-    await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2', [tempBookPayload.title,tempBookPayload.isbn])
+    await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2', [
+      tempBookPayload.title,
+      tempBookPayload.isbn
+    ])
     // clear update book
-    await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2',[tempBookUpdateTitle, tempBookPayload.isbn])
+    await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2', [
+      tempBookUpdateTitle,
+      tempBookPayload.isbn
+    ])
     // clear genre
     await db.query('DELETE FROM genres WHERE genres.genre_name ILIKE $1', [tempBookPayload.genre])
     tempJwt = ''
