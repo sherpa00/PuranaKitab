@@ -42,8 +42,8 @@
         },
         "/register": {
             "post": {
-                "summary": "Register new account user",
-                "description": "Register new account user",
+                "summary": "Register new user",
+                "description": "Register new user operation",
                 "produces": ["application/json"],
                 "consumes": ["application/json"],
                 "tags": [
@@ -54,21 +54,23 @@
                         "in": "body",
                         "name": "body",
                         "description": "New Account User Object",
-                        "required": true,
                         "schema": {
                             "type": "Object",
                             "properties": {
                                 "username": {
                                     "type": "string",
-                                    "example": "jhondoe"
+                                    "example": "jhondoe",
+                                    "required": true
                                 },
                                 "email": {
-                                    "type": "string",
-                                    "example":"jhondoe@gmail.com"
+                                    "type": "email",
+                                    "example":"jhondoe@gmail.com",
+                                    "required": true
                                 },
                                 "password": {
                                     "type": "string",
-                                    "example": "thisispassword123"
+                                    "example": "thisispassword123",
+                                    "required": true
                                 }
                             }
                         }
@@ -92,7 +94,65 @@
                         "description": "Invalid Validation Operation",
                         "schema": {
                             "type": "Object",
-                            "$ref": "#/components/schemas/Register_invalidation"
+                            "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected Error"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "summary": "Login User",
+                "description": "Login user operation",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "tags": [
+                    "login"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Login User Object",
+                        "schema": {
+                            "type": "Object",
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "example":"jhondoe@gmail.com",
+                                    "required": true
+                                },
+                                "password": {
+                                    "type": "string",
+                                    "example": "thisispassword123",
+                                    "required": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfull login operation of account user",
+                        "schema": {
+                            "$ref": "#/components/schemas/Login_success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid login operation of account user",
+                        "schema": {
+                            "type": "Object",
+                            "$ref": "#/components/schemas/Login_invalid"
+                        }
+                    },
+                    "403": {
+                        "description": "Invalid Validation Operation",
+                        "schema": {
+                            "type": "Object",
+                            "$ref": "#/components/schemas/RegisterLogin_invalidation"
                         }
                     },
                     "default": {
@@ -128,7 +188,7 @@
                     }
                 }
             },
-            "Register_invalidation": {
+            "RegisterLogin_invalidation": {
                 "properties": {
                     "success": {
                         "type": "boolean",
@@ -168,6 +228,50 @@
                     "timestamp": {
                         "type": "integer",
                         "example": 2349249
+                    }
+                }
+            },
+            "Login_success": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "token": {
+                        "type": "string",
+                        "example": "fkdslk23409ujf32490kcl239"
+                    },
+                    "data": {
+                        "properties": {
+                            "userid": {
+                                "type": "integer",
+                                "example": "12449023984"
+                            },
+                            "username": {
+                                "type": "string",
+                                "example": "jhondoe"
+                            },
+                            "email": {
+                                "type": "email",
+                                "example": "jhondoe@gmail.com"
+                            }
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Successfully LoggedIn"
+                    }
+                }
+            },
+            "Login_invalid": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Error while login user account"
                     }
                 }
             }
