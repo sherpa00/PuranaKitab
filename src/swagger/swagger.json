@@ -160,6 +160,35 @@
                     }
                 }
             }
+        },
+        "/logout": {
+            "get": {
+                "summary": "Logout User",
+                "description": "Logout User operation",
+                "tags": [
+                    "logout"
+                ],
+                "security": [{
+                    "JWT": []
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfull logout operation of account user",
+                        "schema": {
+                            "$ref": "#/components/schemas/Logout_success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid logout operation of account user",
+                        "schema": {
+                            "$ref": "#/components/schemas/Logout_invalid"
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/schemas/UnauthorizedError"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -274,7 +303,42 @@
                         "example": "Error while login user account"
                     }
                 }
+            },
+            "Logout_success": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Successfully Logged out"
+                    }
+                }
+            },
+            "Logout_invalid": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Error while logout operation"
+                    }
+                }
+            },
+            "UnauthorizedError": {
+                "description": "Access token is missing or invalid"
             }
         }
+    },
+    "securityDefinitions": { 
+        "JWT": { 
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT token"
+        } 
     }
 }
