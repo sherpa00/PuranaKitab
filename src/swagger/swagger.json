@@ -16,12 +16,39 @@
     "host": "localhost:3003",
     "basePath": "/api",
     "paths": {
+        "/healthCheck": {
+            "get": {
+                "summary": "Api Health Check",
+                "description": "Checking the health of api",
+                "produces": ["application/json"],
+                "tags": [
+                     "healthCheck"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully get the api healthcheck info",
+                        "schema": {
+                            "$ref": "#/components/schemas/HealthCheck_success"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    },
+                    "default": {
+                        "description": "Unexpected Error"
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "summary": "Register new account user",
                 "description": "Register new account user",
                 "produces": ["application/json"],
                 "consumes": ["application/json"],
+                "tags": [
+                    "register"
+                ],
                 "parameters": [
                     {
                         "in": "body",
@@ -114,6 +141,33 @@
                                 "example": "Validation Error"
                             }
                         }
+                    }
+                }
+            },
+            "HealthCheck_success": {
+                "properties": {
+                    "uptime": {
+                        "type": "integer",
+                        "example": 200000.020390
+                    },
+                    "responsetime": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                            
+                        },
+                        "example": [
+                            20239,
+                            34329
+                        ]
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Good Health"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "example": 2349249
                     }
                 }
             }

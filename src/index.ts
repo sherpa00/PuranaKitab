@@ -6,8 +6,6 @@ import StatusCode from 'http-status-codes'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import logger from './utils/logger.utils'
-import passport from './configs/passport.config'
-import { isAdmin } from './middlewares/admin.middleware'
 import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
 import { RootRouter } from './routes'
 
@@ -53,23 +51,6 @@ app.get('/api', (req: Request, res: Response): void => {
       message: 'Api server Error'
     })
   }
-})
-
-// private route for testing authorizations
-app.get('/api/private', passport.authenticate('jwt', { session: false }), (req: Request, res: Response) => {
-  res.status(StatusCode.OK).json({
-    success: true,
-    message: 'Authorization Success',
-    data: req.user
-  })
-})
-
-// private route for admin
-app.get('/api/isadmin', passport.authenticate('jwt', { session: false }), isAdmin, (req: Request, res: Response) => {
-  res.status(StatusCode.OK).json({
-    success: true,
-    message: 'WELCOME ADMIN'
-  })
 })
 
 // api docs
