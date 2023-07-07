@@ -45,7 +45,7 @@ router.patch(
     .withMessage('Body oldpassword should not be empty')
     .isLength({ min: 5 })
     .withMessage('Body oldpassword length should be greater than 5'),
-  body('oldpassword')
+  body('newpassword')
     .notEmpty()
     .withMessage('Body newpassword should not be empty')
     .isLength({ min: 5 })

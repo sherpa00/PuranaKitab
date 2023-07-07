@@ -53,9 +53,9 @@ const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promis
       success: true,
       token,
       data: {
-        'userid': foundUser.rows[0].userid,
-        'username': foundUser.rows[0].username,
-        'email': foundUser.rows[0].email
+        userid: foundUser.rows[0].userid,
+        username: foundUser.rows[0].username,
+        email: foundUser.rows[0].email
       },
       message: 'Successfully LoggedIn'
     }

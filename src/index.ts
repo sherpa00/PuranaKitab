@@ -54,7 +54,7 @@ app.get('/api', (req: Request, res: Response): void => {
 })
 
 // api docs
-const swaggerFile: any = (process.cwd() + '/src/swagger/swagger.json')
+const swaggerFile: any = process.cwd() + '/src/swagger/swagger.json'
 const swaggerData: any = fs.readFileSync(swaggerFile, 'utf-8')
 const swaggerDocs: any = JSON.parse(swaggerData)
 

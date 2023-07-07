@@ -1,507 +1,951 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "description": "REST API for the web app 'puranakitab'",
-        "version": "1.0.0",
-        "title": "PuranaKitab",
-        "contact": {
-            "github": "@sherpa00"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://choosealicense.com/licenses/mit/"
-        }
+  "swagger": "2.0",
+  "info": {
+    "description": "REST API for the web app 'puranakitab'",
+    "version": "1.0.0",
+    "title": "PuranaKitab",
+    "contact": {
+      "github": "@sherpa00"
     },
-    "schemas": ["http"],
-    "host": "localhost:3003",
-    "basePath": "/api",
-    "paths": {
-        "/healthCheck": {
-            "get": {
-                "summary": "Api Health Check",
-                "description": "Checking the health of api",
-                "produces": ["application/json"],
-                "tags": [
-                     "healthCheck"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully get the api healthcheck info",
-                        "schema": {
-                            "$ref": "#/components/schemas/HealthCheck_success"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error"
-                    },
-                    "default": {
-                        "description": "Unexpected Error"
-                    }
-                }
-            }
-        },
-        "/register": {
-            "post": {
-                "summary": "Register new user",
-                "description": "Register new user operation",
-                "produces": ["application/json"],
-                "consumes": ["application/json"],
-                "tags": [
-                    "register"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "New Account User Object",
-                        "schema": {
-                            "type": "Object",
-                            "properties": {
-                                "username": {
-                                    "type": "string",
-                                    "example": "jhondoe",
-                                    "required": true
-                                },
-                                "email": {
-                                    "type": "email",
-                                    "example":"jhondoe@gmail.com",
-                                    "required": true
-                                },
-                                "password": {
-                                    "type": "string",
-                                    "example": "thisispassword123",
-                                    "required": true
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfull Register operation of new account user",
-                        "schema": {
-                            "$ref": "#/components/schemas/Register_success"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Register operation of new account user",
-                        "schema": {
-                            "type": "Object",
-                            "$ref": "#/components/schemas/Register_invalid"
-                        }
-                    },
-                    "403": {
-                        "description": "Invalid Validation Operation",
-                        "schema": {
-                            "type": "Object",
-                            "$ref": "#/components/schemas/RegisterLogin_invalidation"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected Error"
-                    }
-                }
-            }
-        },
-        "/login": {
-            "post": {
-                "summary": "Login User",
-                "description": "Login user operation",
-                "produces": ["application/json"],
-                "consumes": ["application/json"],
-                "tags": [
-                    "login"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Login User Object",
-                        "schema": {
-                            "type": "Object",
-                            "properties": {
-                                "email": {
-                                    "type": "string",
-                                    "example":"jhondoe@gmail.com",
-                                    "required": true
-                                },
-                                "password": {
-                                    "type": "string",
-                                    "example": "thisispassword123",
-                                    "required": true
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfull login operation of account user",
-                        "schema": {
-                            "$ref": "#/components/schemas/Login_success"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid login operation of account user",
-                        "schema": {
-                            "type": "Object",
-                            "$ref": "#/components/schemas/Login_invalid"
-                        }
-                    },
-                    "403": {
-                        "description": "Invalid Validation Operation",
-                        "schema": {
-                            "type": "Object",
-                            "$ref": "#/components/schemas/RegisterLogin_invalidation"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected Error"
-                    }
-                }
-            }
-        },
-        "/logout": {
-            "get": {
-                "summary": "Logout User",
-                "description": "Logout User operation",
-                "tags": [
-                    "logout"
-                ],
-                "security": [{
-                    "JWT": []
-                }],
-                "responses": {
-                    "200": {
-                        "description": "Successfull logout operation of account user",
-                        "schema": {
-                            "$ref": "#/components/schemas/Logout_success"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid logout operation of account user",
-                        "schema": {
-                            "$ref": "#/components/schemas/Logout_invalid"
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/schemas/UnauthorizedError"
-                    }
-                }
-            }
-        },
-        "/forgot-password": {
-            "post": {
-                "summary": "Forgot Password",
-                "description": "Forgot password operation",
-                "consumes": ["application/json"],
-                "produces": ["application/json"],
-                "tags": [
-                    "forgot password"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Forgot Password Object",
-                        "schema": {
-                            "type": "Object",
-                            "properties": {
-                                "email": {
-                                    "type": "string",
-                                    "example":"jhondoe@gmail.com",
-                                    "required": true
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfull forgot password operation where email will be sent with reset link",
-                        "schema": {
-                            "$ref": "#/components/schemas/ForgotPassword_success"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid forgot password operation",
-                        "schema": {
-                            "$ref": "#/components/schemas/ForgotPassword_invalid"
-                        }
-                    },
-                    "403": {
-                        "description": "Vaidation Error",
-                        "schema": {
-                            "$ref": "#/components/schemas/RegisterLogin_invalidation"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected Error"
-                    }
-                }
-            }
-        },
-        "/reset-password/{token}": {
-            "post": {
-                "summary": "Reset Password",
-                "description": "Reset password operation",
-                "produces": ["application/json"],
-                "consumes": ["application/json"],
-                "tags": [
-                    "reset password"
-                ],
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "token",
-                        "description": "Reset Passoword token from reset link",
-                        "schema": {
-                                "token": {
-                                    "type": "string",
-                                    "description": "unique reset token",
-                                    "example":"4893748fjds-493-fnkj238",
-                                    "required": true
-                                }
-                        }
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "New password",
-                        "schema": {
-                            "type": "Object",
-                            "properties": {
-                                "password": {
-                                    "type": "string",
-                                    "example":"jhondoe234u",
-                                    "required": true
-                                }
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfull forgot password operation where email will be sent with reset link",
-                        "schema": {
-                            "$ref": "#/components/schemas/ResetPassword_success"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid forgot password operation",
-                        "schema": {
-                            "$ref": "#/components/schemas/ResetPassword_invalid"
-                        }
-                    },
-                    "403": {
-                        "description": "Vaidation Error",
-                        "schema": {
-                            "$ref": "#/components/schemas/RegisterLogin_invalidation"
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected Error"
-                    }
-                }
-            }
-        }
-    },
-    "components": {
-        "schemas": {
-            "Register_success": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Successfully registered new user account"
-                    }
-                }
-            },
-            "Register_invalid": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Error while registering new user account"
-                    }
-                }
-            },
-            "RegisterLogin_invalidation": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "error": {
-                        "properties": {
-                            "message": {
-                                "type": "string",
-                                "example": "Validation Error"
-                            }
-                        }
-                    }
-                }
-            },
-            "HealthCheck_success": {
-                "properties": {
-                    "uptime": {
-                        "type": "integer",
-                        "example": 200000.020390
-                    },
-                    "responsetime": {
-                        "type": "array",
-                        "items": {
-                            "type": "integer"
-                            
-                        },
-                        "example": [
-                            20239,
-                            34329
-                        ]
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Good Health"
-                    },
-                    "timestamp": {
-                        "type": "integer",
-                        "example": 2349249
-                    }
-                }
-            },
-            "Login_success": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "token": {
-                        "type": "string",
-                        "example": "fkdslk23409ujf32490kcl239"
-                    },
-                    "data": {
-                        "properties": {
-                            "userid": {
-                                "type": "integer",
-                                "example": "12449023984"
-                            },
-                            "username": {
-                                "type": "string",
-                                "example": "jhondoe"
-                            },
-                            "email": {
-                                "type": "email",
-                                "example": "jhondoe@gmail.com"
-                            }
-                        }
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Successfully LoggedIn"
-                    }
-                }
-            },
-            "Login_invalid": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Error while login user account"
-                    }
-                }
-            },
-            "Logout_success": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Successfully Logged out"
-                    }
-                }
-            },
-            "Logout_invalid": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Error while logout operation"
-                    }
-                }
-            },
-            "UnauthorizedError": {
-                "description": "Access token is missing or invalid"
-            },
-            "ForgotPassword_success": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Successfully sent reset link via email"
-                    }
-                }
-            },
-            "ForgotPassword_invalid": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Error while forgot password operation"
-                    }
-                }
-            },
-            "ResetPassword_success": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": true
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Successfully reset password"
-                    }
-                }
-            },
-            "ResetPassword_invalid": {
-                "properties": {
-                    "success": {
-                        "type": "boolean",
-                        "example": false
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Error while reset password operation"
-                    }
-                }
-            }
-        }
-    },
-    "securityDefinitions": { 
-        "JWT": { 
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
-            "description": "JWT token"
-        } 
+    "license": {
+      "name": "MIT",
+      "url": "https://choosealicense.com/licenses/mit/"
     }
+  },
+  "schemas": ["http"],
+  "host": "localhost:3003",
+  "basePath": "/api",
+  "paths": {
+    "/healthCheck": {
+      "get": {
+        "summary": "Api Health Check",
+        "description": "Checking the health of api",
+        "produces": ["application/json"],
+        "tags": ["healthCheck"],
+        "responses": {
+          "200": {
+            "description": "Successfully get the api healthcheck info",
+            "schema": {
+              "$ref": "#/components/schemas/HealthCheck_success"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "summary": "Register new user",
+        "description": "Register new user operation",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "tags": ["register"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "New Account User Object",
+            "schema": {
+              "type": "Object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "jhondoe",
+                  "required": true
+                },
+                "email": {
+                  "type": "email",
+                  "example": "jhondoe@gmail.com",
+                  "required": true
+                },
+                "password": {
+                  "type": "string",
+                  "example": "thisispassword123",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull Register operation of new account user",
+            "schema": {
+              "$ref": "#/components/schemas/Register_success"
+            }
+          },
+          "400": {
+            "description": "Invalid Register operation of new account user",
+            "schema": {
+              "type": "Object",
+              "$ref": "#/components/schemas/Register_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "type": "Object",
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "summary": "Login User",
+        "description": "Login user operation",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "tags": ["login"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Login User Object",
+            "schema": {
+              "type": "Object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "jhondoe@gmail.com",
+                  "required": true
+                },
+                "password": {
+                  "type": "string",
+                  "example": "thisispassword123",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull login operation of account user",
+            "schema": {
+              "$ref": "#/components/schemas/Login_success"
+            }
+          },
+          "400": {
+            "description": "Invalid login operation of account user",
+            "schema": {
+              "type": "Object",
+              "$ref": "#/components/schemas/Login_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "type": "Object",
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "get": {
+        "summary": "Logout User",
+        "description": "Logout User operation",
+        "tags": ["logout"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull logout operation of account user",
+            "schema": {
+              "$ref": "#/components/schemas/Logout_success"
+            }
+          },
+          "400": {
+            "description": "Invalid logout operation of account user",
+            "schema": {
+              "$ref": "#/components/schemas/Logout_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/forgot-password": {
+      "post": {
+        "summary": "Forgot Password",
+        "description": "Forgot password operation",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["forgot password"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Forgot Password Object",
+            "schema": {
+              "type": "Object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "jhondoe@gmail.com",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull forgot password operation where email will be sent with reset link",
+            "schema": {
+              "$ref": "#/components/schemas/ForgotPassword_success"
+            }
+          },
+          "400": {
+            "description": "Invalid forgot password operation",
+            "schema": {
+              "$ref": "#/components/schemas/ForgotPassword_invalid"
+            }
+          },
+          "403": {
+            "description": "Vaidation Error",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/reset-password/{token}": {
+      "post": {
+        "summary": "Reset Password",
+        "description": "Reset password operation",
+        "produces": ["application/json"],
+        "consumes": ["application/json"],
+        "tags": ["reset password"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "description": "Reset Passoword token from reset link",
+            "schema": {
+              "token": {
+                "type": "string",
+                "description": "unique reset token",
+                "example": "4893748fjds-493-fnkj238",
+                "required": true
+              }
+            }
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "New password",
+            "schema": {
+              "type": "Object",
+              "properties": {
+                "password": {
+                  "type": "string",
+                  "example": "jhondoe234u",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull forgot password operation where email will be sent with reset link",
+            "schema": {
+              "$ref": "#/components/schemas/ResetPassword_success"
+            }
+          },
+          "400": {
+            "description": "Invalid forgot password operation",
+            "schema": {
+              "$ref": "#/components/schemas/ResetPassword_invalid"
+            }
+          },
+          "403": {
+            "description": "Vaidation Error",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Get User profile",
+        "description": "Show the user profile",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": ["users"],
+        "responses": {
+          "200": {
+            "description": "Successfully got the user profile",
+            "schema": {
+              "$ref": "#/components/schemas/UsersGet_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get user profile operation",
+            "schema": {
+              "$ref": "#/components/schemas/UsersGet_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove User Account",
+        "description": "Remove the user account",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": ["users"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Password for verifying user for user remove",
+            "schema": {
+              "properties": {
+                "password": {
+                  "type": "string",
+                  "example": "newjhondoepass",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully removed the user account",
+            "schema": {
+              "$ref": "#/components/schemas/UsersDelete_success"
+            }
+          },
+          "400": {
+            "description": "Invalid remove user account operation",
+            "schema": {
+              "$ref": "#/components/schemas/UsersDelete_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/users/username": {
+      "patch": {
+        "summary": "Update User username",
+        "description": "Update the user username",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": ["users"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update username Object",
+            "schema": {
+              "type": "Object",
+              "properties": {
+                "newusername": {
+                  "type": "string",
+                  "example": "newjhondoe",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated the user username",
+            "schema": {
+              "$ref": "#/components/schemas/UsernameUpdate_success"
+            }
+          },
+          "400": {
+            "description": "Invalid update user username operation",
+            "schema": {
+              "$ref": "#/components/schemas/UsernameUpdate_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/users/email": {
+      "patch": {
+        "summary": "Update User email",
+        "description": "Update the user email",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": ["users"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update user email Object",
+            "schema": {
+              "type": "Object",
+              "properties": {
+                "newemail": {
+                  "type": "email",
+                  "example": "newjhondoe@gmail.com",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated the user email",
+            "schema": {
+              "$ref": "#/components/schemas/EmailUpdate_success"
+            }
+          },
+          "400": {
+            "description": "Invalid update user email operation",
+            "schema": {
+              "$ref": "#/components/schemas/EmailUpdate_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/users/password": {
+      "patch": {
+        "summary": "Update User password",
+        "description": "Update the user password",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": ["users"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update user password Object",
+            "schema": {
+              "type": "Object",
+              "properties": {
+                "oldpassword": {
+                  "type": "string",
+                  "example": "oldjhondoepass",
+                  "required": true
+                },
+                "newpassword": {
+                  "type": "string",
+                  "example": "newjhondoepass",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated the user password",
+            "schema": {
+              "$ref": "#/components/schemas/PasswordUpdate_success"
+            }
+          },
+          "400": {
+            "description": "Invalid update user password operation",
+            "schema": {
+              "$ref": "#/components/schemas/PasswordUpdate_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Register_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully registered new user account"
+          }
+        }
+      },
+      "Register_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while registering new user account"
+          }
+        }
+      },
+      "RegisterLogin_invalidation": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "error": {
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Validation Error"
+              }
+            }
+          }
+        }
+      },
+      "HealthCheck_success": {
+        "properties": {
+          "uptime": {
+            "type": "integer",
+            "example": 200000.02039
+          },
+          "responsetime": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "example": [20239, 34329]
+          },
+          "message": {
+            "type": "string",
+            "example": "Good Health"
+          },
+          "timestamp": {
+            "type": "integer",
+            "example": 2349249
+          }
+        }
+      },
+      "Login_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "token": {
+            "type": "string",
+            "example": "fkdslk23409ujf32490kcl239"
+          },
+          "data": {
+            "properties": {
+              "userid": {
+                "type": "integer",
+                "example": "12449023984"
+              },
+              "username": {
+                "type": "string",
+                "example": "jhondoe"
+              },
+              "email": {
+                "type": "email",
+                "example": "jhondoe@gmail.com"
+              }
+            }
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully LoggedIn"
+          }
+        }
+      },
+      "Login_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while login user account"
+          }
+        }
+      },
+      "Logout_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully Logged out"
+          }
+        }
+      },
+      "Logout_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while logout operation"
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid"
+      },
+      "ForgotPassword_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully sent reset link via email"
+          }
+        }
+      },
+      "ForgotPassword_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while forgot password operation"
+          }
+        }
+      },
+      "ResetPassword_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully reset password"
+          }
+        }
+      },
+      "ResetPassword_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while reset password operation"
+          }
+        }
+      },
+      "UsersGet_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Get User data successfull"
+          },
+          "data": {
+            "properties": {
+              "username": {
+                "type": "string",
+                "example": "jhondoe"
+              },
+              "userid": {
+                "type": "integer",
+                "example": 237498
+              },
+              "email": {
+                "type": "email",
+                "example": "jhondoe@gmail.com"
+              },
+              "role": {
+                "type": "string",
+                "example": "CUSTOMER"
+              },
+              "lastlogin": {
+                "type": "timestamp",
+                "example": "2023-07-03T09:38:35.765Z"
+              },
+              "createat": {
+                "type": "timestamp",
+                "example": "2019-07-03T09:38:35.765Z"
+              }
+            }
+          }
+        }
+      },
+      "UsersGet_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting user data"
+          }
+        }
+      },
+      "UsernameUpdate_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Updated username successfully"
+          },
+          "data": {
+            "properties": {
+              "username": {
+                "type": "string",
+                "example": "newjhondoe"
+              },
+              "userid": {
+                "type": "integer",
+                "example": 237498
+              },
+              "email": {
+                "type": "email",
+                "example": "jhondoe@gmail.com"
+              }
+            }
+          }
+        }
+      },
+      "UsernameUpdate_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating user username"
+          }
+        }
+      },
+      "EmailUpdate_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Updated email successfully"
+          },
+          "data": {
+            "properties": {
+              "username": {
+                "type": "string",
+                "example": "jhondoe"
+              },
+              "userid": {
+                "type": "integer",
+                "example": 237498
+              },
+              "email": {
+                "type": "email",
+                "example": "newjhondoe@gmail.com"
+              }
+            }
+          }
+        }
+      },
+      "EmailUpdate_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating user email"
+          }
+        }
+      },
+      "PasswordUpdate_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Updated password successfully"
+          },
+          "data": {
+            "properties": {
+              "username": {
+                "type": "string",
+                "example": "jhondoe"
+              },
+              "userid": {
+                "type": "integer",
+                "example": 237498
+              },
+              "email": {
+                "type": "email",
+                "example": "jhondoe@gmail.com"
+              }
+            }
+          }
+        }
+      },
+      "PasswordUpdate_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating user password"
+          }
+        }
+      },
+      "UsersDelete_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed user account"
+          }
+        }
+      },
+      "UsersDelete_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing user account"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT token"
+    }
+  }
 }
