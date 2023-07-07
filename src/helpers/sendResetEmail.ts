@@ -21,7 +21,7 @@ export interface IMailOptions {
 const sendResetEmail = async (receiverEmail: string, resetToken: string): Promise<SendResetEmailStatus> => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const resetLink: string = `http://localhost:3003/reset-password/${resetToken}`
+    const resetLink: string = `http://localhost:3003/api/reset-password/${resetToken}`
 
     const transporter: Transporter = nodemailer.createTransport({
       service: 'Gmail',

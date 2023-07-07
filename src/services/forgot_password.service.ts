@@ -57,7 +57,7 @@ const ForgotPassword = async (email: string): Promise<ServiceResponse> => {
 
     return {
       success: true,
-      message: 'Successfully completed forgot password operation! Check your email'
+      message: 'Successfully sent reset link via email'
     }
   } catch (err) {
     logger.error(err, 'Error in forgot password operation')

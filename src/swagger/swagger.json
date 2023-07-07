@@ -189,6 +189,121 @@
                     }
                 }
             }
+        },
+        "/forgot-password": {
+            "post": {
+                "summary": "Forgot Password",
+                "description": "Forgot password operation",
+                "consumes": ["application/json"],
+                "produces": ["application/json"],
+                "tags": [
+                    "forgot password"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Forgot Password Object",
+                        "schema": {
+                            "type": "Object",
+                            "properties": {
+                                "email": {
+                                    "type": "string",
+                                    "example":"jhondoe@gmail.com",
+                                    "required": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfull forgot password operation where email will be sent with reset link",
+                        "schema": {
+                            "$ref": "#/components/schemas/ForgotPassword_success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid forgot password operation",
+                        "schema": {
+                            "$ref": "#/components/schemas/ForgotPassword_invalid"
+                        }
+                    },
+                    "403": {
+                        "description": "Vaidation Error",
+                        "schema": {
+                            "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected Error"
+                    }
+                }
+            }
+        },
+        "/reset-password/{token}": {
+            "post": {
+                "summary": "Reset Password",
+                "description": "Reset password operation",
+                "produces": ["application/json"],
+                "consumes": ["application/json"],
+                "tags": [
+                    "reset password"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "token",
+                        "description": "Reset Passoword token from reset link",
+                        "schema": {
+                                "token": {
+                                    "type": "string",
+                                    "description": "unique reset token",
+                                    "example":"4893748fjds-493-fnkj238",
+                                    "required": true
+                                }
+                        }
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "New password",
+                        "schema": {
+                            "type": "Object",
+                            "properties": {
+                                "password": {
+                                    "type": "string",
+                                    "example":"jhondoe234u",
+                                    "required": true
+                                }
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfull forgot password operation where email will be sent with reset link",
+                        "schema": {
+                            "$ref": "#/components/schemas/ResetPassword_success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid forgot password operation",
+                        "schema": {
+                            "$ref": "#/components/schemas/ResetPassword_invalid"
+                        }
+                    },
+                    "403": {
+                        "description": "Vaidation Error",
+                        "schema": {
+                            "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                        }
+                    },
+                    "default": {
+                        "description": "Unexpected Error"
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -330,6 +445,54 @@
             },
             "UnauthorizedError": {
                 "description": "Access token is missing or invalid"
+            },
+            "ForgotPassword_success": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Successfully sent reset link via email"
+                    }
+                }
+            },
+            "ForgotPassword_invalid": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Error while forgot password operation"
+                    }
+                }
+            },
+            "ResetPassword_success": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Successfully reset password"
+                    }
+                }
+            },
+            "ResetPassword_invalid": {
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Error while reset password operation"
+                    }
+                }
             }
         }
     },
