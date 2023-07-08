@@ -43,7 +43,7 @@ router.patch(
     .withMessage('Param cartid should be an integer'),
   body('quantity')
     .notEmpty()
-    .withMessage('Quantity should ot be empty')
+    .withMessage('Quantity should not be empty')
     .isNumeric()
     .withMessage('Quantity should be an integer'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises

@@ -187,13 +187,13 @@ const RemoveSingleCart = async (userID: number, cartID: number): Promise<Service
 
     return {
       success: true,
-      message: 'Successfully removed a single cart'
+      message: 'Successfully removed a cart'
     }
   } catch (err) {
     logger.error(err, 'Error while removing a single cart')
     return {
       success: false,
-      message: 'Error while removing a sigle cart'
+      message: 'Error while removing a cart'
     }
   }
 }

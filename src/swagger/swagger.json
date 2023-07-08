@@ -556,6 +556,242 @@
           }
         }
       }
+    },
+    "/carts": {
+        "get": {
+          "summary": "Get User carts",
+          "description": "Get the user carts",
+          "produces": ["application/json"],
+          "security": [
+            {
+              "JWT": []
+            }
+          ],
+          "tags": ["carts"],
+          "responses": {
+            "200": {
+              "description": "Successfully got the user carts",
+              "schema": {
+                "$ref": "#/components/schemas/CartsGet_success"
+              }
+            },
+            "400": {
+              "description": "Invalid get user carts operation",
+              "schema": {
+                "$ref": "#/components/schemas/CartsGet_invalid"
+              }
+            },
+            "401": {
+              "$ref": "#/components/schemas/UnauthorizedError"
+            },
+            "default": {
+              "description": "Unexpected Error"
+            }
+          }
+        },
+        "post": {
+            "summary": "Add carts",
+            "description": "Add the user carts",
+            "consumes": ["application/json"],
+            "produces": ["application/json"],
+            "security": [
+              {
+                "JWT": []
+              }
+            ],
+            "tags": ["carts"],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "schema": {
+                        "properties": {
+                            "bookid": {
+                                "type": "integer",
+                                "example": "2787",
+                                "required": true
+                            },
+                            "quantity": {
+                                "type": "integer",
+                                "example": 1,
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully added the cart",
+                "schema": {
+                  "$ref": "#/components/schemas/CartsAdd_success"
+                }
+              },
+              "400": {
+                "description": "Invalid post user cart operation",
+                "schema": {
+                  "$ref": "#/components/schemas/CartsAdd_invalid"
+                }
+              },
+              "401": {
+                "$ref": "#/components/schemas/UnauthorizedError"
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        },
+        "delete": {
+            "summary": "Remove all cart",
+            "description": "Remove all user cart",
+            "produces": ["application/json"],
+            "security": [
+              {
+                "JWT": []
+              }
+            ],
+            "tags": ["carts"],
+            "responses": {
+              "200": {
+                "description": "Successfully removed all carts",
+                "schema": {
+                  "$ref": "#/components/schemas/CartsRemoveAll_success"
+                }
+              },
+              "400": {
+                "description": "Invalid remove all user carts operation",
+                "schema": {
+                  "$ref": "#/components/schemas/CartsRemoveAll_invalid"
+                }
+              },
+              "401": {
+                "$ref": "#/components/schemas/UnauthorizedError"
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        }
+    },
+    "/carts/{cartid}": {
+        "patch": {
+            "summary": "Update carts",
+            "description": "update the user carts",
+            "consumes": ["application/json"],
+            "produces": ["application/json"],
+            "security": [
+              {
+                "JWT": []
+              }
+            ],
+            "tags": ["carts"],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "cartid",
+                    "description": "Unique Cart id for updating cart",
+                    "schema": {
+                        "type": "integer",
+                        "example": 931,
+                        "required": true
+                    }
+                },
+                {
+                    "in": "body",
+                    "name": "body",
+                    "schema": {
+                        "properties": {
+                            "quantity": {
+                                "type": "integer",
+                                "example": 2,
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully updated the cart",
+                "schema": {
+                  "$ref": "#/components/schemas/CartsUpdate_success"
+                }
+              },
+              "400": {
+                "description": "Invalid update user cart operation",
+                "schema": {
+                  "$ref": "#/components/schemas/CartsUpdate_invalid"
+                }
+              },
+              "401": {
+                "$ref": "#/components/schemas/UnauthorizedError"
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        },
+        "delete": {
+            "summary": "Remove single cart",
+            "description": "Remove a single user cart",
+            "produces": ["application/json"],
+            "security": [
+              {
+                "JWT": []
+              }
+            ],
+            "tags": ["carts"],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "cartid",
+                    "description": "Unique Cart id for removing cart",
+                    "schema": {
+                        "type": "integer",
+                        "example": 931,
+                        "required": true
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully removed a cart",
+                "schema": {
+                  "$ref": "#/components/schemas/CartsRemove_success"
+                }
+              },
+              "400": {
+                "description": "Invalid remove a user cart operation",
+                "schema": {
+                  "$ref": "#/components/schemas/CartsRemove_invalid"
+                }
+              },
+              "401": {
+                "$ref": "#/components/schemas/UnauthorizedError"
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        }
     }
   },
   "components": {
@@ -935,6 +1171,175 @@
           "message": {
             "type": "string",
             "example": "Error while removing user account"
+          }
+        }
+      },
+      "Cart": {
+        "properties": {
+            "cartid": {
+                "type": "integer",
+                "example": 1253
+            },
+            "userid": {
+                "type": "integer",
+                "example": 1223489053
+            },
+            "bookid": {
+                "type": "integer",
+                "example": 1242353
+            },
+            "quantity": {
+                "type": "integer",
+                "example": 1
+            },
+            "original_price": {
+                "type": "integer",
+                "example": 12532
+            },
+            "total_price": {
+                "type": "integer",
+                "example": 12532
+            }
+        }
+      },
+      "CartsGet_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got all carts"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+                "$ref": "#components/schemas/Cart"
+            }
+            
+          }
+        }
+      },
+      "CartsGet_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting user carts"
+          }
+        }
+      },
+      "CartsAdd_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully added cart"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+                "$ref": "#components/schemas/Cart"
+            }
+            
+          }
+        }
+      },
+      "CartsAdd_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while adding user carts"
+          }
+        }
+      },
+      "CartsUpdate_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully updated a cart"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+                "$ref": "#components/schemas/Cart"
+            }
+            
+          }
+        }
+      },
+      "CartsUpdate_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating a cart"
+          }
+        }
+      },
+      "CartsRemoveAll_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed all carts"
+          }
+        }
+      },
+      "CartsRemoveAll_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing all carts"
+          }
+        }
+      },
+      "CartsRemove_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed a cart"
+          }
+        }
+      },
+      "CartsRemove_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing a cart"
           }
         }
       }
