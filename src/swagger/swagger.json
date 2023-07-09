@@ -1533,6 +1533,93 @@
               }
             }
         }
+    },
+    "/search": {
+        "get": {
+            "summary": "Search books",
+            "description": "search all the books",
+            "produces": ["application/json"],
+            "tags": ["search"],
+            "parameters": [
+                {
+                    "in": "query",
+                    "name": "query",
+                    "description": "Book search query",
+                    "schema": {
+                        "type": "string",
+                        "example": "a"
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "search_by",
+                    "description": "Book search by i.e title, author, description",
+                    "schema": {
+                        "type": "string",
+                        "example": "title"
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "genre",
+                    "description": "Book search genre",
+                    "schema": {
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "page",
+                    "description": "Books search pagination page number",
+                    "schema": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "size",
+                    "description": "Book search pagination page size",
+                    "schema": {
+                        "type": "integer",
+                        "example": 5
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "sort_by",
+                    "description": "Book search sort by",
+                    "schema": {
+                        "type": "string",
+                        "example": ""
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully searchd books",
+                "schema": {
+                  "$ref": "#/components/schemas/SearchBooks_success"
+                }
+              },
+              "400": {
+                "description": "Invalid search books operation",
+                "schema": {
+                  "$ref": "#/components/schemas/SearchBooks_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        }
     }
   },
   "components": {
@@ -2514,6 +2601,44 @@
           "message": {
             "type": "string",
             "example": "Error while removing a book"
+          }
+        }
+      },
+      "SearchBooks_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully searched books"
+          },
+          "data": {
+            "properties": {
+                "pagination": {
+                    "$ref": "#/components/schemas/Pagination"
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/components/schemas/Books"
+                    }
+                }
+            }
+            
+          }
+        }
+      },
+      "SearchBooks_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while searching books"
           }
         }
       }
