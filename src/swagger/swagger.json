@@ -617,7 +617,121 @@
               "403": {
                 "description": "Invalid Validation Operation",
                 "schema": {
-                    "$ref": "#/components/schemas/NewInvalidation"
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        },
+        "post": {
+            "summary": "Add a book (ADMIN)",
+            "description": "Add a book for strictly admin only.",
+            "consumes": ["application/json"],
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "security": [{
+                "JWT": []
+            }],
+            "parameters": [
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "New Book object",
+                    "schema": {
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "One Piece",
+                                "required": true
+                            },
+                            "book_type": {
+                                "type": "string",
+                                "example": "Paper Back",
+                                "required": true
+                            },
+                            "price": {
+                                "type": "integer",
+                                "example": 1000,
+                                "required": true
+                            },
+                            "publication_date": {
+                                "type": "timestamp",
+                                "example": "2019-07-03",
+                                "required": true
+                            },
+                            "available_quantity": {
+                                "type": "integer",
+                                "example": 4,
+                                "required": true
+                            },
+                            "book_condition": {
+                                "type": "string",
+                                "example": "GOOD",
+                                "require": true
+                            },
+                            "isbn": {
+                                "type": "string",
+                                "example": "1903843829489",
+                                "required": true
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "It is a book about a pirate in search of a treasure whick will make him pirate king.",
+                                "required": true
+                            },
+                            "genre": {
+                                "type": "string",
+                                "example": "Anime",
+                                "required": true
+                            },
+                            "authorFirstname": {
+                                "type": "string",
+                                "example": "Jhon",
+                                "required": true
+                            },
+                            "authorLastname": {
+                                "type": "string",
+                                "example": "doe",
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully added a book",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksAdd_success"
+                }
+              },
+              "400": {
+                "description": "Invalid add a book operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksAdd_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "401": {
+                "description": "Unauthorized Operation",
+                "schema": {
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Unauthorized"
+                        }
+                    }
                 }
               },
               "default": {
@@ -659,7 +773,523 @@
               "403": {
                 "description": "Invalid Validation Operation",
                 "schema": {
-                    "$ref": "#/components/schemas/NewInvalidation"
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        },
+        "patch": {
+            "summary": "Update a book (ADMIN)",
+            "description": "Update a book for strictly admin only.",
+            "consumes": ["application/json"],
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "security": [{
+                "JWT": []
+            }],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "bookid",
+                    "description": "Unique Book Id",
+                    "schema": {
+                        "type": "integer",
+                        "example": 3299
+                    }
+                },
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Updated Book object",
+                    "schema": {
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "example": "One Piece"
+                            },
+                            "book_type": {
+                                "type": "string",
+                                "example": "Paper Back"
+                            },
+                            "price": {
+                                "type": "integer",
+                                "example": 1000
+                            },
+                            "publication_date": {
+                                "type": "timestamp",
+                                "example": "2019-07-03"
+                            },
+                            "available_quantity": {
+                                "type": "integer",
+                                "example": 4
+                            },
+                            "book_condition": {
+                                "type": "string",
+                                "example": "GOOD"
+                            },
+                            "isbn": {
+                                "type": "string",
+                                "example": "1903843829489"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "It is a book about a pirate in search of a treasure whick will make him pirate king."
+                            }
+                        }
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully updated a book",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksUpdate_success"
+                }
+              },
+              "400": {
+                "description": "Invalid update a book operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksUpdate_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "401": {
+                "description": "Unauthorized Operation",
+                "schema": {
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Unauthorized"
+                        }
+                    }
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        },
+        "delete": {
+            "summary": "Remove a single book (ADMIN)",
+            "description": "Remove a single book for strictly admin only",
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "security": [{
+                "JWT": []
+            }],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "bookid",
+                    "description": "Unique Book Id",
+                    "schema": {
+                        "type": "integer",
+                        "example": 3299
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully removed a book",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksSingleRemove_success"
+                }
+              },
+              "400": {
+                "description": "Invalid remove a book operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksSingleRemove_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        }
+    },
+    "/books/{bookid}/author": {
+        "patch": {
+            "summary": "Update a book author (ADMIN)",
+            "description": "Update a book author for strictly admin only.",
+            "consumes": ["application/json"],
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "security": [{
+                "JWT": []
+            }],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "bookid",
+                    "description": "Unique Book Id",
+                    "schema": {
+                        "type": "integer",
+                        "example": 3299
+                    }
+                },
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Updated Book auhtor object",
+                    "schema": {
+                        "properties": {
+                            "firstname": {
+                                "type": "string",
+                                "example": "Jhon",
+                                "required": true
+                            },
+                            "lastname": {
+                                "type": "string",
+                                "example": "doe",
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully updated book author",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksUpdateAuthor_success"
+                }
+              },
+              "400": {
+                "description": "Invalid update book author operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksUpdateAuthor_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "401": {
+                "description": "Unauthorized Operation",
+                "schema": {
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Unauthorized"
+                        }
+                    }
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        }
+    },
+    "/books/{bookid}/genre": {
+        "patch": {
+            "summary": "Update a book genre (ADMIN)",
+            "description": "Update a book genre for strictly admin only.",
+            "consumes": ["application/json"],
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "security": [{
+                "JWT": []
+            }],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "bookid",
+                    "description": "Unique Book Id",
+                    "schema": {
+                        "type": "integer",
+                        "example": 3299
+                    }
+                },
+                {
+                    "in": "body",
+                    "name": "body",
+                    "description": "Updated Book genre title",
+                    "schema": {
+                        "properties": {
+                            "genre": {
+                                "type": "string",
+                                "example": "Anime",
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully updated book genre",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksUpdateGenre_success"
+                }
+              },
+              "400": {
+                "description": "Invalid update book genre operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksUpdateGenre_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "401": {
+                "description": "Unauthorized Operation",
+                "schema": {
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Unauthorized"
+                        }
+                    }
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        }
+    },
+    "/books/{bookid}/image": {
+        "post": {
+            "summary": "Add a book image (ADMIN)",
+            "description": "Add a book image for strictly admin only.",
+            "consumes": ["multipart/form-data"],
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "security": [{
+                "JWT": []
+            }],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "bookid",
+                    "description": "Unique Book Id",
+                    "schema": {
+                        "type": "integer",
+                        "example": 3299
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "type",
+                    "description": "Book image type (eg. 'FRONT', BACK', )",
+                    "schema": {
+                        "type": "string",
+                        "example": "FRONT"
+                    }
+                },
+                {
+                    "in": "formData",
+                    "name": "bookimage",
+                    "description": "Book image form data",
+                    "type": "file"
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully added book image",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksAddImage_success"
+                }
+              },
+              "400": {
+                "description": "Invalid add book image operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksAddImage_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "401": {
+                "description": "Unauthorized Operation",
+                "schema": {
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Unauthorized"
+                        }
+                    }
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        },
+        "patch": {
+            "summary": "Update book image (ADMIN)",
+            "description": "Update a book image for strictly admin only.",
+            "consumes": ["multipart/form-data"],
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "security": [{
+                "JWT": []
+            }],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "bookid",
+                    "description": "Unique Book Id",
+                    "schema": {
+                        "type": "integer",
+                        "example": 3299
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "type",
+                    "description": "Book image type (eg. 'FRONT', BACK', )",
+                    "schema": {
+                        "type": "string",
+                        "example": "FRONT"
+                    }
+                },
+                {
+                    "in": "formData",
+                    "name": "bookimage",
+                    "description": "Book image form data",
+                    "type": "file"
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully updated book image",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksUpdateImage_success"
+                }
+              },
+              "400": {
+                "description": "Invalid update book image operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksUpdateImage_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "401": {
+                "description": "Unauthorized Operation",
+                "schema": {
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Unauthorized"
+                        }
+                    }
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        },
+        "delete": {
+            "summary": "Remove book image (ADMIN)",
+            "description": "Remove a book image for strictly admin only.",
+            "consumes": ["multipart/form-data"],
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "security": [{
+                "JWT": []
+            }],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "bookid",
+                    "description": "Unique Book Id",
+                    "schema": {
+                        "type": "integer",
+                        "example": 3299
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "type",
+                    "description": "Book image type (eg. 'FRONT', BACK', )",
+                    "schema": {
+                        "type": "string",
+                        "example": "FRONT"
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully removed book image",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksRemoveImage_success"
+                }
+              },
+              "400": {
+                "description": "Invalid remove book image operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksRemoveImage_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/RegisterLogin_invalidation"
+                }
+              },
+              "401": {
+                "description": "Unauthorized Operation",
+                "schema": {
+                    "properties": {
+                        "success": {
+                            "type": "boolean",
+                            "example": false
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Unauthorized"
+                        }
+                    }
                 }
               },
               "default": {
@@ -1669,6 +2299,221 @@
           "message": {
             "type": "string",
             "example": "Error while getting a book"
+          }
+        }
+      },
+      "BooksAdd_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully added new book"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SingleBook"
+          }
+        }
+      },
+      "BooksAdd_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while adding new book"
+          }
+        }
+      },
+      "BooksUpdate_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully updated a book"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SingleBook"
+          }
+        }
+      },
+      "BooksUpdate_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating a book"
+          }
+        }
+      },
+      "BooksUpdateAuthor_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully updated Book Author"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SingleBook"
+          }
+        }
+      },
+      "BooksUpdateAuthor_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating book author"
+          }
+        }
+      },
+      "BooksUpdateGenre_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully updated Book Genre"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SingleBook"
+          }
+        }
+      },
+      "BooksUpdateGenre_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating book genre"
+          }
+        }
+      },
+      "BooksAddImage_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully uploaded Book image"
+          },
+          "data": {
+            "properties": {
+                "src": {
+                    "type": "string",
+                    "example": "htttps:/cloudinary/image/12940918.png"
+                }
+            }
+          }
+        }
+      },
+      "BooksAddImage_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while uploading book image"
+          }
+        }
+      },
+      "BooksUpdateImage_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully updated Book image"
+          }
+        }
+      },
+      "BooksUpdateImage_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while uploading book image"
+          }
+        }
+      },
+      "BooksRemoveImage_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed Book image"
+          }
+        }
+      },
+      "BooksRemoveImage_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to remove book image"
+          }
+        }
+      },
+      "BooksSingleRemove_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed a Book"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SingleBook"
+          }
+        }
+      },
+      "BooksSingleRemove_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing a book"
           }
         }
       }
