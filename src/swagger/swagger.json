@@ -557,6 +557,117 @@
         }
       }
     },
+    "/books": {
+        "get": {
+            "summary": "Get all books",
+            "description": "Show all the books",
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "parameters": [
+                {
+                    "in": "query",
+                    "name": "genre",
+                    "description": "Book genre title",
+                    "schema": {
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "author",
+                    "description": "Book author fullname with '_' instead of spaces",
+                    "schema": {
+                        "type": "string",
+                        "example": "Chhewang_Sherpa"
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "page",
+                    "description": "Books get pagination page number",
+                    "schema": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                {
+                    "in": "query",
+                    "name": "size",
+                    "description": "Book get pagination page size",
+                    "schema": {
+                        "type": "integer",
+                        "example": 5
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully got all books",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksGet_success"
+                }
+              },
+              "400": {
+                "description": "Invalid get all books operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksGet_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/NewInvalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        }
+    },
+    "/books/{bookid}": {
+        "get": {
+            "summary": "Get a single book",
+            "description": "Show a single book",
+            "produces": ["application/json"],
+            "tags": ["books"],
+            "parameters": [
+                {
+                    "in": "path",
+                    "name": "bookid",
+                    "description": "Unique Book Id",
+                    "schema": {
+                        "type": "integer",
+                        "example": 123
+                    }
+                }
+            ],
+            "responses": {
+              "200": {
+                "description": "Successfully got a book",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksSingleGet_success"
+                }
+              },
+              "400": {
+                "description": "Invalid get a books operation",
+                "schema": {
+                  "$ref": "#/components/schemas/BooksSingleGet_invalid"
+                }
+              },
+              "403": {
+                "description": "Invalid Validation Operation",
+                "schema": {
+                    "$ref": "#/components/schemas/NewInvalidation"
+                }
+              },
+              "default": {
+                "description": "Unexpected Error"
+              }
+            }
+        }
+    },
     "/carts": {
         "get": {
           "summary": "Get User carts",
@@ -1340,6 +1451,224 @@
           "message": {
             "type": "string",
             "example": "Error while removing a cart"
+          }
+        }
+      },
+      "Pagination": {
+        "description": "Book Pagination Metadata",
+        "properties": {
+            "total_results": {
+                "type": "integer",
+                "example": 1
+            },
+            "total_pages": {
+                "type": "integer",
+                "example": 1
+            },
+            "current_page": {
+                "type": "integer",
+                "example": 1
+            },
+            "has_next_page": {
+                "type": "boolean",
+                "example": false
+            },
+            "has_previous_page": {
+                "type": "integer",
+                "example": false
+            }
+        }
+      },
+      "Books": {
+        "properties": {
+            "bookid": {
+                "type": "integer",
+                "example": 125
+            },
+            "authorid": {
+                "type": "integer",
+                "example": 122348
+            },
+            "title": {
+                "type": "string",
+                "example": "One Piece"
+            },
+            "book_type": {
+                "type": "string",
+                "example": "Paper Back"
+            },
+            "price": {
+                "type": "integer",
+                "example": 1000
+            },
+            "publication_date": {
+                "type": "timestamp",
+                "example": "2019-07-03T09:38:35.765Z"
+            },
+            "available_quantity": {
+                "type": "integer",
+                "example": 4
+            },
+            "book_condition": {
+                "type": "string",
+                "example": "GOOD"
+            },
+            "isbn": {
+                "type": "string",
+                "example": "1903843829489"
+            },
+            "createdat": {
+                "type": "timestamp",
+                "example": "2011-07-03T09:38:35.765Z"
+            },
+            "description": {
+                "type": "string",
+                "example": "It is a book about a pirate in search of a treasure whick will make him pirate king."
+            },
+            "genre_id": {
+                "type": "integer",
+                "example": "2982"
+            },
+            "genre_name": {
+                "type": "string",
+                "example": "Anime"
+            },
+            "firstname": {
+                "type": "string",
+                "example": "Chhewang"
+            },
+            "lastname": {
+                "type": "string",
+                "example": "Sherpa"
+            }
+        }
+      },
+      "BooksGet_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got all books"
+          },
+          "data": {
+            "properties": {
+                "pagination": {
+                    "$ref": "#/components/schemas/Pagination"
+                },
+                "results": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/components/schemas/Books"
+                    }
+                }
+            }
+            
+          }
+        }
+      },
+      "BooksGet_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting all books"
+          }
+        }
+      },
+      "NewInvalidation": {
+        "properties": {
+            "success": {
+                "type": "boolean",
+                "example": false
+            },
+            "message": {
+                "type": "string",
+                "example": "Validation Error"
+            }
+        }
+      },
+      "SingleBook": {
+        "properties": {
+            "bookid": {
+                "type": "integer",
+                "example": 125
+            },
+            "authorid": {
+                "type": "integer",
+                "example": 122348
+            },
+            "title": {
+                "type": "string",
+                "example": "One Piece"
+            },
+            "book_type": {
+                "type": "string",
+                "example": "Paper Back"
+            },
+            "price": {
+                "type": "integer",
+                "example": 1000
+            },
+            "publication_date": {
+                "type": "timestamp",
+                "example": "2019-07-03T09:38:35.765Z"
+            },
+            "available_quantity": {
+                "type": "integer",
+                "example": 4
+            },
+            "book_condition": {
+                "type": "string",
+                "example": "GOOD"
+            },
+            "isbn": {
+                "type": "string",
+                "example": "1903843829489"
+            },
+            "createdat": {
+                "type": "timestamp",
+                "example": "2011-07-03T09:38:35.765Z"
+            },
+            "description": {
+                "type": "string",
+                "example": "It is a book about a pirate in search of a treasure whick will make him pirate king."
+            },
+            "genre_id": {
+                "type": "integer",
+                "example": "2982"
+            }
+        }
+      },
+      "BooksSingleGet_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got a book"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SingleBook"
+          }
+        }
+      },
+      "BooksSingleGet_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting a book"
           }
         }
       }
