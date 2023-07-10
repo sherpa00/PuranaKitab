@@ -1620,6 +1620,217 @@
               }
             }
         }
+    },
+    "/reviews": {
+        "get": {
+          "summary": "Get Book Reviews",
+          "description": "Get the book reivews",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "tags": ["book reviews"],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Unique Book Id",
+              "schema": {
+                "properties": {
+                  "bookid": {
+                    "type": "integer",
+                    "example": 2787,
+                    "required": true
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully got all book reviews",
+              "schema": {
+                "$ref": "#/components/schemas/ReviewsGet_success"
+              }
+            },
+            "400": {
+              "description": "Invalid get book reviews operation",
+              "schema": {
+                "$ref": "#/components/schemas/ReviewsGet_invalid"
+              }
+            },
+            "403": {
+              "description": "Invalid Validation Operation",
+              "schema": {
+                "$ref": "#/components/schemas/RegisterLogin_invalidation"
+              }
+            },
+            "default": {
+              "description": "Unexpected Error"
+            }
+          }
+        },
+        "post": {
+          "summary": "Add Book Review",
+          "description": "Add the book reivew",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "tags": ["book reviews"],
+          "security": [{
+            "JWT": []
+          }],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Unique Book Id",
+              "schema": {
+                "properties": {
+                  "bookid": {
+                    "type": "integer",
+                    "example": 2787,
+                    "required": true
+                  },
+                  "stars": {
+                    "type": "integer",
+                    "example": 4,
+                    "required": true
+                  },
+                  "message": {
+                    "type": "string",
+                    "example": "Nice Book",
+                    "required": true
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully added book review",
+              "schema": {
+                "$ref": "#/components/schemas/ReviewsAdd_success"
+              }
+            },
+            "400": {
+              "description": "Invalid add book review operation",
+              "schema": {
+                "$ref": "#/components/schemas/ReviewsAdd_invalid"
+              }
+            },
+            "401": {
+              "$ref": "#/components/schemas/UnauthorizedError"
+            },
+            "403": {
+              "description": "Invalid Validation Operation",
+              "schema": {
+                "$ref": "#/components/schemas/RegisterLogin_invalidation"
+              }
+            },
+            "default": {
+              "description": "Unexpected Error"
+            }
+          }
+        },
+        "delete": {
+          "summary": "Remove All Book Reviews",
+          "description": "Remove all book reivews",
+          "consumes": ["application/json"],
+          "produces": ["application/json"],
+          "tags": ["book reviews"],
+          "security": [{
+            "JWT": []
+          }],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "description": "Unique Book Id",
+              "schema": {
+                "properties": {
+                  "bookid": {
+                    "type": "integer",
+                    "example": 2787,
+                    "required": true
+                  }
+                }
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully removed all book reviews",
+              "schema": {
+                "$ref": "#/components/schemas/ReviewsRemoveAll_success"
+              }
+            },
+            "400": {
+              "description": "Invalid remove all book reviews operation",
+              "schema": {
+                "$ref": "#/components/schemas/ReviewsRemoveAll_invalid"
+              }
+            },
+            "401": {
+              "$ref": "#/components/schemas/UnauthorizedError"
+            },
+            "403": {
+              "description": "Invalid Validation Operation",
+              "schema": {
+                "$ref": "#/components/schemas/RegisterLogin_invalidation"
+              }
+            },
+            "default": {
+              "description": "Unexpected Error"
+            }
+          }
+        }
+    },
+    "/reviews/{reviewid}": {
+      "delete": {
+        "summary": "Add Book Review",
+        "description": "Add the book reivew",
+        "produces": ["application/json"],
+        "tags": ["book reviews"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "reviewid",
+            "description": "Unique Book Review Id",
+            "schema": {
+              "type": "integer",
+              "example": 234,
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully remvoed a book review",
+            "schema": {
+              "$ref": "#/components/schemas/ReviewsRemove_success"
+            }
+          },
+          "400": {
+            "description": "Invalid remove a book review operation",
+            "schema": {
+              "$ref": "#/components/schemas/ReviewsRemove_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2639,6 +2850,148 @@
           "message": {
             "type": "string",
             "example": "Error while searching books"
+          }
+        }
+      },
+      "Review": {
+        "properties": {
+          "reviewid": {
+            "type": "integer",
+            "example": 234
+          },
+          "userid": {
+            "type": "integer",
+            "example": 234532
+          },
+          "bookid": {
+            "type": "integer",
+            "example": 3728
+          },
+          "username": {
+            "type": "string",
+            "example": "jhon doe"
+          },
+          "stars": {
+            "type": "integer",
+            "example": 3
+          },
+          "message": {
+            "type": "string",
+            "example": "Nice Book"
+          }
+        }
+      },
+      "ReviewsGet_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got all book reviews"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          }
+        }
+      },
+      "ReviewsGet_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting book reviews"
+          }
+        }
+      },
+      "ReviewsAdd_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully added book review"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Review"
+          }
+        }
+      },
+      "ReviewsAdd_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while adding book review"
+          }
+        }
+      },
+      "ReviewsRemove_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed book review"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Review"
+          }
+        }
+      },
+      "ReviewsRemove_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing book review"
+          }
+        }
+      },
+      "ReviewsRemoveAll_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed all book review"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          }
+        }
+      },
+      "ReviewsRemoveAll_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing all book review"
           }
         }
       }
