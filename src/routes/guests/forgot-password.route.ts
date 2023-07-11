@@ -3,7 +3,6 @@ import { body } from 'express-validator'
 import { forgotPasswordAccountLimit } from '../../utils/rateLimiters'
 import { ForgotPasswordOne } from '../../controllers/forgot-password.controller'
 
-
 const router = express.Router()
 
 router.post(

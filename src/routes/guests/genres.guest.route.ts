@@ -1,15 +1,15 @@
-import {Router, type IRouter} from 'express'
+import { Router, type IRouter } from 'express'
 import { GetBookOneGenres } from '../../controllers/genres.controller'
 import { query } from 'express-validator'
 
 const router: IRouter = Router()
 
 router.get(
-    '/',
-    query('page').optional().isInt().withMessage('Query page should be an integer'),
-    query('size').optional().isInt().withMessage('Query size should be an integer'),
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    GetBookOneGenres
-  )
+  '/',
+  query('page').optional().isInt().withMessage('Query page should be an integer'),
+  query('size').optional().isInt().withMessage('Query size should be an integer'),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+  GetBookOneGenres
+)
 
-export {router as GenreGuestRouter}
+export { router as GenreGuestRouter }

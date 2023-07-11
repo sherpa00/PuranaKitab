@@ -1,11 +1,11 @@
+import fs from 'fs'
 import express, { type Application, type Request, type Response } from 'express'
 import morgan from 'morgan'
 import pinoHTTP from 'pino-http'
 import StatusCode from 'http-status-codes'
 import cors from 'cors'
+import swaggerUi from 'swagger-ui-express'
 import logger from './utils/logger.utils'
-import passport from './configs/passport.config'
-import { isAdmin } from './middlewares/admin.middleware'
 import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
 import { RootRouter } from './routes'
 
@@ -53,22 +53,12 @@ app.get('/api', (req: Request, res: Response): void => {
   }
 })
 
-// private route for testing authorizations
-app.get('/api/private', passport.authenticate('jwt', { session: false }), (req: Request, res: Response) => {
-  res.status(StatusCode.OK).json({
-    success: true,
-    message: 'Authorization Success',
-    data: req.user
-  })
-})
+// api docs
+const swaggerFile: any = process.cwd() + '/src/swagger/swagger.json'
+const swaggerData: any = fs.readFileSync(swaggerFile, 'utf-8')
+const swaggerDocs: any = JSON.parse(swaggerData)
 
-// private route for admin
-app.get('/api/isadmin', passport.authenticate('jwt', { session: false }), isAdmin, (req: Request, res: Response) => {
-  res.status(StatusCode.OK).json({
-    success: true,
-    message: 'WELCOME ADMIN'
-  })
-})
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
 
 // root api router
 app.use('/', RootRouter)

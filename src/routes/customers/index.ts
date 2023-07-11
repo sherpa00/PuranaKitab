@@ -14,4 +14,4 @@ router.use('/carts', CartRouter)
 
 router.use('/reviews', ReviewCustomerRouter)
 
-export {router as CustomerRouter}
+export { router as CustomerRouter }

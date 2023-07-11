@@ -1,4 +1,4 @@
-import Router, {type IRouter} from 'express'
+import Router, { type IRouter } from 'express'
 import { SearchRouter } from './search.route'
 import { ForgotPasswordRouter } from './forgot-password.route'
 import { ResetPasswordRouter } from './reset-password.route'
@@ -9,7 +9,6 @@ import { GenreGuestRouter } from './genres.guest.route'
 import { LoginRouter } from './login.route'
 import { RegisterRouter } from './register.route'
 import { ReviewsGuestRouter } from './reviews.guest.route'
-
 
 const router: IRouter = Router()
 router.use('/register', RegisterRouter)
@@ -32,6 +31,4 @@ router.use('/genres', GenreGuestRouter)
 
 router.use('/reviews', ReviewsGuestRouter)
 
-
-
-export {router as GuestRouter}
+export { router as GuestRouter }

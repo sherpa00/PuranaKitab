@@ -27,8 +27,8 @@ router.post(
     .withMessage('Book Condition should either be GOOD or ACCEPTABLE or OLD'),
   body('available_quantity').notEmpty().withMessage('Book Available Quantity Should not be empty'),
   body('isbn').notEmpty().withMessage('Book isbn Should not be empty'),
-  body('description').optional().isString().withMessage('Book description Should should be string'),
-  body('genre').isString().withMessage('Book genre should be a string'),
+  body('description').notEmpty().isString().withMessage('Book description Should should be string'),
+  body('genre').notEmpty().isString().withMessage('Book genre should be a string'),
   body('authorFirstname').notEmpty().withMessage('Book author firstname Should not be empty'),
   body('authorLastname').notEmpty().withMessage('Book author lastname Should not be empty'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -61,7 +61,7 @@ router.patch(
   body('title').optional().isString().withMessage('Book Title Should be string'),
   body('price').optional().isInt().withMessage('Book Price Should be integer'),
   body('publication_date').optional().trim().isDate().withMessage('Book Publication Date Should be valid date'),
-  body('book_type').optional().isAlpha().withMessage('Book Type should be string'),
+  body('book_type').optional().isString().withMessage('Book Type should be string'),
   body('book_condition')
     .optional()
     .isIn(['GOOD', 'ACCEPTABLE', 'OLD'])

@@ -6,24 +6,12 @@ import { ReviewsAdminRouter } from './reviews.admin.route'
 
 const router: IRouter = Router()
 
-router.use(
-    '/books',
-    BookAdminRouter
-)
+router.use('/books', BookAdminRouter)
 
-router.use(
-    '/authors',
-    AuthorsAdminRouter
-)
+router.use('/authors', AuthorsAdminRouter)
 
-router.use(
-    '/genres',
-    GenresAdminRouter
-)
+router.use('/genres', GenresAdminRouter)
 
-router.use(
-    '/reviews',
-    ReviewsAdminRouter
-)
+router.use('/reviews', ReviewsAdminRouter)
 
-export {router as AdminRouter}
+export { router as AdminRouter }
