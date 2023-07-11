@@ -7,7 +7,7 @@ const generatePaginationMetadata = (totalResult: number, currentPage: number, si
   const hasPreviousPage: boolean = currentPage > 1
 
   return {
-    total_results: totalResult,
+    total_results: Number(totalResult),
     total_pages: totalPages,
     current_page: currentPage,
     has_next_page: hasNextPage,

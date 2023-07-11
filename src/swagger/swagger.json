@@ -1622,52 +1622,52 @@
         }
     },
     "/reviews": {
-        "get": {
-          "summary": "Get Book Reviews",
-          "description": "Get the book reivews",
-          "consumes": ["application/json"],
-          "produces": ["application/json"],
-          "tags": ["book reviews"],
-          "parameters": [
-            {
-              "in": "body",
-              "name": "body",
-              "description": "Unique Book Id",
-              "schema": {
-                "properties": {
-                  "bookid": {
-                    "type": "integer",
-                    "example": 2787,
-                    "required": true
-                  }
+      "get": {
+        "summary": "Get Book Reviews",
+        "description": "Get the book reivews",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["book reviews"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Unique Book Id",
+            "schema": {
+              "properties": {
+                "bookid": {
+                  "type": "integer",
+                  "example": 2787,
+                  "required": true
                 }
               }
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successfully got all book reviews",
-              "schema": {
-                "$ref": "#/components/schemas/ReviewsGet_success"
-              }
-            },
-            "400": {
-              "description": "Invalid get book reviews operation",
-              "schema": {
-                "$ref": "#/components/schemas/ReviewsGet_invalid"
-              }
-            },
-            "403": {
-              "description": "Invalid Validation Operation",
-              "schema": {
-                "$ref": "#/components/schemas/RegisterLogin_invalidation"
-              }
-            },
-            "default": {
-              "description": "Unexpected Error"
-            }
           }
-        },
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully got all book reviews",
+            "schema": {
+              "$ref": "#/components/schemas/ReviewsGet_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get book reviews operation",
+            "schema": {
+              "$ref": "#/components/schemas/ReviewsGet_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      },
         "post": {
           "summary": "Add Book Review",
           "description": "Add the book reivew",
@@ -1785,8 +1785,8 @@
     },
     "/reviews/{reviewid}": {
       "delete": {
-        "summary": "Add Book Review",
-        "description": "Add the book reivew",
+        "summary": "Remove sinlge Book Review",
+        "description": "Remove single book reivew",
         "produces": ["application/json"],
         "tags": ["book reviews"],
         "security": [{
@@ -1815,6 +1815,232 @@
             "description": "Invalid remove a book review operation",
             "schema": {
               "$ref": "#/components/schemas/ReviewsRemove_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/authors": {
+      "get": {
+        "summary": "Get Book Authors",
+        "description": "Get the book authors",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["book authors"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Book Authors Pagination page number",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "description": "Book Authors Pagination page size",
+            "schema": {
+              "type": "integer",
+              "example": 3,
+              "required": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully got all book authors",
+            "schema": {
+              "$ref": "#/components/schemas/AuthorsGet_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get book authors operation",
+            "schema": {
+              "$ref": "#/components/schemas/AuthorsGet_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Book Author",
+        "description": "Add the book author",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["book authors"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "properties": {
+                "firstname": {
+                  "type": "string",
+                  "example": "Jhon",
+                  "required": true
+                },
+                "lastname": {
+                  "type": "string",
+                  "example": "Chamling",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully added book author",
+            "schema": {
+              "$ref": "#/components/schemas/AuthorsAdd_success"
+            }
+          },
+          "400": {
+            "description": "Invalid add book author operation",
+            "schema": {
+              "$ref": "#/components/schemas/AuthorsAdd_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/authors/{authorid}": {
+      "patch": {
+        "summary": "Update Book author",
+        "description": "Update the book author",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["book authors"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authorid",
+            "description": "Unique Book authorid",
+            "schema": {
+              "type": "integer",
+              "example": 3721,
+              "required": true
+            }
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update Book author object",
+            "schema": {
+              "properties": {
+                "firstname": {
+                  "type": "string",
+                  "example": "Roman",
+                  "required": false
+                },
+                "lastname": {
+                  "type": "string",
+                  "example": "Regins",
+                  "required": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated book author",
+            "schema": {
+              "$ref": "#/components/schemas/AuthorsUpdate_success"
+            }
+          },
+          "400": {
+            "description": "Invalid update a book author operation",
+            "schema": {
+              "$ref": "#/components/schemas/AuthorsUpdate_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove Book Author",
+        "description": "Remove the book Author",
+        "produces": ["application/json"],
+        "tags": ["book authors"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "authorid",
+            "description": "Unique Book authorid",
+            "schema": {
+              "type": "integer",
+              "example": 3721,
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully remvoed book author",
+            "schema": {
+              "$ref": "#/components/schemas/AuthorsRemove_success"
+            }
+          },
+          "400": {
+            "description": "Invalid remove a book author operation",
+            "schema": {
+              "$ref": "#/components/schemas/AuthorsRemove_invalid"
             }
           },
           "401": {
@@ -2992,6 +3218,183 @@
           "message": {
             "type": "string",
             "example": "Error while removing all book review"
+          }
+        }
+      },
+      "Author": {
+        "properties": {
+          "authorid": {
+            "type": "integer",
+            "example": 345
+          },
+          "firstname": {
+            "type": "string",
+            "example": "Jhon"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "fullname": {
+            "type": "string",
+            "example": "Jhon Doe"
+          }
+        }
+      },
+      "AuthorsGet_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got all book authors"
+          },
+          "data": {
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Author"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AuthorsGet_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting all book authors"
+          }
+        }
+      },
+      "AuthorsAdd_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully added book author"
+          },
+          "data": {
+            "properties": {
+              "authorid": {
+                "type": "integer",
+                "example": 234
+              },
+              "firstname": {
+                "type": "string",
+                "example": "Jhon"
+              },
+              "lastname": {
+                "type": "string",
+                "example": "Cena"
+              }
+            }
+          }
+        }
+      },
+      "AuthorsAdd_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting all book authors"
+          }
+        }
+      },
+      "AuthorsUpdate_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully updated book author"
+          },
+          "data": {
+            "properties": {
+              "authorid": {
+                "type": "integer",
+                "example": 234
+              },
+              "firstname": {
+                "type": "string",
+                "example": "Jhon"
+              },
+              "lastname": {
+                "type": "string",
+                "example": "Cena"
+              }
+            }
+          }
+        }
+      },
+      "AuthorsUpdate_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating book author"
+          }
+        }
+      },
+      "AuthorsRemove_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed book author"
+          },
+          "data": {
+            "properties": {
+              "authorid": {
+                "type": "integer",
+                "example": 234
+              },
+              "firstname": {
+                "type": "string",
+                "example": "Jhon"
+              },
+              "lastname": {
+                "type": "string",
+                "example": "Cena"
+              }
+            }
+          }
+        }
+      },
+      "AuthorsRemove_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing book author"
           }
         }
       }
