@@ -2057,6 +2057,222 @@
           }
         }
       }
+    },
+    "/genres": {
+      "get": {
+        "summary": "Get Book Genres",
+        "description": "Get the book genres",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["book genres"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Book Genres Pagination page number",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "description": "Book Genres Pagination page size",
+            "schema": {
+              "type": "integer",
+              "example": 3,
+              "required": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully got all book genres",
+            "schema": {
+              "$ref": "#/components/schemas/GenresGet_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get book gernes operation",
+            "schema": {
+              "$ref": "#/components/schemas/GenresGet_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add Book Genre",
+        "description": "Add the book genre",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["book genres"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "properties": {
+                "genre": {
+                  "type": "string",
+                  "example": "tech",
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully added book genre",
+            "schema": {
+              "$ref": "#/components/schemas/GenresAdd_success"
+            }
+          },
+          "400": {
+            "description": "Invalid add book genre operation",
+            "schema": {
+              "$ref": "#/components/schemas/GenresAdd_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/genres/{genreid}": {
+      "patch": {
+        "summary": "Update Book genre",
+        "description": "Update the book genre",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["book genres"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genreid",
+            "description": "Unique Book genreid",
+            "schema": {
+              "type": "integer",
+              "example": 2093,
+              "required": true
+            }
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Update Book genre object",
+            "schema": {
+              "properties": {
+                "genre": {
+                  "type": "string",
+                  "example": "newtech",
+                  "required": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated book genre",
+            "schema": {
+              "$ref": "#/components/schemas/GenresUpdate_success"
+            }
+          },
+          "400": {
+            "description": "Invalid update a book genre operation",
+            "schema": {
+              "$ref": "#/components/schemas/GenresUpdate_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove Book Genre",
+        "description": "Remove the book genre",
+        "produces": ["application/json"],
+        "tags": ["book genres"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "genreid",
+            "description": "Unique Book genreid",
+            "schema": {
+              "type": "integer",
+              "example": 201,
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully remvoed book genre",
+            "schema": {
+              "$ref": "#/components/schemas/GenresRemove_success"
+            }
+          },
+          "400": {
+            "description": "Invalid remove a book genre operation",
+            "schema": {
+              "$ref": "#/components/schemas/GenresRemove_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError"
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3395,6 +3611,136 @@
           "message": {
             "type": "string",
             "example": "Error while removing book author"
+          }
+        }
+      },
+      "Genre": {
+        "properties": {
+          "genre_id": {
+            "type": "integer",
+            "example": 123
+          },
+          "genre": {
+            "type": "string",
+            "example": "Tech"
+          }
+        }
+      },
+      "GenresGet_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got all book genres"
+          },
+          "data": {
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Genre"
+                }
+              }
+            }
+          }
+        }
+      },
+      "GenresGet_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting all book genres"
+          }
+        }
+      },
+      "GenresAdd_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully added book genre"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Genre"
+          }
+        }
+      },
+      "GenresAdd_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while adding book genre"
+          }
+        }
+      },
+      "GenresUpdate_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully updated book genre"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Genre"
+          }
+        }
+      },
+      "GenresUpdate_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while updating book genre"
+          }
+        }
+      },
+      "GenresRemove_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed book genre"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Genre"
+          }
+        }
+      },
+      "GenresRemove_invalid" : {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while removing book genre"
           }
         }
       }
