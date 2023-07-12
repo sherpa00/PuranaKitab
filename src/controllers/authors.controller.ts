@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
-import CustomError from '../../../utils/custom-error'
-import { type ServiceResponse } from '../../../types'
-import { AddNewBookAuthor, GetAllBookAuthors, RemoveAuthor, UpdateAuthor } from '../../../services/authors.service'
+import CustomError from '../utils/custom-error'
+import { type ServiceResponse } from '../types'
+import { AddNewBookAuthor, GetAllBookAuthors, RemoveAuthor, UpdateAuthor } from '../services/authors.service'
 
 // funciton to capitalize
 export const capitalize = <T extends string>(word: T): string => {

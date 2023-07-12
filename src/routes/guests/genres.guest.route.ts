@@ -1,5 +1,5 @@
 import { Router, type IRouter } from 'express'
-import { GetBookOneGenres } from '../../__tests__/integration/controllers/genres.controller'
+import { GetBookOneGenres } from '../../controllers/genres.controller'
 import { query } from 'express-validator'
 
 const router: IRouter = Router()

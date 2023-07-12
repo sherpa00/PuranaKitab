@@ -1,9 +1,9 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { DeleteUser, GetUserData, UpdateEmail, UpdatePassword, UpdateUsername } from '../../../services/user.service'
-import type { ServiceResponse } from '../../../types'
+import { DeleteUser, GetUserData, UpdateEmail, UpdatePassword, UpdateUsername } from '../services/user.service'
+import type { ServiceResponse } from '../types'
 import { validationResult } from 'express-validator'
-import CustomError from '../../../utils/custom-error'
+import CustomError from '../utils/custom-error'
 
 // controller for get the user data
 const GetOneUserData = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

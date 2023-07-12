@@ -1,9 +1,9 @@
 import { type Request, type Response, type NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
-import { type InewUser } from '../../../services/register.service'
-import LoginUser, { type loginPayload } from '../../../services/login.service'
-import CustomError from '../../../utils/custom-error'
+import { type InewUser } from '../services/register.service'
+import LoginUser, { type loginPayload } from '../services/login.service'
+import CustomError from '../utils/custom-error'
 
 const LoginOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

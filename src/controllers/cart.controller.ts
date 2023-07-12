@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import { StatusCodes } from 'http-status-codes'
-import CustomError from '../../../utils/custom-error'
-import { AddCart, GetAllCart, UpdateCart, RemoveSingleCart, RemoveAllCart } from '../../../services/cart.service'
-import type { ServiceResponse } from '../../../types'
+import CustomError from '../utils/custom-error'
+import { AddCart, GetAllCart, UpdateCart, RemoveSingleCart, RemoveAllCart } from '../services/cart.service'
+import type { ServiceResponse } from '../types'
 
 // controller for adding cart
 const GetOneAllCart = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

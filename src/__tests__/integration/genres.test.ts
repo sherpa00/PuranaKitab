@@ -4,7 +4,7 @@ import { hash, genSalt } from 'bcrypt'
 import app from '../../index'
 import { db } from '../../configs/db.configs'
 import { type Iuser } from '../../types'
-import { capitalize } from './controllers/authors.controller'
+import { capitalize } from '../../controllers/authors.controller'
 
 describe('Testing book genres routes', () => {
   // temp genres payload

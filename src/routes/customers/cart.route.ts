@@ -6,7 +6,7 @@ import {
   RemoveAllOneCart,
   RemoveSingleOneCart,
   UpdateOneCart
-} from '../../__tests__/integration/controllers/cart.controller'
+} from '../../controllers/cart.controller'
 
 const router = express.Router()
 

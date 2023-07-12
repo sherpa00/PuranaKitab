@@ -1,7 +1,7 @@
 import express from 'express'
 import { body, param } from 'express-validator'
 import { resettPasswordAccountLimit } from '../../utils/rateLimiters'
-import { ResetPasswordOne } from '../../__tests__/integration/controllers/reset-password.controller'
+import { ResetPasswordOne } from '../../controllers/reset-password.controller'
 
 const router = express.Router()
 

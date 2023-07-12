@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import { StatusCodes } from 'http-status-codes'
-import CustomError from '../../../utils/custom-error'
-import type { userPayload } from '../../../configs/passport.config'
-import { AddReview, GetAllReviews, RemoveAllReviews, RemoveSinlgeReview } from '../../../services/reviews.service'
-import type { ServiceResponse } from '../../../types'
+import CustomError from '../utils/custom-error'
+import type { userPayload } from '../configs/passport.config'
+import { AddReview, GetAllReviews, RemoveAllReviews, RemoveSinlgeReview } from '../services/reviews.service'
+import type { ServiceResponse } from '../types'
 
 const GetAllOneBookReview = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

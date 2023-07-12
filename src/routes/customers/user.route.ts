@@ -5,7 +5,7 @@ import {
   UpdateOneEmail,
   UpdateOnePassword,
   UpdateOneUsername
-} from '../../__tests__/integration/controllers/user.controller'
+} from '../../controllers/user.controller'
 import { body } from 'express-validator'
 
 const router = express.Router()

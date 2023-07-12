@@ -1,6 +1,6 @@
 import express, { type IRouter } from 'express'
 import { query } from 'express-validator'
-import { SearchBooksOne } from '../../__tests__/integration/controllers/search.controller'
+import { SearchBooksOne } from '../../controllers/search.controller'
 
 const router: IRouter = express.Router()
 
@@ -15,6 +15,10 @@ router.get(
   query('page').optional().isInt().withMessage('Query page should be an integer'),
   query('size').optional().isInt().withMessage('Query size should be an integer'),
   query('sort_by').optional().isAlpha().withMessage('Query sort_by should be a string'),
+  query('condition')
+  .optional()
+  .isString().withMessage('Query book condition should be a string')
+  .isIn(['OLD', 'old', 'GOOD', 'good', 'ACCEPTABLE', 'acceptable']).withMessage('Query book condition must be either old, good or acceptable'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   SearchBooksOne
 )

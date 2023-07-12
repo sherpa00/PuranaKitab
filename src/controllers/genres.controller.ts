@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
-import CustomError from '../../../utils/custom-error'
-import { type ServiceResponse } from '../../../types'
-import { AddBookGenre, DeleteGenre, GetBookGenres, UpdateGenre } from '../../../services/genres.service'
+import CustomError from '../utils/custom-error'
+import { type ServiceResponse } from '../types'
+import { AddBookGenre, DeleteGenre, GetBookGenres, UpdateGenre } from '../services/genres.service'
 import { StatusCodes } from 'http-status-codes'
 import { capitalize } from './authors.controller'
 

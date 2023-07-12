@@ -1,6 +1,6 @@
 import { Router, type IRouter } from 'express'
 import { body } from 'express-validator'
-import { GetAllOneBookReview } from '../../__tests__/integration/controllers/reivew.controller'
+import { GetAllOneBookReview } from '../../controllers/reivew.controller'
 
 const router: IRouter = Router()
 

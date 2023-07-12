@@ -1,6 +1,6 @@
 import express from 'express'
 import { body } from 'express-validator'
-import registerOne from '../../__tests__/integration/controllers/register.controller'
+import registerOne from '../../controllers/register.controller'
 import { createAccountLimit } from '../../utils/rateLimiters'
 
 const router = express.Router()

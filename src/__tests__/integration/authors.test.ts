@@ -3,7 +3,7 @@ import { genSalt, hash } from 'bcrypt'
 import { db } from '../../configs/db.configs'
 import app from '../../index'
 import { type Iuser } from '../../types'
-import { capitalize } from './controllers/authors.controller'
+import { capitalize } from '../../controllers/authors.controller'
 
 describe('Testing book authors routes', () => {
   // temp author payload

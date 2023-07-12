@@ -12,7 +12,8 @@ const SearchBooks = async (
   searchGenre: string | null | undefined,
   searchPage: number,
   searchSize: number,
-  searchSortBy: string
+  searchSortBy: string,
+  searchBookCondition: string | null | undefined
 ): Promise<ServiceResponse> => {
   try {
     // db search with search query and search by
@@ -27,19 +28,21 @@ const SearchBooks = async (
       countSearchResults = await db.query(
         `SELECT COUNT(*) FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id
-            WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)`,
-        [searchQuery, searchGenre]
+            WHERE books.title ILIKE '%' || $1 || '%' 
+              AND (genres.genre_name = $2 OR $2 IS NULL)
+                AND (books.book_condition = $3 OR $3 IS NULL)`,
+        [searchQuery, searchGenre, searchBookCondition]
       )
 
       searchResults = await db.query(
         `SELECT books.* ${orderByJson.select_by} FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id
           ${orderByJson.left_join}
-            WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)
+            WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL) AND (books.book_condition = $3 OR $3 IS NULL)
             ${orderByJson.group_by}
               ${orderByJson.order_by}
-                LIMIT $3 OFFSET ($4 - 1) * $3`,
-        [searchQuery, searchGenre, searchSize, searchPage]
+                LIMIT $4 OFFSET ($5 - 1) * $4`,
+        [searchQuery, searchGenre,searchBookCondition, searchSize, searchPage]
       )
     } else if (searchBy === 'author') {
       // get total search results

@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import { StatusCodes } from 'http-status-codes'
-import CustomError from '../../../utils/custom-error'
-import type { ServiceResponse } from '../../../types'
-import { ResetPassword } from '../../../services/reset-password.service'
+import CustomError from '../utils/custom-error'
+import type { ServiceResponse } from '../types'
+import { ResetPassword } from '../services/reset-password.service'
 
 // contorller for resetting password
 const ResetPasswordOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

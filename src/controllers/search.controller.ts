@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
-import CustomError from '../../../utils/custom-error'
-import type { ServiceResponse } from '../../../types'
-import { SearchBooks } from '../../../services/search.service'
+import CustomError from '../utils/custom-error'
+import type { ServiceResponse } from '../types'
+import { SearchBooks } from '../services/search.service'
 import { StatusCodes } from 'http-status-codes'
 
 // contoller for searching books
@@ -23,6 +23,7 @@ const SearchBooksOne = async (req: Request, res: Response, next: NextFunction): 
     const searchSize: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
     const searchSortBy: string =
       req.query.sort_by != null && req.query.sort_by !== undefined ? String(req.query.sort_by) : 'most_reviewed'
+    const searchBookCondition: any = req.query.condition !== null && req.query.condition !== undefined ? String(req.query.condition).toUpperCase() : req.query.condition
 
     // call search books service
     const searchBooksStatus: ServiceResponse = await SearchBooks(
@@ -31,7 +32,8 @@ const SearchBooksOne = async (req: Request, res: Response, next: NextFunction): 
       searchGenre,
       searchPage,
       searchSize,
-      searchSortBy
+      searchSortBy,
+      searchBookCondition
     )
 
     if (!searchBooksStatus.success) {
