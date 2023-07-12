@@ -1,9 +1,9 @@
 import type { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { validationResult } from 'express-validator'
-import { type ServiceResponse } from '../types'
-import { ForgotPassword } from '../services/forgot_password.service'
-import CustomError from '../utils/custom-error'
+import { type ServiceResponse } from '../../../types'
+import { ForgotPassword } from '../../../services/forgot_password.service'
+import CustomError from '../../../utils/custom-error'
 
 // controller for forgot password operation
 const ForgotPasswordOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

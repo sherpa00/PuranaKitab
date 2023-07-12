@@ -9,7 +9,7 @@ import {
   RemoveBookImage,
   UpdateOneBookGenre,
   UpdateOneBookAuthor
-} from '../../controllers/books.controller'
+} from '../../__tests__/integration/controllers/books.controller'
 import multerStorage from '../../utils/multer.utils'
 
 const router = express.Router()

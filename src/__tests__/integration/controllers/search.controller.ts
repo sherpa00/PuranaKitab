@@ -1,8 +1,8 @@
 import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
-import CustomError from '../utils/custom-error'
-import type { ServiceResponse } from '../types'
-import { SearchBooks } from '../services/search.service'
+import CustomError from '../../../utils/custom-error'
+import type { ServiceResponse } from '../../../types'
+import { SearchBooks } from '../../../services/search.service'
 import { StatusCodes } from 'http-status-codes'
 
 // contoller for searching books

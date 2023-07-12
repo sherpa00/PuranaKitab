@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { LogOut } from '../services/logout.service'
-import type { ServiceResponse } from '../types'
+import { LogOut } from '../../../services/logout.service'
+import type { ServiceResponse } from '../../../types'
 
 // controller for logout
 const LogOutOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
