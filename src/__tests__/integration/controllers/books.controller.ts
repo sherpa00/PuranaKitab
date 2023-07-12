@@ -14,10 +14,10 @@ import {
   DeleteBookImage,
   UpdateBookGenre,
   UpdateBookAuthor
-} from '../services/books.service'
-import type { ServiceResponse } from '../types'
-import CustomError from '../utils/custom-error'
-import { convertToAcceptableFullname } from '../helpers/textManipulation'
+} from '../../../services/books.service'
+import type { ServiceResponse } from '../../../types'
+import CustomError from '../../../utils/custom-error'
+import { convertToAcceptableFullname } from '../../../helpers/textManipulation'
 import { capitalize } from './authors.controller'
 
 // controller for getting all books

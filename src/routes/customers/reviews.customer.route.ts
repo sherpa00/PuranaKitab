@@ -1,7 +1,7 @@
 import { Router, type IRouter } from 'express'
 import { body } from 'express-validator'
 import passport from '../../configs/passport.config'
-import { AddOneReview } from '../../controllers/reivew.controller'
+import { AddOneReview } from '../../__tests__/integration/controllers/reivew.controller'
 
 const router: IRouter = Router()
 

@@ -1,6 +1,6 @@
 import express, { type IRouter } from 'express'
 import { body, param } from 'express-validator'
-import { AddBookOneGenre, DeleteOneGenre, UpdateOneGenre } from '../../controllers/genres.controller'
+import { AddBookOneGenre, DeleteOneGenre, UpdateOneGenre } from '../../__tests__/integration/controllers/genres.controller'
 
 const router: IRouter = express.Router()
 
