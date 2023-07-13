@@ -19,6 +19,12 @@ router.get(
   .optional()
   .isString().withMessage('Query book condition should be a string')
   .isIn(['OLD', 'old', 'GOOD', 'good', 'ACCEPTABLE', 'acceptable']).withMessage('Query book condition must be either old, good or acceptable'),
+  query('min_price')
+    .optional()
+    .isInt().withMessage('Query Min Price should be an integer'),
+  query('max_price')
+    .optional()
+    .isInt().withMessage('Query Max Price should be an integer'),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   SearchBooksOne
 )

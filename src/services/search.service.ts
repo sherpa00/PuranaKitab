@@ -13,7 +13,9 @@ const SearchBooks = async (
   searchPage: number,
   searchSize: number,
   searchSortBy: string,
-  searchBookCondition: string | null | undefined
+  searchBookCondition: string | null | undefined,
+  searchMinPrice: number | null | undefined,
+  searchMaxPrice: number | null | undefined
 ): Promise<ServiceResponse> => {
   try {
     // db search with search query and search by
@@ -30,19 +32,24 @@ const SearchBooks = async (
           LEFT JOIN genres ON books.genre_id = genres.genre_id
             WHERE books.title ILIKE '%' || $1 || '%' 
               AND (genres.genre_name = $2 OR $2 IS NULL)
-                AND (books.book_condition = $3 OR $3 IS NULL)`,
-        [searchQuery, searchGenre, searchBookCondition]
+                AND (books.book_condition = $3 OR $3 IS NULL)
+                  AND (books.price >= $4 OR $4 IS NULL)
+                    AND (books.price <= $5 OR $5 IS NULL)`,
+        [searchQuery, searchGenre, searchBookCondition, searchMinPrice, searchMaxPrice]
       )
 
       searchResults = await db.query(
         `SELECT books.* ${orderByJson.select_by} FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id
           ${orderByJson.left_join}
-            WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL) AND (books.book_condition = $3 OR $3 IS NULL)
+            WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL) 
+            AND (books.book_condition = $3 OR $3 IS NULL)
+            AND (books.price >= $4 OR $4 IS NULL)
+            AND (books.price <= $5 OR $5 IS NULL)
             ${orderByJson.group_by}
               ${orderByJson.order_by}
-                LIMIT $4 OFFSET ($5 - 1) * $4`,
-        [searchQuery, searchGenre,searchBookCondition, searchSize, searchPage]
+                LIMIT $6 OFFSET ($7 - 1) * $6`,
+        [searchQuery, searchGenre,searchBookCondition,searchMinPrice,searchMaxPrice, searchSize, searchPage]
       )
     } else if (searchBy === 'author') {
       // get total search results
@@ -50,8 +57,12 @@ const SearchBooks = async (
         `SELECT COUNT(*) FROM books
           INNER JOIN authors ON books.authorid = authors.authorid
           LEFT JOIN genres ON books.genre_id = genres.genre_id 
-            WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL)`,
-        [searchQuery, searchGenre]
+            WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' 
+              AND (genres.genre_name = $2 OR $2 IS NULL)
+                AND (books.book_condition = $3 OR $3 IS NULL)
+                  AND (books.price >= $4 OR $4 IS NULL)
+                    AND (books.price <= $5 OR $5 IS NULL)`,
+        [searchQuery, searchGenre, searchBookCondition, searchMinPrice, searchMaxPrice]
       )
       // search in authors
       searchResults = await db.query(
@@ -59,29 +70,41 @@ const SearchBooks = async (
            INNER JOIN authors ON books.authorid = authors.authorid
            LEFT JOIN genres ON books.genre_id = genres.genre_id 
           ${orderByJson.left_join}
-            WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL) 
+            WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' 
+            AND (genres.genre_name = $2 OR $2 IS NULL) 
+            AND (books.book_condition = $3 OR $3 IS NULL)
+            AND (books.price >= $4 OR $4 IS NULL)
+            AND (books.price <= $5 OR $5 IS NULL)
             ${orderByJson.group_by}
             ${orderByJson.order_by}
-              LIMIT $3 OFFSET ($4 - 1) * $3`,
-        [searchQuery, searchGenre, searchSize, searchPage]
+              LIMIT $6 OFFSET ($7 - 1) * $6`,
+        [searchQuery, searchGenre,searchBookCondition, searchMinPrice, searchMaxPrice, searchSize, searchPage]
       )
     } else if (searchBy === 'description') {
       // get search results count
       countSearchResults = await db.query(
         `SELECT COUNT(*) FROM books 
           LEFT JOIN genres ON books.genre_id = genres.genre_id 
-            WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) AND (genres.genre_name = $2 OR $2 IS NULL)`,
-        [searchQuery, searchGenre]
+            WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) 
+              AND (genres.genre_name = $2 OR $2 IS NULL)
+                AND (books.book_condition = $3 OR $3 IS NULL)
+                  AND (books.price >= $4 OR $4 IS NULL)
+                    AND (books.price <= $5 OR $5 IS NULL)`,
+        [searchQuery, searchGenre, searchBookCondition, searchMinPrice, searchMaxPrice]
       )
       searchResults = await db.query(
         `SELECT books.* ${orderByJson.select_by} FROM books 
           LEFT JOIN genres ON books.genre_id = genres.genre_id
           ${orderByJson.left_join}
-            WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) AND (genres.genre_name = $2 OR $2 IS NULL) 
+            WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) 
+            AND (genres.genre_name = $2 OR $2 IS NULL) 
+            AND (books.book_condition = $3 OR $3 IS NULL)
+            AND (books.price >= $4 OR $4 IS NULL)
+            AND (books.price <= $5 OR $5 IS NULL)
             ${orderByJson.group_by}
             ${orderByJson.order_by}
-              LIMIT $3 OFFSET ($4 - 1) * $3`,
-        [searchQuery, searchGenre, searchSize, searchPage]
+              LIMIT $6 OFFSET ($7 - 1) * $6`,
+        [searchQuery, searchGenre,searchBookCondition, searchMinPrice, searchMaxPrice, searchSize, searchPage]
       )
     } else {
       return {

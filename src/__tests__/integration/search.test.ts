@@ -241,6 +241,72 @@ describe('Testing books search routes', () => {
     expect(reqBody.body.data).toBeUndefined()
   })
 
+  it('should return searched book for correct search query and correct search by and correct search book condition', async () => {
+    const tempSearchQuery: string = ''
+    const tempSearchBy: string = 'title'
+
+    const tempSearchConditon: string = tempBookPayload1.book_condition
+
+    const reqBody = await request(app).get(
+      `/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&condition=${tempSearchConditon}`
+    )
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.pagination).toBeDefined()
+    expect(reqBody.body.data.results).toBeDefined()
+  })
+
+  it('should not return searched book for correct search query and correct search by and incorrect search book condition', async () => {
+    const tempSearchQuery: string = ''
+    const tempSearchBy: string = 'title'
+
+    const tempSearchConditon: number = 244329
+
+    const reqBody = await request(app).get(
+      `/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&condition=${tempSearchConditon}`
+    )
+
+    expect(reqBody.statusCode).toBe(403)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('should return searched book for correct search query and correct search by and correct search min-max price range', async () => {
+    const tempSearchQuery: string = ''
+    const tempSearchBy: string = 'title'
+
+    const tempSearchMinPrice: number = 100
+    const tempSearchMaxPrice: number = 1000
+
+    const reqBody = await request(app).get(
+      `/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&min_price=${tempSearchMinPrice}&max_price=${tempSearchMaxPrice}`
+    )
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.pagination).toBeDefined()
+    expect(reqBody.body.data.results).toBeDefined()
+  })
+
+  it('should not return searched book for correct search query and correct search by and incorrect search min-max price range', async () => {
+    const tempSearchQuery: string = ''
+    const tempSearchBy: string = 'title'
+
+    const tempSearchMinPrice: string = 'invalidPrice'
+    const tempSearchMaxPrice: string = 'invalidPrice'
+
+    const reqBody = await request(app).get(
+      `/api/search?query=${tempSearchQuery}&search_by=${tempSearchBy}&min_price=${tempSearchMinPrice}&max_price=${tempSearchMaxPrice}`
+    )
+
+    expect(reqBody.statusCode).toBe(403)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
   afterEach(async () => {
     // clear admin user
     await db.query('DELETE FROM users WHERE users.userid = $1', [tempAdminUserid])
