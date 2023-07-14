@@ -1594,7 +1594,34 @@
                         "type": "string",
                         "example": ""
                     }
+                },
+                {
+                  "in": "query",
+                  "name": "condition",
+                  "description": "Book search by condition",
+                  "schema": {
+                      "type": "string",
+                      "example": "GOOD"
+                  }
+              },
+              {
+                "in": "query",
+                "name": "min_price",
+                "description": "Book search by minimum price",
+                "schema": {
+                    "type": "integer",
+                    "example": 100
                 }
+            },
+            {
+              "in": "query",
+              "name": "max_price",
+              "description": "Book search by maxmimun price",
+              "schema": {
+                  "type": "integer",
+                  "example": 1000
+              }
+          }
             ],
             "responses": {
               "200": {
