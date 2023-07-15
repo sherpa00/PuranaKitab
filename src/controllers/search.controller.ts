@@ -23,9 +23,18 @@ const SearchBooksOne = async (req: Request, res: Response, next: NextFunction): 
     const searchSize: number = req.query.size !== null && req.query.size !== undefined ? Number(req.query.size) : 10
     const searchSortBy: string =
       req.query.sort_by != null && req.query.sort_by !== undefined ? String(req.query.sort_by) : 'most_reviewed'
-    const searchBookCondition: any = req.query.condition !== null && req.query.condition !== undefined ? String(req.query.condition).toUpperCase() : req.query.condition
-    const searchMinPrice: any = req.query.min_price !== null && req.query.min_price !== undefined ? Number(req.query.min_price) : req.query.min_price
-    const searchMaxPrice: any = req.query.max_price !== null && req.query.max_price !== undefined ? Number(req.query.max_price) : req.query.max_price
+    const searchBookCondition: any =
+      req.query.condition !== null && req.query.condition !== undefined
+        ? String(req.query.condition).toUpperCase()
+        : req.query.condition
+    const searchMinPrice: any =
+      req.query.min_price !== null && req.query.min_price !== undefined
+        ? Number(req.query.min_price)
+        : req.query.min_price
+    const searchMaxPrice: any =
+      req.query.max_price !== null && req.query.max_price !== undefined
+        ? Number(req.query.max_price)
+        : req.query.max_price
 
     // call search books service
     const searchBooksStatus: ServiceResponse = await SearchBooks(

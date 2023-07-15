@@ -49,7 +49,7 @@ const SearchBooks = async (
             ${orderByJson.group_by}
               ${orderByJson.order_by}
                 LIMIT $6 OFFSET ($7 - 1) * $6`,
-        [searchQuery, searchGenre,searchBookCondition,searchMinPrice,searchMaxPrice, searchSize, searchPage]
+        [searchQuery, searchGenre, searchBookCondition, searchMinPrice, searchMaxPrice, searchSize, searchPage]
       )
     } else if (searchBy === 'author') {
       // get total search results
@@ -78,7 +78,7 @@ const SearchBooks = async (
             ${orderByJson.group_by}
             ${orderByJson.order_by}
               LIMIT $6 OFFSET ($7 - 1) * $6`,
-        [searchQuery, searchGenre,searchBookCondition, searchMinPrice, searchMaxPrice, searchSize, searchPage]
+        [searchQuery, searchGenre, searchBookCondition, searchMinPrice, searchMaxPrice, searchSize, searchPage]
       )
     } else if (searchBy === 'description') {
       // get search results count
@@ -104,7 +104,7 @@ const SearchBooks = async (
             ${orderByJson.group_by}
             ${orderByJson.order_by}
               LIMIT $6 OFFSET ($7 - 1) * $6`,
-        [searchQuery, searchGenre,searchBookCondition, searchMinPrice, searchMaxPrice, searchSize, searchPage]
+        [searchQuery, searchGenre, searchBookCondition, searchMinPrice, searchMaxPrice, searchSize, searchPage]
       )
     } else {
       return {
