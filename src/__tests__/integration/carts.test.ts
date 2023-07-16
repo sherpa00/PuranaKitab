@@ -592,15 +592,6 @@ describe('Testing cart routes', () => {
     await db.query('DELETE FROM users WHERE users.userid = $1', [currUserId])
     // clear admin user
     await db.query('DELETE FROM users WHERE users.userid = $1', [tempAdminUserid])
-    // clear author
-    await db.query('DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2', [
-      tempBookPayload1.authorFirstname,
-      tempBookPayload1.authorLastname
-    ])
-    await db.query('DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2', [
-      tempBookPayload2.authorFirstname,
-      tempBookPayload2.authorLastname
-    ])
     // clear book
     await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2', [
       tempBookPayload1.title,
@@ -609,6 +600,15 @@ describe('Testing cart routes', () => {
     await db.query('DELETE FROM books WHERE books.title = $1 AND books.isbn = $2', [
       tempBookPayload2.title,
       tempBookPayload2.isbn
+    ])
+    // clear author
+    await db.query('DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2', [
+      tempBookPayload1.authorFirstname,
+      tempBookPayload1.authorLastname
+    ])
+    await db.query('DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2', [
+      tempBookPayload2.authorFirstname,
+      tempBookPayload2.authorLastname
     ])
     // clear genre
     await db.query('DELETE FROM genres WHERE genres.genre_name ILIKE $1', [tempBookPayload1.genre])
