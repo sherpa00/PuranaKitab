@@ -19,17 +19,17 @@ export const convertToDbOrderBy = (sortBy: string): ISortByToOrderBy => {
     switch (sortBy) {
       case 'most_reviewed':
         resultOrderBy = {
-          select_by: ', COUNT(reviews.reviewid) AS review_count',
+          select_by: ', CAST(COUNT(reviews.reviewid) AS integer) AS review_count',
           left_join: 'LEFT JOIN reviews ON books.bookid = reviews.bookid',
-          group_by: 'GROUP BY books.bookid, genres.genre_id, reviews.reviewid',
+          group_by: 'GROUP BY books.bookid, genres.genre_id, authors.firstname, authors.lastname, reviews.reviewid, front_book_image.img_src, back_book_image.img_src,front_book_image.*, back_book_image.*',
           order_by: 'ORDER BY review_count DESC'
         }
         break
       case 'least_reviewed':
         resultOrderBy = {
-          select_by: ', COUNT(reviews.reviewid) AS review_count',
+          select_by: ', CAST(COUNT(reviews.reviewid) AS integer) AS review_count',
           left_join: 'LEFT JOIN reviews ON books.bookid = reviews.bookid',
-          group_by: 'GROUP BY books.bookid,genres.genre_id, reviews.reviewid',
+          group_by: 'GROUP BY books.bookid,genres.genre_id, authors.firstname, authors.lastname, reviews.reviewid, front_book_image.img_src, back_book_image.img_src,front_book_image.*, back_book_image.*',
           order_by: 'ORDER BY review_count ASC'
         }
         break

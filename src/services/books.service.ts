@@ -28,9 +28,11 @@ const GetAllBooks = async (
     if (page != null && page !== undefined && size != null && size !== undefined) {
       // get books with page and size
       getBooksStatus = await db.query(
-        `SELECT * FROM books
+        `SELECT books.*,genres.*,authors.authorid, authors.firstname AS author_firstname, authors.lastname AS author_lastname, front_book_image.img_src AS front_img_src, back_book_image AS back_img_src FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id
           LEFT JOIN authors ON books.authorid = authors.authorid
+          LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
+          LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
             WHERE genres.genre_name = $1 OR $1 IS NULL 
             AND CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL
               LIMIT $3 OFFSET ($4 - 1) * $3`,
@@ -39,9 +41,11 @@ const GetAllBooks = async (
     } else {
       // pagination not required
       getBooksStatus = await db.query(
-        `SELECT * FROM books
+        `SELECT books.*,genres.*,authors.authorid, authors.firstname AS author_firstname, authors.lastname AS author_lastname, front_book_image.img_src AS front_img_src, back_book_image AS back_img_src FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id
           LEFT JOIN authors ON books.authorid = authors.authorid
+          LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
+          LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
             WHERE (genres.genre_name = $1 OR $1 IS NULL)
             AND (CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL)`,
         [genre, author]
@@ -100,7 +104,14 @@ const GetAllBooks = async (
 // service for getting all books
 const GetOnlyOneBook = async (bookID: number): Promise<ServiceResponse> => {
   try {
-    const getBooksStatus = await db.query('SELECT * FROM books WHERE books.bookid = $1', [bookID])
+    const getBooksStatus = await db.query(
+      `SELECT books.*,genres.*,authors.authorid, authors.firstname AS author_firstname, authors.lastname AS author_lastname, front_book_image.img_src AS front_img_src, back_book_image AS back_img_src FROM books
+       LEFT JOIN genres ON books.genre_id = genres.genre_id
+       LEFT JOIN authors ON books.authorid = authors.authorid
+       LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
+       LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
+       WHERE books.bookid = $1`,
+       [bookID])
 
     if (getBooksStatus.rowCount <= 0) {
       return {

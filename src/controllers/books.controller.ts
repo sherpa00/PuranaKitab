@@ -89,7 +89,7 @@ const GetBookById = async (req: Request, res: Response, next: NextFunction): Pro
     const getBookByIdStatus: ServiceResponse = await GetOnlyOneBook(parseInt(req.params.bookid))
 
     if (!getBookByIdStatus.success) {
-      const error = new CustomError(`No Book withd id: ${req.params.bookid} found`, 404)
+      const error = new CustomError(`No Book with id: ${req.params.bookid} found`, 404)
       throw error
     }
 

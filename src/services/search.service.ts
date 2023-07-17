@@ -30,6 +30,7 @@ const SearchBooks = async (
       countSearchResults = await db.query(
         `SELECT COUNT(*) FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id
+          LEFT JOIN authors on books.authorid = authors.authorid
             WHERE books.title ILIKE '%' || $1 || '%' 
               AND (genres.genre_name = $2 OR $2 IS NULL)
                 AND (books.book_condition = $3 OR $3 IS NULL)
@@ -39,8 +40,11 @@ const SearchBooks = async (
       )
 
       searchResults = await db.query(
-        `SELECT books.* ${orderByJson.select_by} FROM books
+        `SELECT books.* ${orderByJson.select_by}, genres.genre_name, authors.firstname AS author_firstname, authors.lastname AS author_lastname, front_book_image.img_src AS front_img_src, back_book_image AS back_img_src FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id
+          LEFT JOIN authors ON books.authorid = authors.authorid
+          LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
+          LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
           ${orderByJson.left_join}
             WHERE books.title ILIKE '%' || $1 || '%' AND (genres.genre_name = $2 OR $2 IS NULL) 
             AND (books.book_condition = $3 OR $3 IS NULL)
@@ -66,9 +70,11 @@ const SearchBooks = async (
       )
       // search in authors
       searchResults = await db.query(
-        `SELECT books.* ${orderByJson.select_by} FROM books
+        `SELECT books.* ${orderByJson.select_by},genres.genre_name,authors.firstname AS author_firstname, authors.lastname AS author_lastname, front_book_image.img_src AS front_img_src, back_book_image AS back_img_src FROM books
            INNER JOIN authors ON books.authorid = authors.authorid
            LEFT JOIN genres ON books.genre_id = genres.genre_id 
+           LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
+          LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
           ${orderByJson.left_join}
             WHERE CONCAT(authors.firstname, ' ', authors.lastname) ILIKE '%' || $1 || '%' 
             AND (genres.genre_name = $2 OR $2 IS NULL) 
@@ -84,7 +90,8 @@ const SearchBooks = async (
       // get search results count
       countSearchResults = await db.query(
         `SELECT COUNT(*) FROM books 
-          LEFT JOIN genres ON books.genre_id = genres.genre_id 
+          LEFT JOIN genres ON books.genre_id = genres.genre_id
+          LEFT JOIN authors ON books.authorid = authors.authorid
             WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) 
               AND (genres.genre_name = $2 OR $2 IS NULL)
                 AND (books.book_condition = $3 OR $3 IS NULL)
@@ -93,8 +100,11 @@ const SearchBooks = async (
         [searchQuery, searchGenre, searchBookCondition, searchMinPrice, searchMaxPrice]
       )
       searchResults = await db.query(
-        `SELECT books.* ${orderByJson.select_by} FROM books 
+        `SELECT books.* ${orderByJson.select_by},genres.genre_name,authors.firstname AS author_firstname, authors.lastname AS author_lastname, front_book_image.img_src AS front_img_src, back_book_image AS back_img_src FROM books 
           LEFT JOIN genres ON books.genre_id = genres.genre_id
+          LEFT JOIN authors on books.authorid = authors.authorid
+          LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
+          LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
           ${orderByJson.left_join}
             WHERE to_tsvector('simple', books.description) @@ to_tsquery('simple', $1) 
             AND (genres.genre_name = $2 OR $2 IS NULL) 
