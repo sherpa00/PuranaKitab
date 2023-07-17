@@ -19,9 +19,11 @@ describe('Testing books search routes', () => {
 
   let tempAddBookid1: number
   let tempBookGenreid1: number
+  let tempBookAuthorid1: number
 
   let tempAddBookid2: number
   let tempBookGenreid2: number
+  let tempBookAuthorid2: number
 
   // temporary book payload for req.body
   const tempBookPayload1 = {
@@ -51,8 +53,8 @@ describe('Testing books search routes', () => {
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phaseljhjk hhl kjhjlus faucibus libero id facilisis mollis. Mauris eu sollicitudin risus. Nulla posuere euismod mauris at facilisis. Curabitur sagittis dictum massa, at tempor metus feugiat ut. Nunc tincidunt sem non ex molestie, vel congue quam cursus. Sed non nunc bibendum, consequat purus ac, efficitur sem. Cras eget enim ac turpis aliquam consequat in in nulla. In auctor bibendum tellus at dictum.Nullam in feugiat mauris. Quisque in elit sem. Fusce rutrum mi ac tincidunt aliquam. Proin sed enim id leo varius cursus. Morbi placerat magna a metus ultrices dapibus. Aenean lacinia pellentesque odio, id ultricies quam tincidunt et. Curabitur iaculis urna a urna auctor, at cursus dolor eleifend. Suspendisse potenti. Donec condimentum, dolor nec viverra hendrerit, lacus risus consectetur justo, eget ullamcorper elit nulla id enim. Vivamus sollicitudin malesuada magna ac efficitur. Sed vitae nulla nec eros rhoncus ultrices. Donec a lacus est.',
     genre: 'test',
-    authorFirstname: 'test1firstname',
-    authorLastname: 'test1lastname'
+    authorFirstname: 'test2firstname',
+    authorLastname: 'test2lastname'
   }
 
   beforeEach(async () => {
@@ -84,6 +86,7 @@ describe('Testing books search routes', () => {
       })
     tempAddBookid1 = tempAddBook1.body.data.bookid
     tempBookGenreid1 = tempAddBook1.body.data.genre_id
+    tempBookAuthorid1 = tempAddBook1.body.data.authorid
 
     const tempAddBook2 = await request(app)
       .post('/api/books')
@@ -93,6 +96,7 @@ describe('Testing books search routes', () => {
       })
     tempAddBookid2 = tempAddBook2.body.data.bookid
     tempBookGenreid2 = tempAddBook2.body.data.genre_id
+    tempBookAuthorid2 = tempAddBook2.body.data.authorid
   })
 
   it('Should return searched books for correct search query and correct search by title', async () => {
@@ -140,7 +144,7 @@ describe('Testing books search routes', () => {
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data.results).toBeDefined()
-    expect(reqBody.body.data.results.length).toBeGreaterThanOrEqual(2)
+    expect(reqBody.body.data.results.length).toBeGreaterThanOrEqual(1)
   })
 
   it('Should return searched books for empty correct search query and correct search by title', async () => {
@@ -311,28 +315,28 @@ describe('Testing books search routes', () => {
     // clear admin user
     await db.query('DELETE FROM users WHERE users.userid = $1', [tempAdminUserid])
 
-    // clear author
-    await db.query('DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2', [
-      tempBookPayload1.authorFirstname,
-      tempBookPayload1.authorLastname
+    // clear book
+    await db.query('DELETE FROM books WHERE books.bookid = $1 AND books.genre_id = $2 AND books.authorid = $3', [
+      tempAddBookid1,
+      tempBookGenreid1,
+      tempBookAuthorid1
+    ])
+    await db.query('DELETE FROM books WHERE books.bookid = $1 AND books.genre_id = $2 AND books.authorid = $3', [
+      tempAddBookid2,
+      tempBookGenreid2,
+      tempBookAuthorid2
     ])
 
-    // clear book
-    await db.query('DELETE FROM books WHERE books.bookid = $1 AND books.genre_id = $2', [
-      tempAddBookid1,
-      tempBookGenreid1
-    ])
-    await db.query('DELETE FROM books WHERE books.bookid = $1 AND books.genre_id = $2', [
-      tempAddBookid2,
-      tempBookGenreid2
-    ])
+    // clear author
+    await db.query('DELETE FROM authors WHERE authors.authorid = $1', [tempBookAuthorid1])
+    await db.query('DELETE FROM authors WHERE authors.authorid = $1', [tempBookAuthorid2])
 
     // clear genre
     await db.query('DELETE FROM genres WHERE genres.genre_id = $1', [tempBookGenreid1])
     await db.query('DELETE FROM genres WHERE genres.genre_id = $1', [tempBookGenreid2])
   })
 
-  // close db
+  // close dbs
   afterAll(async () => {
     await db.end()
   })

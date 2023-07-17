@@ -124,8 +124,8 @@ describe('Testing book reviews routes', () => {
     description:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phaseljhjk hhl kjhjlus faucibus libero id facilisis mollis. Mauris eu sollicitudin risus. Nulla posuere euismod mauris at facilisis. Curabitur sagittis dictum massa, at tempor metus feugiat ut. Nunc tincidunt sem non ex molestie, vel congue quam cursus. Sed non nunc bibendum, consequat purus ac, efficitur sem. Cras eget enim ac turpis aliquam consequat in in nulla. In auctor bibendum tellus at dictum.Nullam in feugiat mauris. Quisque in elit sem. Fusce rutrum mi ac tincidunt aliquam. Proin sed enim id leo varius cursus. Morbi placerat magna a metus ultrices dapibus. Aenean lacinia pellentesque odio, id ultricies quam tincidunt et. Curabitur iaculis urna a urna auctor, at cursus dolor eleifend. Suspendisse potenti. Donec condimentum, dolor nec viverra hendrerit, lacus risus consectetur justo, eget ullamcorper elit nulla id enim. Vivamus sollicitudin malesuada magna ac efficitur. Sed vitae nulla nec eros rhoncus ultrices. Donec a lacus est.',
     genre: 'testGenre',
-    authorFirstname: 'test1firstname',
-    authorLastname: 'test1lastname'
+    authorFirstname: 'Test1firstname',
+    authorLastname: 'Test1lastname'
   }
 
   it('Should get all book reviews for correct bookid for every user', async () => {
@@ -594,15 +594,15 @@ describe('Testing book reviews routes', () => {
     await db.query('DELETE FROM users WHERE users.userid = $1', [currUserId1])
     // clear admin user
     await db.query('DELETE FROM users WHERE users.userid = $1', [tempAdminUserid])
-    // clear author
-    await db.query('DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2', [
-      tempBookPayload1.authorFirstname,
-      tempBookPayload1.authorLastname
-    ])
     // clear book
     await db.query('DELETE FROM books WHERE books.bookid = $1 AND books.isbn = $2', [
       tempAddBookid,
       tempBookPayload1.isbn
+    ])
+    // clear author
+    await db.query('DELETE FROM authors WHERE authors.firstname = $1 AND authors.lastname = $2', [
+      tempBookPayload1.authorFirstname,
+      tempBookPayload1.authorLastname
     ])
     // clear genre
     await db.query('DELETE FROM genres WHERE genre_name ILIKE $1', [tempBookPayload1.genre])
