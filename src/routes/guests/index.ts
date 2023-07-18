@@ -9,6 +9,7 @@ import { GenreGuestRouter } from './genres.guest.route'
 import { LoginRouter } from './login.route'
 import { RegisterRouter } from './register.route'
 import { ReviewsGuestRouter } from './reviews.guest.route'
+import { CategoriesBestSellerRouter } from './categories.route'
 
 const router: IRouter = Router()
 router.use('/register', RegisterRouter)
@@ -30,5 +31,7 @@ router.use('/authors', AuthorGuestRouter)
 router.use('/genres', GenreGuestRouter)
 
 router.use('/reviews', ReviewsGuestRouter)
+
+router.use('/categories', CategoriesBestSellerRouter)
 
 export { router as GuestRouter }
