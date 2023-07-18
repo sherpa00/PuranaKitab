@@ -2961,13 +2961,21 @@
             "type": "string",
             "example": "Anime"
           },
-          "firstname": {
+          "author_firstname": {
             "type": "string",
             "example": "Chhewang"
           },
-          "lastname": {
+          "author_lastname": {
             "type": "string",
             "example": "Sherpa"
+          },
+          "front_img_src": {
+            "type": "string",
+            "example": "http://clodinary/image/234cl23840238909"
+          },
+          "back_img_src": {
+            "type": "string",
+            "example": "http://clodinary/image/234c29390l238409"
           }
         }
       },
@@ -3083,7 +3091,7 @@
             "example": "Successfully got a book"
           },
           "data": {
-            "$ref": "#/components/schemas/SingleBook"
+            "$ref": "#/components/schemas/Books"
           }
         }
       },
