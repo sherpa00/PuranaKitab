@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import CustomError from '../utils/custom-error'
 import { validationResult } from 'express-validator'
 import { type ServiceResponse } from '../types'
-import { GetCategoriesBestSeller, GetCategoriesTopRated } from '../services/categories.service'
+import { GetCategoriesBestSeller, GetCategoriesNewArrivals, GetCategoriesTopRated } from '../services/categories.service'
 import { StatusCodes } from 'http-status-codes'
 
 // category controller -> Best Seller books
@@ -69,4 +69,36 @@ const GetOneCategoryTopRated = async (req: Request, res: Response, next: NextFun
     }
 }
 
-export {GetOneCategoryBestSeller,GetOneCategoryTopRated}
+// category controller -> new arrivals books
+const GetOneCategoryNewArrivals = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // validation error
+        const invalidationError = validationResult(req)
+
+        if (!invalidationError.isEmpty()) {
+            const error = new CustomError('Validation Error', 403)
+            throw error
+        }
+
+        // req.queires for pagination page and size
+        const page: number = req.query.page !== undefined && req.query.page !== null ? Number(req.query.page) : 1
+        const size: number = req.query.size !== undefined && req.query.size !== null ? Number(req.query.size) : 10
+
+        // call the get new arrivals service
+        const getNewArrivals: ServiceResponse = await GetCategoriesNewArrivals(page, size)
+
+        if (!getNewArrivals.success) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                ...getNewArrivals
+            })
+        } else {
+            res.status(StatusCodes.OK).json({
+                ...getNewArrivals
+            })
+        }
+    } catch (err) {
+        next(err)
+    }
+}
+
+export {GetOneCategoryBestSeller,GetOneCategoryTopRated,GetOneCategoryNewArrivals}

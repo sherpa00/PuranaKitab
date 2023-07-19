@@ -1,5 +1,5 @@
 import express, {type IRouter} from 'express'
-import { GetOneCategoryBestSeller, GetOneCategoryTopRated } from '../../controllers/categories.controller'
+import { GetOneCategoryBestSeller, GetOneCategoryNewArrivals, GetOneCategoryTopRated } from '../../controllers/categories.controller'
 import { query } from 'express-validator'
 
 const router: IRouter = express.Router()
@@ -28,6 +28,19 @@ router.get(
         .isInt().withMessage('Query size should be an integer'),
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     GetOneCategoryTopRated
+)
+
+// category router -> new arrivals
+router.get(
+    '/new-arrivals',
+    query('page')
+        .optional()
+        .isInt().withMessage('Query page should be an integer'),
+    query('size')
+        .optional()
+        .isInt().withMessage('Query size should be an integer'),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    GetOneCategoryNewArrivals
 )
 
 export {router as CategoriesBestSellerRouter}
