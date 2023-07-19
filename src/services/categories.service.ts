@@ -3,6 +3,7 @@ import generatePaginationMetadata from '../helpers/generatePaginationMetadata'
 import { type IPaginationMetadata, type ServiceResponse } from '../types'
 import logger from '../utils/logger.utils'
 
+// category service -> Best Seller books
 const GetCategoriesBestSeller = async (page: number, size: number) : Promise<ServiceResponse> => {
     try {
         // count the best seller books from db for pagination metadata
@@ -70,4 +71,66 @@ const GetCategoriesBestSeller = async (page: number, size: number) : Promise<Ser
     }
 }
 
-export {GetCategoriesBestSeller}
+// category service -> Top Rated books
+const GetCategoriesTopRated = async (page: number, size: number): Promise<ServiceResponse> => {
+    try {
+        // count the top rated books for pagination metadata
+        const countTopRatedBooks = await db.query(
+            `SELECT
+                books.bookid,
+                COALESCE(AVG(reviews.stars), 0) AS avg_rating
+            FROM 
+                books
+            LEFT JOIN reviews ON books.bookid = reviews.bookid
+            GROUP BY books.bookid`
+        )
+
+        // get the top rated books by db
+        const getTopRated = await db.query(
+            `SELECT
+                books.*,
+                COALESCE(AVG(reviews.stars),0) AS avg_rating
+            FROM
+                books
+            LEFT JOIN reviews ON books.bookid = reviews.bookid
+            GROUP BY books.bookid
+            ORDER BY avg_rating DESC
+            LIMIT $1 OFFSET ($2 - 1) * $1`,
+            [size, page]
+        )
+
+        if (getTopRated.rowCount < 0) {
+            return {
+                success: false,
+                message: 'Failed to get top rated category'
+            }
+        }
+
+        const getTopRatedBooksPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
+            countTopRatedBooks.rowCount,
+            page ?? 1,
+            size ?? countTopRatedBooks.rowCount
+        )
+
+        return {
+            success: true,
+            message: 'Successfully got the top rated category',
+            data: {
+                pagination: {
+                    ...getTopRatedBooksPaginationMetadata
+                },
+                results: getTopRated.rows
+            }
+        }
+    } catch (err) {
+        logger.error(err, 'Errro while getting top rated category')
+        return {
+            success: false,
+            message: 'Failed to get the top rated category'
+        }
+    }
+}
+
+
+
+export {GetCategoriesBestSeller,GetCategoriesTopRated}
