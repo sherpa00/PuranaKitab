@@ -172,6 +172,7 @@ const GetCategoriesNewArrivals = async (page: number, size: number): Promise<Ser
             LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
             LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
             WHERE books.publication_date BETWEEN $1 AND $2
+            ORDER BY books.publication_date DESC
             LIMIT $3 OFFSET ($4 - 1) * $3`,
             [fiveYearsAgo, currentDate, size, page]
         )
@@ -209,4 +210,74 @@ const GetCategoriesNewArrivals = async (page: number, size: number): Promise<Ser
     }
 }
 
-export {GetCategoriesBestSeller,GetCategoriesTopRated, GetCategoriesNewArrivals}
+// category service -> Recently Added
+const GetCategoriesRecentlyAdded = async (page: number, size: number): Promise<ServiceResponse> => {
+    try {
+        const currentDate: Date = new Date()
+        const startOfYear: Date = new Date(currentDate.getFullYear(), 0, 1) // start of current year
+
+        // count the recently added books from db
+        const countRecentlyAdded = await db.query(
+            `SELECT
+                COUNT(*)
+            FROM
+                books
+            WHERE books.createdat BETWEEN $1 AND $2`,
+            [startOfYear, currentDate]
+        )
+
+        // get the new arrivals from db
+        const getRecentlyAdded = await db.query(
+            `SELECT
+                books.*,
+                authors.firstname AS author_firstname,
+                authors.lastname AS author_lastname,
+                genres.genre_name,
+                front_book_image.img_src AS front_img_src,
+                back_book_image.img_src AS back_img_src
+            FROM
+                books
+            LEFT JOIN authors ON authors.authorid = books.authorid
+            LEFT JOIN genres ON genres.genre_id = books.genre_id
+            LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
+            LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
+            WHERE books.createdat BETWEEN $1 AND $2
+            ORDER By books.createdat DESC
+            LIMIT $3 OFFSET ($4 - 1) * $3`,
+            [startOfYear, currentDate, size, page]
+        )
+
+        if (getRecentlyAdded.rowCount < 0) {
+            return {
+                success: false,
+                message: 'Failed to get the recently added category'
+            }
+        }
+
+        const getRecentlyAddedPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
+            countRecentlyAdded.rows[0].count,
+            page ?? 1,
+            size ?? countRecentlyAdded.rows[0].count
+        )
+
+        return {
+            success: true,
+            message: 'Successfully got the new arrivals category',
+            data: {
+                pagination: {
+                    ...getRecentlyAddedPaginationMetadata
+                },
+                results: getRecentlyAdded.rows            
+            }
+        }
+
+    } catch (err) {
+        logger.error(err, 'Error while getting recently added category')
+        return {
+            success: false,
+            message: 'Failed to get recently added category'
+        }
+    }
+}
+
+export {GetCategoriesBestSeller,GetCategoriesTopRated, GetCategoriesNewArrivals, GetCategoriesRecentlyAdded}
