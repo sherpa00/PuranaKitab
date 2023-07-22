@@ -262,7 +262,7 @@ const GetCategoriesRecentlyAdded = async (page: number, size: number): Promise<S
 
         return {
             success: true,
-            message: 'Successfully got the new arrivals category',
+            message: 'Successfully got the recently added category',
             data: {
                 pagination: {
                     ...getRecentlyAddedPaginationMetadata
