@@ -2334,6 +2334,218 @@
           }
         }
       }
+    },
+    "/categories/best-seller": {
+      "get": {
+        "summary": "Get categories best seller books",
+        "description": "Get categories best seller books",
+        "produces": ["application/json"],
+        "tags": ["Categories (Best Seller)"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Book Categories Pagination page number",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "description": "Book Categories Pagination page size",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully got categories best seller",
+            "schema": {
+              "$ref": "#/components/schemas/CategoriesBestSeller_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get categories best seller books operation",
+            "schema": {
+              "$ref": "#/components/schemas/CategoriesBestSeller_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/categories/top-rated": {
+      "get": {
+        "summary": "Get categories top rated books",
+        "description": "Get categories top rated books",
+        "produces": ["application/json"],
+        "tags": ["Categories (Top Rated)"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Book Categories Pagination page number",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "description": "Book Categories Pagination page size",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully got categories top rated",
+            "schema": {
+              "$ref": "#/components/schemas/CategoriesTopRated_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get categories top rated books operation",
+            "schema": {
+              "$ref": "#/components/schemas/CategoriesTopRated_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/categories/new-arrivals": {
+      "get": {
+        "summary": "Get categories new arrivals books",
+        "description": "Get categories new arrivals books",
+        "produces": ["application/json"],
+        "tags": ["Categories (New Arrivals)"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Book Categories Pagination page number",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "description": "Book Categories Pagination page size",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully got categories new arrivals",
+            "schema": {
+              "$ref": "#/components/schemas/CategoriesNewArrivals_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get categories best new arrivals operation",
+            "schema": {
+              "$ref": "#/components/schemas/CategoriesNewArrivals_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/categories/recently-added": {
+      "get": {
+        "summary": "Get categories recently added books",
+        "description": "Get categories recenlty added books",
+        "produces": ["application/json"],
+        "tags": ["Categories (Recently Added)"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Book Categories Pagination page number",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          },
+          {
+            "in": "query",
+            "name": "size",
+            "description": "Book Categories Pagination page size",
+            "schema": {
+              "type": "integer",
+              "example": 1,
+              "required": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully got categories recently added",
+            "schema": {
+              "$ref": "#/components/schemas/CategoriesRecentlyAdded_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get categories best seller books operation",
+            "schema": {
+              "$ref": "#/components/schemas/CategoriesRecentlyAdded_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3805,6 +4017,154 @@
           "message": {
             "type": "string",
             "example": "Error while removing book genre"
+          }
+        }
+      },
+      "CategoriesBestSeller_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got categories best seller"
+          },
+          "data": {
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Books"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CategoriesBestSeller_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Error while getting categories best seller"
+          }
+        }
+      },
+      "CategoriesTopRated_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got the top rated category"
+          },
+          "data": {
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Books"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CategoriesTopRated_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to get top rated category"
+          }
+        }
+      },
+      "CategoriesNewArrivals_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got the new arrivals category"
+          },
+          "data": {
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Books"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CategoriesNewArrivals_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to get new arrivals category"
+          }
+        }
+      },
+      "CategoriesRecentlyAdded_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got the recently added category"
+          },
+          "data": {
+            "properties": {
+              "pagination": {
+                "$ref": "#/components/schemas/Pagination"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Books"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CategoriesRecentlyAdded_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to get recently added category"
           }
         }
       }
