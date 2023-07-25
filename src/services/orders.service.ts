@@ -38,13 +38,13 @@ const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: nu
                     orders (
                         userid,
                         phone_number,
-                        ordered_books
+                        ordered_books,
                         total_amount
                     )
                 VALUES (
                     $1,
                     $2,
-                    ARRAY$3,
+                    $3,
                     $4
                 ) RETURNING *
             `,
