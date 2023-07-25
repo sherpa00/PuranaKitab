@@ -1,8 +1,14 @@
 import express, { type IRouter } from 'express'
 import { body } from 'express-validator'
-import { PlaceOrderOfflineOne } from '../../controllers/orders.controller'
+import { PlaceOrderOfflineOne, ShowMyOrdersOne } from '../../controllers/orders.controller'
 
 const router: IRouter = express.Router()
+
+router.get(
+    '/my-orders',
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    ShowMyOrdersOne
+)
 
 router.post(
     '/place-order',

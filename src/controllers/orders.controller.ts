@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import { type ServiceResponse } from '../types'
-import { PlaceOrderOffline } from '../services/orders.service'
+import { PlaceOrderOffline, ShowMyOrders } from '../services/orders.service'
 import { StatusCodes } from 'http-status-codes'
 
 // controller for place order offline
@@ -41,4 +41,28 @@ const PlaceOrderOfflineOne =async (req: Request, res: Response, next: NextFuncti
     }
 }
 
-export {PlaceOrderOfflineOne}
+// controller for showing orders
+const ShowMyOrdersOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+        // authenticated user
+        const authenticatedUser: any = req.user
+        const authenticatedUserId: number = authenticatedUser.userid
+
+        // call show my orders service
+        const showMyOrdersStatus: ServiceResponse = await ShowMyOrders(authenticatedUserId)
+
+        if (!showMyOrdersStatus.success) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                ...showMyOrdersStatus
+            })
+        }
+
+        res.status(StatusCodes.OK).json({
+            ...showMyOrdersStatus
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+export {PlaceOrderOfflineOne, ShowMyOrdersOne}

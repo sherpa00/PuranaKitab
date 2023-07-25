@@ -1,6 +1,10 @@
+import * as dotenv from 'dotenv'
+import Stripe from 'stripe'
 import { db } from '../configs/db.configs'
 import { type ServiceResponse } from '../types'
 import logger from '../utils/logger.utils'
+
+dotenv.config()
 
 interface OrderedBooks {
     bookid: number,
@@ -8,6 +12,13 @@ interface OrderedBooks {
     book_original_price: number,
     book_total_price: number
 }
+
+// strip init
+const STRIPE_SECRET: string = String(process.env.STRIPE_SECRET)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const STRIPE = new Stripe(STRIPE_SECRET,{
+    apiVersion: '2022-11-15'
+})
 
 // service for place order process offline of user carts
 const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: number): Promise<ServiceResponse> => {
@@ -65,18 +76,19 @@ const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: nu
 
         // clear carts and also reduce books quantity
         for (let i = 0; i < cartsList.length; i++) {
+            const originalBookQuantity = await db.query('SELECT available_quantity FROM books WHERE bookid = $1',[cartsList[i].bookid])
             await db.query(
                 `
                     UPDATE
                         books
                     SET
-                        books.available_quantity = books.available_quantity - $1
+                        books.available_quantity = $1
                     WHERE
                         books.bookid = $2
                 `
                 [
                     // eslint-disable-next-line no-sequences
-                    cartsList[i].quantity,
+                    Number(originalBookQuantity.rows[0].available_quantity) - cartsList[i].quantity,
                     cartsList[i].bookid
                 ]
             )
@@ -109,4 +121,35 @@ const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: nu
     }
 }
 
-export {PlaceOrderOffline}
+// service for showing user orders
+const ShowMyOrders = async (userid: number): Promise<ServiceResponse> => {
+    try {
+
+        // check if order exits or not
+        const countOrders = await db.query('SELECT COUNT(*) FROM orders WHERE orders.userid = $1',[userid])
+
+        if (countOrders.rows[0].count < 0) {
+            return {
+                success: false,
+                message: 'Failed to get my orders'
+            }
+        }
+
+        // get user orders from db
+        const showOrdersStatus = await db.query('SELECT * FROM orders WHERE orders.userid = $1',[userid])
+
+        return {
+            success: true,
+            message: 'Successfully got my orders',
+            data: showOrdersStatus.rows
+        } 
+    } catch (err) {
+        logger.error(err, 'Error while getting my orders')
+        return {
+            success: false,
+            message: 'Failed to get my orders'
+        }
+    }
+}
+
+export {PlaceOrderOffline,ShowMyOrders}

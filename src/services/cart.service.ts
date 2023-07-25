@@ -58,7 +58,7 @@ const AddCart = async (userID: number, bookID: number, bookQuantity: number): Pr
     }
 
     // compute total price of book with quantiy
-    const totalBookPrice: number = originalBookAvailableQuantity * originalBookPrice
+    const totalBookPrice: number = bookQuantity * originalBookPrice
 
     // add new cart to db
     const addNewCartStatus = await db.query(
