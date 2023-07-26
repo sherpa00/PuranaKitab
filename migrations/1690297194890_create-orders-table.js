@@ -19,6 +19,17 @@ exports.up = pgm => {
         total_amount: {
             type: 'integer',
             notNull: true
+        },
+        payment_intent_id: {
+            type: 'text',
+            notNull: false
+        },
+        payment_status: {
+            type: 'text'
+        },
+        payment_method: {
+            type: 'text',
+            notNull: true
         }
     })
 

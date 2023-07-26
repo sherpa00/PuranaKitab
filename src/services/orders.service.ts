@@ -27,20 +27,22 @@ const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: nu
         const totalOrderedBooks: any = []
         // check if cart in cartsList exist for correct userid or not
         for (let i = 0; i < cartsList.length; i++) {
-            const cartCountInUserCarts = await db.query('SELECT COUNT(*) FROM carts WHERE carts.cartid = $1 AND carts.userid = $2',[cartsList[i].cartid,userid])
-            if (cartCountInUserCarts.rowCount <= 0) {
-                throw new Error('Failed to place order as cart is invalid')
+            const foundCart = await db.query('SELECT * FROM carts WHERE carts.cartid = $1 AND carts.userid = $2',[parseInt(cartsList[i].cartid),userid])
+            if (foundCart.rowCount <= 0) {
+                return {
+                    success: false,
+                    message: 'Cart is unavailable'
+                }
             }
-            totalCartsAmount += Number(cartsList[i].total_price)
+            totalCartsAmount += parseInt(foundCart.rows[0].total_price)
             const tempOrderdSingleBook: OrderedBooks = {
-                bookid: cartsList[i].bookid,
-                total_quantity: cartsList[i].quantity,
-                book_original_price: cartsList[i].original_price,
-                book_total_price: cartsList[i].total_price
+                bookid: foundCart.rows[0].bookid,
+                total_quantity: foundCart.rows[0].quantity,
+                book_original_price: foundCart.rows[0].original_price,
+                book_total_price: foundCart.rows[0].total_price
             }
             totalOrderedBooks.push(tempOrderdSingleBook)
         }
-
 
         // add to db order
         const addOrderStatus = await db.query(
@@ -50,20 +52,26 @@ const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: nu
                         userid,
                         phone_number,
                         ordered_books,
-                        total_amount
+                        total_amount,
+                        payment_status,
+                        payment_method
                     )
                 VALUES (
                     $1,
                     $2,
                     $3,
-                    $4
+                    $4,
+                    $5,
+                    $6
                 ) RETURNING *
             `,
             [
                 userid,
                 phoneNumber,
                 totalOrderedBooks,
-                totalCartsAmount
+                totalCartsAmount,
+                'unpaid',
+                'cash_on_delivery'
             ]
         )
         
@@ -74,24 +82,50 @@ const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: nu
             }
         }
 
+        // create stripe payment intent
+        const paymentIntent = await STRIPE.paymentIntents.create({
+            amount: totalCartsAmount,
+            currency: 'usd',
+            metadata: {
+                orderid: addOrderStatus.rows[0].orderid
+            }
+        })
+
+        // update order with attached orere payemnt intent id
+        const updatedOrderWithPayment = await db.query('UPDATE orders SET payment_intent_id = $1 WHERE orders.userid = $2 AND orders.orderid = $3 RETURNING *',[String(paymentIntent.id),userid,parseInt(addOrderStatus.rows[0].orderid)])
+
+        if (updatedOrderWithPayment.rowCount <= 0) {
+            // delete orders after failing in payments
+            await db.query('DELETE FROM orders WHERE orders.userid = $1 AND orders.orderid = $2',[userid,parseInt(addOrderStatus.rows[0].orderid)])
+            return {
+                success: false,
+                message: 'Failed to place your orders'
+            }
+        }
         // clear carts and also reduce books quantity
         for (let i = 0; i < cartsList.length; i++) {
-            const originalBookQuantity = await db.query('SELECT available_quantity FROM books WHERE bookid = $1',[cartsList[i].bookid])
+            const foundCart = await db.query('SELECT * FROM carts WHERE carts.cartid = $1 AND carts.userid = $2',[cartsList[i].cartid,userid])
+
+            const originalBookQuantity = await db.query('SELECT available_quantity FROM books WHERE bookid = $1',[parseInt(foundCart.rows[0].bookid)])
+            const newBookQuantity: number = parseInt(originalBookQuantity.rows[0].available_quantity) - parseInt(foundCart.rows[0].quantity)
+
             await db.query(
                 `
                     UPDATE
                         books
                     SET
-                        books.available_quantity = $1
+                        available_quantity = $1
                     WHERE
-                        books.bookid = $2
-                `
+                        bookid = $2
+                    RETURNING *
+                `,
                 [
                     // eslint-disable-next-line no-sequences
-                    Number(originalBookQuantity.rows[0].available_quantity) - cartsList[i].quantity,
-                    cartsList[i].bookid
+                    newBookQuantity,
+                    parseInt(foundCart.rows[0].bookid)
                 ]
             )
+
             // clear user carts
             await db.query(
                 `
@@ -102,7 +136,7 @@ const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: nu
                 `,
                 [
                     userid,
-                    cartsList[i].bookid
+                    foundCart.rows[0].bookid
                 ]
             )
         }
@@ -110,7 +144,10 @@ const PlaceOrderOffline = async (cartsList: [any],userid: number,phoneNumber: nu
         return {
             success: true,
             message: 'Successfully placed your orders',
-            data: addOrderStatus.rows[0]
+            data: {
+                ...updatedOrderWithPayment.rows[0],
+                client_secret: paymentIntent.client_secret
+            }
         }
     } catch (err) {
         logger.error(err, 'Error while placing order')
