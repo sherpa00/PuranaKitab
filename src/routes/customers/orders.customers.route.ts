@@ -22,4 +22,4 @@ router.post(
     PlaceOrderOfflineOne
 )
 
-export {router as OrdersRouter}
+export {router as OrdersCustomerRouter}

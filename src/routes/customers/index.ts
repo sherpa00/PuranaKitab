@@ -3,7 +3,7 @@ import { LogoutRouter } from './logout.route'
 import { UserRouter } from './user.route'
 import { CartRouter } from './cart.route'
 import { ReviewCustomerRouter } from './reviews.customer.route'
-import { OrdersRouter } from './orders.route'
+import { OrdersCustomerRouter } from './orders.customers.route'
 
 const router: IRouter = Router()
 
@@ -15,6 +15,6 @@ router.use('/carts', CartRouter)
 
 router.use('/reviews', ReviewCustomerRouter)
 
-router.use('/orders', OrdersRouter)
+router.use('/orders', OrdersCustomerRouter)
 
 export { router as CustomerRouter }

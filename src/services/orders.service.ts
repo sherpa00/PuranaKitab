@@ -189,4 +189,55 @@ const ShowMyOrders = async (userid: number): Promise<ServiceResponse> => {
     }
 }
 
-export {PlaceOrderOffline,ShowMyOrders}
+// service for order confirmation
+const ConfirmOrders = async (orderid: number): Promise<ServiceResponse> => {
+    try {
+        // check if order exists or not
+        const orderFound = await db.query('SELECT * FROM orders WHERE orders.orderid = $1',[orderid])
+
+        if (orderFound.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Failed to confirm order'
+            }
+        }
+
+        // confirm payment status for this order
+        const confirmOrderStatus = await db.query(
+            `
+                UPDATE
+                    orders
+                SET
+                    payment_status = $1
+                WHERE
+                    orderid = $2
+                RETURNING *
+            `,
+            [
+                'paid',
+                orderid
+            ]
+        )
+
+        if (confirmOrderStatus.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Failed to confirm order'
+            }
+        }
+
+        return {
+            success: true,
+            message: 'Successfully confirmed the order',
+            data: confirmOrderStatus.rows[0]
+        }
+    } catch (err) {
+        logger.error(err, 'Error while confirming order')
+        return {
+            success: false,
+            message: 'Failed to conifrm order'
+        }
+    }
+}
+
+export {PlaceOrderOffline,ShowMyOrders, ConfirmOrders}

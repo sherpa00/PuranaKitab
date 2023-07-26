@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import { type ServiceResponse } from '../types'
-import { PlaceOrderOffline, ShowMyOrders } from '../services/orders.service'
+import { ConfirmOrders, PlaceOrderOffline, ShowMyOrders } from '../services/orders.service'
 import { StatusCodes } from 'http-status-codes'
 
 // controller for place order offline
@@ -55,6 +55,7 @@ const ShowMyOrdersOne = async (req: Request, res: Response, next: NextFunction):
             res.status(StatusCodes.BAD_REQUEST).json({
                 ...showMyOrdersStatus
             })
+            return
         }
 
         res.status(StatusCodes.OK).json({
@@ -65,4 +66,29 @@ const ShowMyOrdersOne = async (req: Request, res: Response, next: NextFunction):
     }
 }
 
-export {PlaceOrderOfflineOne, ShowMyOrdersOne}
+// controller for showing orders
+const ConfirmOrdersOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+
+        // req params 
+        const orderid: number = parseInt(req.params.orderid)
+
+        // call confirm orders service
+        const confirmOrdersStatus: ServiceResponse = await ConfirmOrders(orderid)
+
+        if (!confirmOrdersStatus.success) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                ...confirmOrdersStatus
+            })
+            return
+        }
+
+        res.status(StatusCodes.OK).json({
+            ...confirmOrdersStatus
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+export {PlaceOrderOfflineOne, ShowMyOrdersOne, ConfirmOrdersOne}
