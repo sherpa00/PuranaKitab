@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express'
 import { validationResult } from 'express-validator'
 import CustomError from '../utils/custom-error'
 import { type ServiceResponse } from '../types'
-import { ConfirmOrders, type OnlineCardDetails, PlaceOrderOffline, PlaceOrderOnline, ShowMyOrders } from '../services/orders.service'
+import { ConfirmOrders, type OnlineCardDetails, PlaceOrderOffline, PlaceOrderOnline, ShowMyOrders, RemoveOrder } from '../services/orders.service'
 import { StatusCodes } from 'http-status-codes'
 import logger from '../utils/logger.utils'
 
@@ -42,7 +42,7 @@ const PlaceOrderOfflineOne =async (req: Request, res: Response, next: NextFuncti
     }
 }
 
-// controller for place order offline
+// controller for place order online
 const PlaceOrderOnlineOne =async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
         // validation error
@@ -111,7 +111,7 @@ const ShowMyOrdersOne = async (req: Request, res: Response, next: NextFunction):
     }
 }
 
-// controller for showing orders
+// controller for confirming orders
 const ConfirmOrdersOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
 
@@ -136,4 +136,29 @@ const ConfirmOrdersOne = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
-export {PlaceOrderOfflineOne, PlaceOrderOnlineOne, ShowMyOrdersOne, ConfirmOrdersOne}
+// controller for confirming orders
+const RemoveOrderOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+
+        // req params 
+        const orderid: number = parseInt(req.params.orderid)
+
+        // call remove orders service
+        const removeOrderStatus: ServiceResponse = await RemoveOrder(orderid)
+
+        if (!removeOrderStatus.success) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                ...removeOrderStatus
+            })
+            return
+        }
+
+        res.status(StatusCodes.OK).json({
+            ...removeOrderStatus
+        })
+    } catch (err) {
+        next(err)
+    }
+}
+
+export {PlaceOrderOfflineOne, PlaceOrderOnlineOne, ShowMyOrdersOne, ConfirmOrdersOne, RemoveOrderOne}

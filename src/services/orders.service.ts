@@ -411,4 +411,51 @@ const ConfirmOrders = async (orderid: number): Promise<ServiceResponse> => {
     }
 }
 
-export {PlaceOrderOffline, PlaceOrderOnline, ShowMyOrders, ConfirmOrders}
+// service for removing order after confirmation
+const RemoveOrder = async (orderid: number): Promise<ServiceResponse> => {
+    try {
+        // check if order exists
+        const foundOrder = await db.query('SELECT * FROM orders WHERE orders.orderid = $1',[orderid])
+
+        if (foundOrder.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'No Order Found'
+            }
+        }
+
+        // check if order payment status is paid
+        const isOrderPaymentPaid: boolean = foundOrder.rows[0].payment_status === 'paid'
+
+        if (!isOrderPaymentPaid) {
+            return {
+                success: false,
+                message: 'Order payment is due'
+            }
+        }
+
+        // remove order from db
+        const removeOrderStatus = await db.query('DELETE FROM orders WHERE orders.orderid = $1 RETURNING *',[orderid])
+
+        if (removeOrderStatus.rowCount <= 0) {
+            return {
+                success: false,
+                message: 'Failed to remove order'
+            }
+        }
+
+        return {
+            success: true,
+            message: 'Successfully removed order',
+            data: removeOrderStatus.rows[0]
+        }
+    } catch (err) {
+        logger.error(err, 'Error while removing order')
+        return {
+            success: false,
+            message: 'Failed to remove order'
+        }
+    }
+}
+
+export {PlaceOrderOffline, PlaceOrderOnline, ShowMyOrders, ConfirmOrders, RemoveOrder}
