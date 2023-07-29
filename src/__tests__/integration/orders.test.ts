@@ -459,6 +459,193 @@ describe('Testing orders routes', () => {
     expect(reqBody.body.data).toBeUndefined()
   })
 
+  it('Should confirm user orders for authorized admin user', async () => {
+    // temp add books
+    const tempAddBook1 = await request(app)
+      .post('/api/books')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // temp add carts
+    const tempAddCart1 = await request(app)
+      .post('/api/carts')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 1
+      })
+
+    // temp order req body 
+    const tempBodyCarts: [{cartid: number}] = [
+        {
+            cartid: tempAddCart1.body.data.cartid
+        }
+    ]
+    const tempBodyPhoneNumber: number = 9804080343
+
+    const tempAddOrder = await request(app)
+      .post('/api/orders/place-order/offline')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        carts: tempBodyCarts,
+        phone_number: tempBodyPhoneNumber
+      })
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/api/orders/confirm-order/${tempAddOrder.body.data.orderid}`)
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.orderid).toEqual(tempAddOrder.body.data.orderid)
+    expect(reqBody.body.data.payment_status).toEqual('paid')
+    expect(reqBody.body.data.payment_method).toBe('cash_on_delivery')
+  })
+
+  it('Should not confirm user orders for incorrect param orderid for authorized admin user', async () => {
+    // temp add books
+    const tempAddBook1 = await request(app)
+      .post('/api/books')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // temp add carts
+    const tempAddCart1 = await request(app)
+      .post('/api/carts')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 1
+      })
+
+    // temp order req body 
+    const tempBodyCarts: [{cartid: number}] = [
+        {
+            cartid: tempAddCart1.body.data.cartid
+        }
+    ]
+    const tempBodyPhoneNumber: number = 9804080343
+
+    const tempAddOrder = await request(app)
+      .post('/api/orders/place-order/offline')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        carts: tempBodyCarts,
+        phone_number: tempBodyPhoneNumber
+      })
+
+    const reqBody = await request(app)
+      .get('/api/orders/confirm-order/invalidOrderid')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+
+  })
+
+  it('Should not confirm user orders which is already paid online for correct param orderid for authorized admin user', async () => {
+    // temp add books
+    const tempAddBook1 = await request(app)
+      .post('/api/books')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // temp add carts
+    const tempAddCart1 = await request(app)
+      .post('/api/carts')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 1
+      })
+
+    // temp order req body 
+    const tempBodyCarts: [{cartid: number}] = [
+        {
+            cartid: tempAddCart1.body.data.cartid
+        }
+    ]
+    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyCardDetails = {
+        'creditCard': '4242424242424242',
+        'expMonth': 11,
+        'expYear': 2023,
+        'cvc': '123'
+    }
+
+    const tempAddOrder = await request(app)
+      .post('/api/orders/place-order/online')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        carts: tempBodyCarts,
+        phone_number: tempBodyPhoneNumber,
+        card_details: tempBodyCardDetails
+      })
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/api/orders/confirm-order/${tempAddOrder.body.data.orderid}`)
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+
+  })
+
+  it('Should not confirm user orders for correct param orderid for unauthorized admin user', async () => {
+    // temp add books
+    const tempAddBook1 = await request(app)
+      .post('/api/books')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // temp add carts
+    const tempAddCart1 = await request(app)
+      .post('/api/carts')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 1
+      })
+
+    // temp order req body 
+    const tempBodyCarts: [{cartid: number}] = [
+        {
+            cartid: tempAddCart1.body.data.cartid
+        }
+    ]
+    const tempBodyPhoneNumber: number = 9804080343
+
+    const tempAddOrder = await request(app)
+      .post('/api/orders/place-order/offline')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        carts: tempBodyCarts,
+        phone_number: tempBodyPhoneNumber
+      })
+
+    const reqBody = await request(app)
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      .get(`/api/orders/confirm-order/${tempAddOrder.body.data.orderid}`)
+      .set('Authorization', 'Bearer ' + 'invalidjwt')
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.data).toBeUndefined()
+
+  })
+
   it('Should return user orders for authorized user', async () => {
     // temp add books
     const tempAddBook1 = await request(app)

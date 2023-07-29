@@ -373,6 +373,14 @@ const ConfirmOrders = async (orderid: number): Promise<ServiceResponse> => {
             }
         }
 
+        // check if order already paid
+        if (orderFound.rows[0].payment_status === 'paid') {
+            return {
+                success: false,
+                message: 'Failed to confirm order'
+            }
+        }
+
         // confirm payment status for this order
         const confirmOrderStatus = await db.query(
             `
