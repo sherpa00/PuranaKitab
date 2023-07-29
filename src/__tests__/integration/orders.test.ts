@@ -4,6 +4,7 @@ import { genSalt, hash } from 'bcrypt'
 import app from '../../index'
 import { db } from '../../configs/db.configs'
 import type { Iuser } from '../../types'
+import { OnlineCardDetails } from '../../services/orders.service'
 
 describe('Testing orders routes', () => {
     // assign temporary user
@@ -262,6 +263,196 @@ describe('Testing orders routes', () => {
       .send({
         carts: tempBodyCarts,
         phone_number: tempBodyPhoneNumber
+      })
+
+    expect(reqBody.statusCode).toBe(401)
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should place order (cash-on-delivery) for correct body array of object cartids and body phone number', async () => {
+    // temp add books
+    const tempAddBook1 = await request(app)
+      .post('/api/books')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // temp add carts
+    const tempAddCart1 = await request(app)
+      .post('/api/carts')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 1
+      })
+
+    // temp order req body 
+    const tempBodyCarts: [{cartid: number}] = [
+        {
+            cartid: tempAddCart1.body.data.cartid
+        }
+    ]
+    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyCardDetails = {
+        'creditCard': '4242424242424242',
+        'expMonth': 11,
+        'expYear': 2023,
+        'cvc': '123'
+    }
+
+    const reqBody = await request(app)
+      .post('/api/orders/place-order/online')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        carts: tempBodyCarts,
+        phone_number: tempBodyPhoneNumber,
+        card_details: tempBodyCardDetails
+      })
+
+    expect(reqBody.statusCode).toBe(200)
+    expect(reqBody.body.success).toBeTruthy()
+    expect(reqBody.body.data).toBeDefined()
+    expect(reqBody.body.data.userid).toEqual(tempAddCart1.body.data.userid)
+    expect(reqBody.body.data.phone_number).toEqual(String(tempBodyPhoneNumber))
+    expect(reqBody.body.data.ordered_books).toBeDefined()
+    expect(reqBody.body.data.ordered_books[0].bookid).toEqual(tempAddCart1.body.data.bookid)
+    expect(reqBody.body.data.total_amount).toEqual(tempAddCart1.body.data.total_price)
+    expect(reqBody.body.data.payment_status).toBe('paid')
+    expect(reqBody.body.data.payment_method).toBe('card')
+  })
+
+  it('Should not place order (cash-on-delivery) for incorrect body array of object cartids and body phone number', async () => {
+    // temp add books
+    const tempAddBook1 = await request(app)
+      .post('/api/books')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // temp add carts
+    const tempAddCart1 = await request(app)
+      .post('/api/carts')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 1
+      })
+
+    // temp order req body 
+    const tempBodyCarts: [{cartid: number}] = [
+        {
+            cartid: 3898923853
+        }
+    ]
+    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyCardDetails = {
+        'creditCard': '4242424242424242',
+        'expMonth': 11,
+        'expYear': 2023,
+        'cvc': '123'
+    }
+
+    const reqBody = await request(app)
+      .post('/api/orders/place-order/online')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        carts: tempBodyCarts,
+        phone_number: tempBodyPhoneNumber,
+        card_details: tempBodyCardDetails
+      })
+
+    expect(reqBody.statusCode).toBe(400)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not place order (cash-on-delivery) for correct body array of object cartids and incorrect body phone number', async () => {
+    // temp add books
+    const tempAddBook1 = await request(app)
+      .post('/api/books')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // temp add carts
+    const tempAddCart1 = await request(app)
+      .post('/api/carts')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 1
+      })
+
+    // temp order req body 
+    const tempBodyCarts: [{cartid: number}] = [
+        {
+            cartid: 3898923853
+        }
+    ]
+    const tempBodyPhoneNumber: number = 9804080343234
+    const tempBodyCardDetails = {
+        'creditCard': '4242424242424242',
+        'expMonth': 11,
+        'expYear': 2023,
+        'cvc': '123'
+    }
+
+    const reqBody = await request(app)
+      .post('/api/orders/place-order/online')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        carts: tempBodyCarts,
+        phone_number: tempBodyPhoneNumber,
+        card_details: tempBodyCardDetails
+      })
+
+    expect(reqBody.statusCode).toBe(403)
+    expect(reqBody.body.success).toBeFalsy()
+    expect(reqBody.body.data).toBeUndefined()
+  })
+
+  it('Should not place order (cash-on-delivery) for correct body array of object cartids and body phone number for unauthorized user', async () => {
+    // temp add books
+    const tempAddBook1 = await request(app)
+      .post('/api/books')
+      .set('Authorization', `Bearer ${tempAdminJWT}`)
+      .send({
+        ...tempBookPayload1
+      })
+
+    // temp add carts
+    const tempAddCart1 = await request(app)
+      .post('/api/carts')
+      .set('Authorization', `Bearer ${tempJwt}`)
+      .send({
+        bookid: parseInt(tempAddBook1.body.data.bookid),
+        quantity: 1
+      })
+
+    // temp order req body 
+    const tempBodyCarts: [{cartid: number}] = [
+        {
+            cartid: 3898923853
+        }
+    ]
+    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyCardDetails = {
+        'creditCard': '4242424242424242',
+        'expMonth': 11,
+        'expYear': 2023,
+        'cvc': '123'
+    }
+
+    const reqBody = await request(app)
+      .post('/api/orders/place-order/online')
+      .set('Authorization', 'Bearer ' + 'invalid jwt')
+      .send({
+        carts: tempBodyCarts,
+        phone_number: tempBodyPhoneNumber,
+        card_details: tempBodyCardDetails
       })
 
     expect(reqBody.statusCode).toBe(401)
