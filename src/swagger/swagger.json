@@ -2546,6 +2546,189 @@
           }
         }
       }
+    },
+    "/orders/my-orders": {
+      "get": {
+        "summary": "Get user orders",
+        "description": "Get user orders",
+        "produces": ["application/json"],
+        "tags": ["Orders"],
+        "security": [{
+          "JWT": []
+        }],
+        "responses": {
+          "200": {
+            "description": "Successfully got orders",
+            "schema": {
+              "$ref": "#/components/schemas/MyOrders_success"
+            }
+          },
+          "400": {
+            "description": "Invalid get categories best seller books operation",
+            "schema": {
+              "$ref": "#/components/schemas/MyOrders_invalid"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError" 
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/orders/place-order/online": {
+      "get": {
+        "summary": "Place user orders by card online",
+        "description": "Place user orders by card online",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Orders"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Place Orders object",
+            "schema": {
+              "properties": {
+                "carts": {
+                  "type": "array",
+                  "required": true,
+                  "items": {
+                    "properties": {
+                      "cartid": {
+                        "type": "integer",
+                        "example": 124
+                      }
+                    }
+                  }
+                },
+                "phone_number": {
+                  "type": "integer",
+                  "example": 980408763,
+                  "required": true
+                },
+                "card_details": {
+                  "properties": {
+                    "creditCard": {
+                      "type": "string",
+                      "example": "455455455455"
+                    },
+                    "expMonth": {
+                      "type": "integer",
+                      "example": 12
+                    },
+                    "expYear": {
+                      "type": "integer",
+                      "example": 2024
+                    },
+                    "cvc": {
+                      "type": "string",
+                      "example": "123"
+                    }
+                  }
+                }  
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully placed orders",
+            "schema": {
+              "$ref": "#/components/schemas/PlaceOrdersOnline_success"
+            }
+          },
+          "400": {
+            "description": "Invalid place orders operation",
+            "schema": {
+              "$ref": "#/components/schemas/PlaceOrdersOnline_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError" 
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/orders/place-order/offline": {
+      "get": {
+        "summary": "Place user orders by cash on devliery",
+        "description": "Place user orders by cash on delivery",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Orders"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Place Orders object",
+            "schema": {
+              "properties": {
+                "carts": {
+                  "type": "array",
+                  "required": true,
+                  "items": {
+                    "properties": {
+                      "cartid": {
+                        "type": "integer",
+                        "example": 124
+                      }
+                    }
+                  }
+                },
+                "phone_number": {
+                  "type": "integer",
+                  "example": 980408763,
+                  "required": true
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully placed orders",
+            "schema": {
+              "$ref": "#/components/schemas/PlaceOrdersOffline_success"
+            }
+          },
+          "400": {
+            "description": "Invalid place orders operation",
+            "schema": {
+              "$ref": "#/components/schemas/PlaceOrdersOffline_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError" 
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -4165,6 +4348,309 @@
           "message": {
             "type": "string",
             "example": "Failed to get recently added category"
+          }
+        }
+      },
+      "OrdersOnline": {
+        "properties": {
+          "orderid": {
+            "type": "integer",
+            "example": 123
+          },
+          "userid": {
+            "type": "integer",
+            "example": 13453
+          },
+          "phone_number": {
+            "type": "integer",
+            "example": 9807462732
+          },
+          "ordered_books": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "bookid": {
+                  "type": "integer",
+                  "example": 234
+                },
+                "total_quantity": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "book_original_price": {
+                  "type": "integer",
+                  "example": 1000
+                },
+                "book_total_price": {
+                  "type": "integer",
+                  "example": 1000
+                }
+              }
+            }
+          },
+          "total_amount": {
+            "type": "integer",
+            "example": 1000
+          },
+          "payment_intent_id": {
+            "type": "string",
+            "example": "jfdj_fj3298foj20384"
+          },
+          "payment_status": {
+            "type": "string",
+            "example": "paid"
+          },
+          "payment_method": {
+            "type": "string",
+            "example": "card"
+          }
+        }
+      },
+      "OrdersOffline": {
+        "properties": {
+          "orderid": {
+            "type": "integer",
+            "example": 123
+          },
+          "userid": {
+            "type": "integer",
+            "example": 13453
+          },
+          "phone_number": {
+            "type": "integer",
+            "example": 9807462732
+          },
+          "ordered_books": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "bookid": {
+                  "type": "integer",
+                  "example": 234
+                },
+                "total_quantity": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "book_original_price": {
+                  "type": "integer",
+                  "example": 1000
+                },
+                "book_total_price": {
+                  "type": "integer",
+                  "example": 1000
+                }
+              }
+            }
+          },
+          "total_amount": {
+            "type": "integer",
+            "example": 1000
+          },
+          "payment_intent_id": {
+            "type": "string",
+            "example": "jfdj_fj3298foj20384"
+          },
+          "payment_status": {
+            "type": "string",
+            "example": "unpaid"
+          },
+          "payment_method": {
+            "type": "string",
+            "example": "cash_on_delivery"
+          }
+        }
+      },
+      "MyOrders_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got my orders"
+          },
+          "data": {
+            "type":"array",
+            "items": {
+              "$ref": "#/components/schemas/OrdersOnline"
+            }
+          }
+        }
+      },
+      "MyOrders_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to get my orders"
+          }
+        }
+      },
+      "PlaceOrdersOnline_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got my orders"
+          },
+          "data": {
+            "$ref": "#/components/schemas/OrdersOnline"
+          }
+        }
+      },
+      "PlaceOrdersOnline_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to place your order"
+          }
+        }
+      },
+      "PlaceOrdersOffline_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully got my orders"
+          },
+          "data": {
+            "$ref": "#/components/schemas/OrdersOffline"
+          }
+        }
+      },
+      "PlaceOrdersOffline_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to place your order"
+          }
+        }
+      },
+      "ConfirmedOrders": {
+        "properties": {
+          "orderid": {
+            "type": "integer",
+            "example": 123
+          },
+          "userid": {
+            "type": "integer",
+            "example": 13453
+          },
+          "phone_number": {
+            "type": "integer",
+            "example": 9807462732
+          },
+          "ordered_books": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "bookid": {
+                  "type": "integer",
+                  "example": 234
+                },
+                "total_quantity": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "book_original_price": {
+                  "type": "integer",
+                  "example": 1000
+                },
+                "book_total_price": {
+                  "type": "integer",
+                  "example": 1000
+                }
+              }
+            }
+          },
+          "total_amount": {
+            "type": "integer",
+            "example": 1000
+          },
+          "payment_intent_id": {
+            "type": "string",
+            "example": "jfdj_fj3298foj20384"
+          },
+          "payment_status": {
+            "type": "string",
+            "example": "paid"
+          },
+          "payment_method": {
+            "type": "string",
+            "example": "cash_on_delivery"
+          }
+        }
+      },
+      "ConfirmOrders_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully confirmed the orders"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ConfirmedOrders"
+          }
+        }
+      },
+      "ConfirmOrders_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to place your order"
+          }
+        }
+      },
+      "RemoveOrders_success": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "example": "Successfully removed orders"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ConfirmedOrders"
+          }
+        }
+      },
+      "RemoveOrders_invalid": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Failed to remove order"
           }
         }
       }

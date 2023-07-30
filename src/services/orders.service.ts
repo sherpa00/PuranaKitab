@@ -258,7 +258,7 @@ const PlaceOrderOnline = async (cartsList: [{cartid: number}], userid: number, p
         if (paymentIntent.status !== 'succeeded') {
             return {
                 success: false,
-                message: 'Failed to place order'
+                message: 'Failed to place your order'
             }
         }
 
