@@ -2340,7 +2340,7 @@
         "summary": "Get categories best seller books",
         "description": "Get categories best seller books",
         "produces": ["application/json"],
-        "tags": ["Categories (Best Seller)"],
+        "tags": ["Categories"],
         "parameters": [
           {
             "in": "query",
@@ -2393,7 +2393,7 @@
         "summary": "Get categories top rated books",
         "description": "Get categories top rated books",
         "produces": ["application/json"],
-        "tags": ["Categories (Top Rated)"],
+        "tags": ["Categories"],
         "parameters": [
           {
             "in": "query",
@@ -2446,7 +2446,7 @@
         "summary": "Get categories new arrivals books",
         "description": "Get categories new arrivals books",
         "produces": ["application/json"],
-        "tags": ["Categories (New Arrivals)"],
+        "tags": ["Categories"],
         "parameters": [
           {
             "in": "query",
@@ -2499,7 +2499,7 @@
         "summary": "Get categories recently added books",
         "description": "Get categories recenlty added books",
         "produces": ["application/json"],
-        "tags": ["Categories (Recently Added)"],
+        "tags": ["Categories"],
         "parameters": [
           {
             "in": "query",
@@ -2579,7 +2579,7 @@
       }
     },
     "/orders/place-order/online": {
-      "get": {
+      "post": {
         "summary": "Place user orders by card online",
         "description": "Place user orders by card online",
         "consumes": ["application/json"],
@@ -2665,7 +2665,7 @@
       }
     },
     "/orders/place-order/offline": {
-      "get": {
+      "post": {
         "summary": "Place user orders by cash on devliery",
         "description": "Place user orders by cash on delivery",
         "consumes": ["application/json"],
@@ -2729,7 +2729,107 @@
           }
         }
       }
+    },
+    "/orders/confirm-order/{orderid}": {
+      "get": {
+        "summary": "Confirm user orders (ADMIN ONLY)",
+        "description": "Confirm user orders",
+        "produces": ["application/json"],
+        "tags": ["Orders"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderid",
+            "description": "Unique Order orderid",
+            "schema": {
+              "type": "integer",
+              "example": 2093,
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully confirmed orders",
+            "schema": {
+              "$ref": "#/components/schemas/ConfirmOrders_success"
+            }
+          },
+          "400": {
+            "description": "Invalid confirm orders operation",
+            "schema": {
+              "$ref": "#/components/schemas/ConfirmOrders_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError" 
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
+    },
+    "/orders/{orderid}": {
+      "delete": {
+        "summary": "Remove user orders (ADMIN ONLY)",
+        "description": "Remove user orders",
+        "produces": ["application/json"],
+        "tags": ["Orders"],
+        "security": [{
+          "JWT": []
+        }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "orderid",
+            "description": "Unique Order orderid",
+            "schema": {
+              "type": "integer",
+              "example": 2093,
+              "required": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully removed orders",
+            "schema": {
+              "$ref": "#/components/schemas/RemoveOrders_success"
+            }
+          },
+          "400": {
+            "description": "Invalid remove orders operation",
+            "schema": {
+              "$ref": "#/components/schemas/RemoveOrders_invalid"
+            }
+          },
+          "403": {
+            "description": "Invalid Validation Operation",
+            "schema": {
+              "$ref": "#/components/schemas/RegisterLogin_invalidation"
+            }
+          },
+          "401": {
+            "$ref": "#/components/schemas/UnauthorizedError" 
+          },
+          "default": {
+            "description": "Unexpected Error"
+          }
+        }
+      }
     }
+    
+
   },
   "components": {
     "schemas": {
@@ -4623,7 +4723,7 @@
           },
           "message": {
             "type": "string",
-            "example": "Failed to place your order"
+            "example": "Failed to confirm order"
           }
         }
       },
