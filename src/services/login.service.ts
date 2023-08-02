@@ -1,4 +1,4 @@
-import { compareSync } from 'bcrypt'
+import { compare } from 'bcrypt'
 import { sign } from 'jsonwebtoken'
 import * as dotenv from 'dotenv'
 import { db } from '../configs/db.configs'
@@ -25,17 +25,17 @@ const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promis
     if (foundUser.rowCount <= 0) {
       return {
         success: false,
-        message: 'No user found'
+        message: 'User Email or Password incorrect'
       }
     }
 
     // verify user's password
-    const isVerified: boolean = compareSync(userInfo.password, foundUser.rows[0].password)
+    const isVerified: boolean = await compare(userInfo.password, foundUser.rows[0].password)
 
     if (!isVerified) {
       return {
         success: false,
-        message: 'Invalid Password'
+        message: 'User Email or Password incorrect'
       }
     }
 
@@ -57,13 +57,13 @@ const LoginUser = async (userInfo: Pick<InewUser, 'email' | 'password'>): Promis
         username: foundUser.rows[0].username,
         email: foundUser.rows[0].email
       },
-      message: 'Successfully LoggedIn'
+      message: 'Successfully Loggedin'
     }
   } catch (err) {
     logger.error(err, 'Error while login in')
     return {
       success: false,
-      message: 'Error while login in'
+      message: 'User Email or Password incorrect'
     }
   }
 }

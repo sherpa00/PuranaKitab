@@ -7,7 +7,7 @@ import type { Iuser } from '../../types'
 import { OnlineCardDetails } from '../../services/orders.service'
 
 describe('Testing orders routes', () => {
-    // assign temporary user
+  // assign temporary user
   const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing523423',
     email: 'testing95083290909045328@gmail.com',
@@ -125,11 +125,11 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
 
@@ -171,11 +171,11 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: 3898923853
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: 3898923853
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
 
@@ -210,11 +210,11 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: 3898923853
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: 3898923853
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343234
 
@@ -249,11 +249,11 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: 3898923853
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: 3898923853
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
 
@@ -287,18 +287,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const reqBody = await request(app)
@@ -340,18 +340,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: 3898923853
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: 3898923853
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const reqBody = await request(app)
@@ -386,18 +386,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: 3898923853
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: 3898923853
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343234
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const reqBody = await request(app)
@@ -432,18 +432,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: 3898923853
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: 3898923853
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const reqBody = await request(app)
@@ -477,11 +477,11 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
 
@@ -524,11 +524,11 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
 
@@ -547,7 +547,6 @@ describe('Testing orders routes', () => {
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
-
   })
 
   it('Should not confirm user orders which is already paid online for correct param orderid for authorized admin user', async () => {
@@ -568,18 +567,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const tempAddOrder = await request(app)
@@ -599,7 +598,6 @@ describe('Testing orders routes', () => {
     expect(reqBody.statusCode).toBe(400)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
-
   })
 
   it('Should not confirm user orders for correct param orderid for unauthorized admin user', async () => {
@@ -620,11 +618,11 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
 
@@ -643,7 +641,6 @@ describe('Testing orders routes', () => {
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.data).toBeUndefined()
-
   })
 
   it('Should return user orders for authorized user', async () => {
@@ -664,18 +661,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const tempAddOrder = await request(app)
@@ -687,9 +684,7 @@ describe('Testing orders routes', () => {
         card_details: tempBodyCardDetails
       })
 
-    const reqBody = await request(app)
-      .get('/api/orders/my-orders')
-      .set('Authorization', `Bearer ${tempJwt}`)
+    const reqBody = await request(app).get('/api/orders/my-orders').set('Authorization', `Bearer ${tempJwt}`)
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
@@ -716,18 +711,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const tempAddOrder = await request(app)
@@ -765,18 +760,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const tempAddOrder = await request(app)
@@ -817,18 +812,18 @@ describe('Testing orders routes', () => {
         quantity: 1
       })
 
-    // temp order req body 
-    const tempBodyCarts: [{cartid: number}] = [
-        {
-            cartid: tempAddCart1.body.data.cartid
-        }
+    // temp order req body
+    const tempBodyCarts: [{ cartid: number }] = [
+      {
+        cartid: tempAddCart1.body.data.cartid
+      }
     ]
     const tempBodyPhoneNumber: number = 9804080343
     const tempBodyCardDetails = {
-        'creditCard': '4242424242424242',
-        'expMonth': 11,
-        'expYear': 2023,
-        'cvc': '123'
+      creditCard: '4242424242424242',
+      expMonth: 11,
+      expYear: 2023,
+      cvc: '123'
     }
 
     const tempAddOrder = await request(app)
@@ -847,7 +842,6 @@ describe('Testing orders routes', () => {
 
     expect(reqBody.statusCode).toBe(401)
     expect(reqBody.body.data).toBeUndefined()
-
   })
 
   // clear all temporary datas

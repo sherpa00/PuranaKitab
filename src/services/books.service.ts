@@ -111,7 +111,8 @@ const GetOnlyOneBook = async (bookID: number): Promise<ServiceResponse> => {
        LEFT JOIN book_images AS front_book_image ON books.bookid = front_book_image.bookid AND front_book_image.img_type = 'FRONT'
        LEFT JOIN book_images AS back_book_image ON books.bookid = back_book_image.bookid AND back_book_image.img_type = 'BACK'
        WHERE books.bookid = $1`,
-       [bookID])
+      [bookID]
+    )
 
     if (getBooksStatus.rowCount <= 0) {
       return {

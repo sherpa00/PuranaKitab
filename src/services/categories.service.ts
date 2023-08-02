@@ -4,22 +4,22 @@ import { type IPaginationMetadata, type ServiceResponse } from '../types'
 import logger from '../utils/logger.utils'
 
 // category service -> Best Seller books
-const GetCategoriesBestSeller = async (page: number, size: number) : Promise<ServiceResponse> => {
-    try {
-        // count the best seller books from db for pagination metadata
-        const countBestSellerBooks = await db.query(
-            `SELECT 
+const GetCategoriesBestSeller = async (page: number, size: number): Promise<ServiceResponse> => {
+  try {
+    // count the best seller books from db for pagination metadata
+    const countBestSellerBooks = await db.query(
+      `SELECT 
                 COUNT(*) 
             FROM 
                 books
             INNER JOIN book_sales ON books.bookid = book_sales.bookid
             `
-        )
+    )
 
-        // get the best seller books from db
-        const getBestSeller = await db.query(
-            // eslint-disable-next-line quotes
-            `SELECT
+    // get the best seller books from db
+    const getBestSeller = await db.query(
+      // eslint-disable-next-line quotes
+      `SELECT
                 books.*,
                 authors.firstname AS author_firstname,
                 authors.lastname AS author_lastname,
@@ -36,58 +36,58 @@ const GetCategoriesBestSeller = async (page: number, size: number) : Promise<Ser
             ORDER BY book_sales.sales_count DESC
             LIMIT $1 OFFSET ($2 - 1) * $1;
           `,
-          [size, page]
-        )
+      [size, page]
+    )
 
-        if (getBestSeller.rowCount < 0) {
-            return {
-                success: false,
-                message: 'Failed to get best seller category'
-            }
-        }
-
-        const getBestSellerPaginationMetaData: IPaginationMetadata = generatePaginationMetadata(
-            countBestSellerBooks.rows[0].count,
-            page ?? 1,
-            size ?? countBestSellerBooks.rows[0].count
-        )
-
-        return {
-            success: true,
-            message: 'Successfully got the best seller category',
-            data: {
-                pagination: {
-                    ...getBestSellerPaginationMetaData
-                },
-                results: getBestSeller.rows
-            }
-        }
-    } catch(err) {
-        logger.error(err, 'Error while getting best seller category')
-        return {
-            success: false,
-            message: 'Failed to get the best seller category'
-        }
+    if (getBestSeller.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to get best seller category'
+      }
     }
+
+    const getBestSellerPaginationMetaData: IPaginationMetadata = generatePaginationMetadata(
+      countBestSellerBooks.rows[0].count,
+      page ?? 1,
+      size ?? countBestSellerBooks.rows[0].count
+    )
+
+    return {
+      success: true,
+      message: 'Successfully got the best seller category',
+      data: {
+        pagination: {
+          ...getBestSellerPaginationMetaData
+        },
+        results: getBestSeller.rows
+      }
+    }
+  } catch (err) {
+    logger.error(err, 'Error while getting best seller category')
+    return {
+      success: false,
+      message: 'Failed to get the best seller category'
+    }
+  }
 }
 
 // category service -> Top Rated books
 const GetCategoriesTopRated = async (page: number, size: number): Promise<ServiceResponse> => {
-    try {
-        // count the top rated books for pagination metadata
-        const countTopRatedBooks = await db.query(
-            `SELECT
+  try {
+    // count the top rated books for pagination metadata
+    const countTopRatedBooks = await db.query(
+      `SELECT
                 books.bookid,
                 COALESCE(AVG(reviews.stars), 0) AS avg_rating
             FROM 
                 books
             LEFT JOIN reviews ON books.bookid = reviews.bookid
             GROUP BY books.bookid`
-        )
+    )
 
-        // get the top rated books by db
-        const getTopRated = await db.query(
-            `SELECT
+    // get the top rated books by db
+    const getTopRated = await db.query(
+      `SELECT
                 books.*,
                 authors.firstname AS author_firstname,
                 authors.lastname AS author_lastname,
@@ -105,60 +105,60 @@ const GetCategoriesTopRated = async (page: number, size: number): Promise<Servic
             GROUP BY books.bookid, authors.firstname, authors.lastname, genres.genre_name, front_book_image.img_src, back_book_image.img_src
             ORDER BY avg_rating DESC
             LIMIT $1 OFFSET ($2 - 1) * $1`,
-            [size, page]
-        )
+      [size, page]
+    )
 
-        if (getTopRated.rowCount < 0) {
-            return {
-                success: false,
-                message: 'Failed to get top rated category'
-            }
-        }
-
-        const getTopRatedBooksPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
-            countTopRatedBooks.rowCount,
-            page ?? 1,
-            size ?? countTopRatedBooks.rowCount
-        )
-
-        return {
-            success: true,
-            message: 'Successfully got the top rated category',
-            data: {
-                pagination: {
-                    ...getTopRatedBooksPaginationMetadata
-                },
-                results: getTopRated.rows
-            }
-        }
-    } catch (err) {
-        logger.error(err, 'Errro while getting top rated category')
-        return {
-            success: false,
-            message: 'Failed to get the top rated category'
-        }
+    if (getTopRated.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to get top rated category'
+      }
     }
+
+    const getTopRatedBooksPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
+      countTopRatedBooks.rowCount,
+      page ?? 1,
+      size ?? countTopRatedBooks.rowCount
+    )
+
+    return {
+      success: true,
+      message: 'Successfully got the top rated category',
+      data: {
+        pagination: {
+          ...getTopRatedBooksPaginationMetadata
+        },
+        results: getTopRated.rows
+      }
+    }
+  } catch (err) {
+    logger.error(err, 'Errro while getting top rated category')
+    return {
+      success: false,
+      message: 'Failed to get the top rated category'
+    }
+  }
 }
 
 // category service -> New Arrivals
 const GetCategoriesNewArrivals = async (page: number, size: number): Promise<ServiceResponse> => {
-    try {
-        const currentDate: Date = new Date()
-        const fiveYearsAgo: Date = new Date(currentDate.getFullYear() - 5, 0, 1) // date five years ago
+  try {
+    const currentDate: Date = new Date()
+    const fiveYearsAgo: Date = new Date(currentDate.getFullYear() - 5, 0, 1) // date five years ago
 
-        // count the new arrivals books from db
-        const countNewArrivalsBooks = await db.query(
-            `SELECT
+    // count the new arrivals books from db
+    const countNewArrivalsBooks = await db.query(
+      `SELECT
                 COUNT(*)
             FROM
                 books
             WHERE books.publication_date BETWEEN $1 AND $2`,
-            [fiveYearsAgo, currentDate]
-        )
+      [fiveYearsAgo, currentDate]
+    )
 
-        // get the new arrivals from db
-        const getNewArrivals = await db.query(
-            `SELECT
+    // get the new arrivals from db
+    const getNewArrivals = await db.query(
+      `SELECT
                 books.*,
                 authors.firstname AS author_firstname,
                 authors.lastname AS author_lastname,
@@ -174,61 +174,60 @@ const GetCategoriesNewArrivals = async (page: number, size: number): Promise<Ser
             WHERE books.publication_date BETWEEN $1 AND $2
             ORDER BY books.publication_date DESC
             LIMIT $3 OFFSET ($4 - 1) * $3`,
-            [fiveYearsAgo, currentDate, size, page]
-        )
+      [fiveYearsAgo, currentDate, size, page]
+    )
 
-        if (getNewArrivals.rowCount < 0) {
-            return {
-                success: false,
-                message: 'Failed to get the new arrivals category'
-            }
-        }
-
-        const getNewArrivalsPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
-            countNewArrivalsBooks.rows[0].count,
-            page ?? 1,
-            size ?? countNewArrivalsBooks.rows[0].count
-        )
-
-        return {
-            success: true,
-            message: 'Successfully got the new arrivals category',
-            data: {
-                pagination: {
-                    ...getNewArrivalsPaginationMetadata
-                },
-                results: getNewArrivals.rows
-            }
-        }
-
-    } catch (err) {
-        logger.error(err, 'Error while getting new arrivals category')
-        return {
-            success: false,
-            message: 'Failed to get new arrivals category'
-        }
+    if (getNewArrivals.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to get the new arrivals category'
+      }
     }
+
+    const getNewArrivalsPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
+      countNewArrivalsBooks.rows[0].count,
+      page ?? 1,
+      size ?? countNewArrivalsBooks.rows[0].count
+    )
+
+    return {
+      success: true,
+      message: 'Successfully got the new arrivals category',
+      data: {
+        pagination: {
+          ...getNewArrivalsPaginationMetadata
+        },
+        results: getNewArrivals.rows
+      }
+    }
+  } catch (err) {
+    logger.error(err, 'Error while getting new arrivals category')
+    return {
+      success: false,
+      message: 'Failed to get new arrivals category'
+    }
+  }
 }
 
 // category service -> Recently Added
 const GetCategoriesRecentlyAdded = async (page: number, size: number): Promise<ServiceResponse> => {
-    try {
-        const currentDate: Date = new Date()
-        const startOfYear: Date = new Date(currentDate.getFullYear(), 0, 1) // start of current year
+  try {
+    const currentDate: Date = new Date()
+    const startOfYear: Date = new Date(currentDate.getFullYear(), 0, 1) // start of current year
 
-        // count the recently added books from db
-        const countRecentlyAdded = await db.query(
-            `SELECT
+    // count the recently added books from db
+    const countRecentlyAdded = await db.query(
+      `SELECT
                 COUNT(*)
             FROM
                 books
             WHERE books.createdat BETWEEN $1 AND $2`,
-            [startOfYear, currentDate]
-        )
+      [startOfYear, currentDate]
+    )
 
-        // get the new arrivals from db
-        const getRecentlyAdded = await db.query(
-            `SELECT
+    // get the new arrivals from db
+    const getRecentlyAdded = await db.query(
+      `SELECT
                 books.*,
                 authors.firstname AS author_firstname,
                 authors.lastname AS author_lastname,
@@ -244,40 +243,39 @@ const GetCategoriesRecentlyAdded = async (page: number, size: number): Promise<S
             WHERE books.createdat BETWEEN $1 AND $2
             ORDER By books.createdat DESC
             LIMIT $3 OFFSET ($4 - 1) * $3`,
-            [startOfYear, currentDate, size, page]
-        )
+      [startOfYear, currentDate, size, page]
+    )
 
-        if (getRecentlyAdded.rowCount < 0) {
-            return {
-                success: false,
-                message: 'Failed to get the recently added category'
-            }
-        }
-
-        const getRecentlyAddedPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
-            countRecentlyAdded.rows[0].count,
-            page ?? 1,
-            size ?? countRecentlyAdded.rows[0].count
-        )
-
-        return {
-            success: true,
-            message: 'Successfully got the recently added category',
-            data: {
-                pagination: {
-                    ...getRecentlyAddedPaginationMetadata
-                },
-                results: getRecentlyAdded.rows            
-            }
-        }
-
-    } catch (err) {
-        logger.error(err, 'Error while getting recently added category')
-        return {
-            success: false,
-            message: 'Failed to get recently added category'
-        }
+    if (getRecentlyAdded.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to get the recently added category'
+      }
     }
+
+    const getRecentlyAddedPaginationMetadata: IPaginationMetadata = generatePaginationMetadata(
+      countRecentlyAdded.rows[0].count,
+      page ?? 1,
+      size ?? countRecentlyAdded.rows[0].count
+    )
+
+    return {
+      success: true,
+      message: 'Successfully got the recently added category',
+      data: {
+        pagination: {
+          ...getRecentlyAddedPaginationMetadata
+        },
+        results: getRecentlyAdded.rows
+      }
+    }
+  } catch (err) {
+    logger.error(err, 'Error while getting recently added category')
+    return {
+      success: false,
+      message: 'Failed to get recently added category'
+    }
+  }
 }
 
-export {GetCategoriesBestSeller,GetCategoriesTopRated, GetCategoriesNewArrivals, GetCategoriesRecentlyAdded}
+export { GetCategoriesBestSeller, GetCategoriesTopRated, GetCategoriesNewArrivals, GetCategoriesRecentlyAdded }

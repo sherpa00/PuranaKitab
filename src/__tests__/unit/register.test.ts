@@ -12,10 +12,9 @@ jest.mock('bcrypt', () => ({
   hash: jest.fn()
 }))
 
-describe('Register New User Service', () => {
-
-    const mockSalt: string = 'mocked_salt'
-    const mockHashedPassword: string = 'mocked_hashed_password'
+describe('Testing Register New User Service', () => {
+  const mockSalt: string = 'mocked_salt'
+  const mockHashedPassword: string = 'mocked_hashed_password'
 
   beforeEach(() => {
     ;(db.query as jest.Mock).mockResolvedValue({
@@ -48,7 +47,7 @@ describe('Register New User Service', () => {
     expect(result.data.username).toEqual(userInfo.username)
   })
 
-  it('should call genSalt and hash functions with correct arguments', async() => {
+  it('should call genSalt and hash functions with correct arguments', async () => {
     await RegisterNewUser(userInfo)
 
     expect(db.query).toHaveBeenCalled() // db query is called
@@ -58,7 +57,7 @@ describe('Register New User Service', () => {
     expect(hash).toHaveBeenCalledWith(userInfo.password, mockSalt) // user password and mocked salt
   })
 
-  it('should return an error response if database query fails', async() => {
+  it('should return an error response if database query fails', async () => {
     const error = new Error('Database Error')
     ;(db.query as jest.Mock).mockRejectedValue(error)
 
@@ -72,8 +71,8 @@ describe('Register New User Service', () => {
 
   it('should return an error response if database query result is empty', async () => {
     ;(db.query as jest.Mock).mockResolvedValue({
-        rowCount: 0,
-        rows: []
+      rowCount: 0,
+      rows: []
     })
 
     const result = await RegisterNewUser(userInfo)
