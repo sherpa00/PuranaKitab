@@ -9,14 +9,14 @@ const LogOut = async (authenticatedUserId: number): Promise<ServiceResponse> => 
 
     // change the last_logout date
     const updateLastLogout = await db.query(
-      'UPDATE users SET last_logout = TO_TIMESTAMP($1 / 1000.0) WHERE userid = $2',
+      'UPDATE users SET last_logout = TO_TIMESTAMP($1 / 1000.0) WHERE userid = $2 RETURNING userid,username,email',
       [currentTimestamp, authenticatedUserId]
     )
 
     if (updateLastLogout.rowCount <= 0) {
       return {
         success: false,
-        message: 'No User found'
+        message: 'Failed to logout'
       }
     }
 
@@ -28,7 +28,7 @@ const LogOut = async (authenticatedUserId: number): Promise<ServiceResponse> => 
     logger.error(err, 'Error while loggin out')
     return {
       success: false,
-      message: 'Error while logging out'
+      message: 'Failed to logout'
     }
   }
 }
