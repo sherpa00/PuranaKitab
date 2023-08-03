@@ -8,12 +8,12 @@ import logger from '../utils/logger.utils'
 const ForgotPassword = async (email: string): Promise<ServiceResponse> => {
   try {
     // first verify if user exists with email
-    const foundUser = await db.query('SELECT * FROM users WHERE users.email = $1', [email])
+    const foundUser = await db.query('SELECT userid,username,email FROM users WHERE users.email = $1', [email])
 
     if (foundUser.rowCount <= 0) {
       return {
         success: false,
-        message: 'No Account Found'
+        message: 'Failed with forgot password operation'
       }
     }
 
@@ -34,7 +34,7 @@ const ForgotPassword = async (email: string): Promise<ServiceResponse> => {
 
     // add new token to db with expiry of 1hr to verify later
     const addTokenToDb = await db.query(
-      'INSERT INTO reset_tokens(email, token, expiry_date) VALUES ($1, $2, $3) RETURNING *',
+      'INSERT INTO reset_tokens(email, token, expiry_date) VALUES ($1, $2, $3) RETURNING userid,username,email',
       [email, token, expireDate]
     )
 
@@ -63,7 +63,7 @@ const ForgotPassword = async (email: string): Promise<ServiceResponse> => {
     logger.error(err, 'Error in forgot password operation')
     return {
       success: false,
-      message: 'Error in forgot password operation'
+      message: 'Failed with forgot password operation'
     }
   }
 }
