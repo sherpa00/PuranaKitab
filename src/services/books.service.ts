@@ -15,14 +15,31 @@ export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid' | '
 
 // service for getting all books
 const GetAllBooks = async (
-  genre: string | null | undefined,
-  author: string | null | undefined,
+  genre?: string | null ,
+  author?: string | null ,
   page?: number,
   size?: number
 ): Promise<ServiceResponse> => {
   try {
     // get all book status
     let getBooksStatus: any
+
+    // count all books for pagination data
+    const countGetAllBooks = await db.query(
+      `SELECT COUNT(*) FROM books
+        LEFT JOIN genres ON books.genre_id = genres.genre_id
+        LEFT JOIN authors ON books.authorid = authors.authorid
+         WHERE (genres.genre_name = $1 OR $1 IS NULL)
+         AND (CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL)`,
+      [genre, author]
+    )
+
+    if (countGetAllBooks.rowCount < 0) {
+      return {
+        success: false,
+        message: 'Failed to get all books'
+      }
+    }
 
     // pagination required
     if (page != null && page !== undefined && size != null && size !== undefined) {
@@ -39,7 +56,7 @@ const GetAllBooks = async (
         [genre, author, size, page]
       )
     } else {
-      // pagination not required
+      // get books without page and size
       getBooksStatus = await db.query(
         `SELECT books.*,genres.*,authors.authorid, authors.firstname AS author_firstname, authors.lastname AS author_lastname, front_book_image.img_src AS front_img_src, back_book_image AS back_img_src FROM books
           LEFT JOIN genres ON books.genre_id = genres.genre_id
@@ -50,22 +67,6 @@ const GetAllBooks = async (
             AND (CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL)`,
         [genre, author]
       )
-    }
-
-    const countGetAllBooks = await db.query(
-      `SELECT COUNT(*) FROM books
-        LEFT JOIN genres ON books.genre_id = genres.genre_id
-        LEFT JOIN authors ON books.authorid = authors.authorid
-         WHERE (genres.genre_name = $1 OR $1 IS NULL)
-         AND (CONCAT(authors.firstname, ' ', authors.lastname) = $2 OR $2 IS NULL)`,
-      [genre, author]
-    )
-
-    if (countGetAllBooks.rowCount < 0) {
-      return {
-        success: false,
-        message: 'Failed to get all books'
-      }
     }
 
     if (getBooksStatus.rowCount < 0) {
@@ -96,7 +97,7 @@ const GetAllBooks = async (
     logger.error(err, 'Error while getting all books')
     return {
       success: false,
-      message: 'Error while getting all books'
+      message: 'Failed to get all books'
     }
   }
 }
