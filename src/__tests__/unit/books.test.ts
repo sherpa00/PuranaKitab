@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { db } from '../../configs/db.configs'
-import { GetAllBooks, GetOnlyOneBook } from '../../services/books.service'
+import { AddBook, GetAllBooks, GetOnlyOneBook, UpdateBook, type NewBookPayload, RemoveBookWithId } from '../../services/books.service'
 import generatePaginationMetadata from '../../helpers/generatePaginationMetadata'
 import { type IPaginationMetadata } from '../../types'
 
@@ -220,3 +221,243 @@ describe('Testing get single book service', () => {
         jest.clearAllMocks()
     })
 })
+
+describe('Testing add a book service', () => {
+    const tempBookAuthorLastname: string = 'temp_author_lastname'
+    const tempBookAuthorFirstname: string = 'temp_author_firstname'
+    const tempBookGenreName: string = 'temp_genre_name'
+    const tempNewBookPayload: NewBookPayload = {
+                'title': 'temp book',
+                'book_type': 'Paper Back',
+                'price': 1000,
+                'publication_date': '2019-07-03T09:38:35.765Z',
+                'available_quantity': 1,
+                'book_condition': 'GOOD',
+                'isbn': '1903843829489',
+                'description': 'it is temp book',
+                'genre': tempBookGenreName
+      }
+
+    const mockedGetAuthorDbQuery = {
+        rowCount: 1,
+        rows: [{
+            authorid: 1
+        }]
+    }
+    const mockedAddAuthorDbQuery = {
+        rowCount: 1,
+        rows: [{
+            authorid: 1
+        }]
+    }
+    const mockedGetGenreDbQuery = {
+        rowCount: 1,
+        rows: [{
+            genre_id: 1
+        }]
+    }
+    const mockedAddGenreDbQuery = {
+        rowCount: 1,
+        rows: [{
+            genre_id: 1
+        }]
+    }
+    const mockedAddBookDbQuery = {
+        rowCount: 1,
+        rows: [{
+                'bookid': 1,
+                'title': 'temp book',
+                'book_type': 'Paper Back',
+                'price': 1000,
+                'publication_date': '2019-07-03T09:38:35.765Z',
+                'available_quantity': 1,
+                'book_condition': 'GOOD',
+                'isbn': '1903843829489',
+                'createdat': '2011-07-03T09:38:35.765Z',
+                'description': 'it is temp book'
+        }]
+    }
+
+    it('Should return success response when successfully adding new book with correct arguments with already added genre and author', async() => {
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedGetAuthorDbQuery)
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedGetGenreDbQuery)
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedAddBookDbQuery)
+
+        const result = await AddBook(tempNewBookPayload, tempBookAuthorFirstname, tempBookAuthorLastname)
+
+        expect(result.success).toBeTruthy()
+        expect(result.message).toEqual('Successfully added new book')
+        expect(result.data).toBeDefined()
+        expect(result.data.title).toEqual(tempNewBookPayload.title)
+        expect(result.data.isbn).toEqual(tempNewBookPayload.isbn)
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(3)
+    })
+
+    it('Should return success response when successfully adding new book with correct arguments with new genre and author', async() => {
+        ;(db.query as jest.Mock).mockResolvedValueOnce({
+            rowCount: 0,
+            rows: []
+        })
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedAddAuthorDbQuery)
+        ;(db.query as jest.Mock).mockResolvedValueOnce({
+            rowCount: 0,
+            rows: []
+        })
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedAddGenreDbQuery)
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedAddBookDbQuery)
+
+        const result = await AddBook(tempNewBookPayload, tempBookAuthorFirstname, tempBookAuthorLastname)
+
+        expect(result.success).toBeTruthy()
+        expect(result.message).toEqual('Successfully added new book')
+        expect(result.data).toBeDefined()
+        expect(result.data.title).toEqual(tempNewBookPayload.title)
+        expect(result.data.isbn).toEqual(tempNewBookPayload.isbn)
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(5)
+    })
+
+    it('Should return error response when database fails while adding new book', async() => {
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedGetAuthorDbQuery)
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedGetGenreDbQuery)
+        ;(db.query as jest.Mock).mockRejectedValueOnce(new Error('Database Error'))
+
+        const result = await AddBook(tempNewBookPayload, tempBookAuthorFirstname, tempBookAuthorLastname)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed while adding new book')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(3)
+    })
+
+    it('Should return error response when database returns empty while adding new book', async() => {
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedGetAuthorDbQuery)
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedGetGenreDbQuery)
+        ;(db.query as jest.Mock).mockResolvedValueOnce({
+            rowCount: 0,
+            rows: []
+        })
+
+        const result = await AddBook(tempNewBookPayload, tempBookAuthorFirstname, tempBookAuthorLastname)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed while adding new book')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(3)
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+})
+
+describe('Testing update book service', () => {
+    const tempBookId: number = 1
+
+    const mockedDbQuery = {
+        rowCount: 1,
+        rows: [{
+                'bookid': 1,
+                'authorid': 1,
+                'title': 'New_temp_title',
+                'book_type': 'Paper Back',
+                'price': 3000,
+                'publication_date': '2019-07-03T09:38:35.765Z',
+                'available_quantity': 34,
+                'book_condition': 'OLD',
+                'isbn': '1903843829489',
+                'createdat': '2011-07-03T09:38:35.765Z',
+                'description': 'it is temp book'
+        }]
+    }
+
+    it('Should return success response when updating book', async () => {
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedDbQuery)
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedDbQuery)
+
+        const tempNewBookPayload: Partial<NewBookPayload> = {
+                title: 'New_temp_title',
+                book_condition: 'OLD',
+                price: 3000,
+                available_quantity: 34
+        }
+
+        const result = await UpdateBook(tempBookId, tempNewBookPayload)
+
+        expect(result.success).toBeTruthy()
+        expect(result.message).toEqual('Successfully updated book')
+        expect(result.data).toBeDefined()
+        expect(result.data.bookid).toEqual(1)
+        expect(result.data.title).toEqual(tempNewBookPayload.title)
+        expect(result.data.price).toEqual(tempNewBookPayload.price)
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+    })
+
+    it('Should return error response when database fails while getting book for updating book', async () => {
+        ;(db.query as jest.Mock).mockRejectedValueOnce(new Error('Database Error'))
+
+        const tempNewBookPayload: Partial<NewBookPayload> = {
+                title: 'New_temp_title',
+                book_condition: 'OLD',
+                price: 3000,
+                available_quantity: 34
+        }
+
+        const result = await UpdateBook(tempBookId, tempNewBookPayload)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to update book')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return error response when book is unavailable for updating book', async () => {
+        ;(db.query as jest.Mock).mockResolvedValueOnce({
+            rowCount: 0,
+            rows: []
+        })
+
+        const tempNewBookPayload: Partial<NewBookPayload> = {
+                title: 'New_temp_title',
+                book_condition: 'OLD',
+                price: 3000,
+                available_quantity: 34
+        }
+
+        const result = await UpdateBook(tempBookId, tempNewBookPayload)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Book is unavailable')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return error response when database fails while updating book', async () => {
+        ;(db.query as jest.Mock).mockResolvedValueOnce(mockedDbQuery)
+        ;(db.query as jest.Mock).mockRejectedValue(new Error('Database Error'))
+
+        const tempNewBookPayload: Partial<NewBookPayload> = {
+                title: 'New_temp_title',
+                book_condition: 'OLD',
+                price: 3000,
+                available_quantity: 34
+        }
+
+        const result = await UpdateBook(tempBookId, tempNewBookPayload)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to update book')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalledTimes(2)
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+})
+
+

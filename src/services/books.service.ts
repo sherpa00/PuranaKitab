@@ -144,7 +144,7 @@ const AddBook = async (
 ): Promise<ServiceResponse> => {
   try {
     // first getting author and coparing if authors exits then not adding or else adding
-    const getAuthorStatus = await db.query('SELECT * FROM authors WHERE firstname = $1 AND lastname = $2', [
+    const getAuthorStatus = await db.query('SELECT authorid FROM authors WHERE firstname = $1 AND lastname = $2', [
       authorFirstname,
       authorLastname
     ])
@@ -154,7 +154,7 @@ const AddBook = async (
 
     if (getAuthorStatus.rowCount <= 0) {
       // no author found so add new author
-      const addAuthorStatus = await db.query('INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING *', [
+      const addAuthorStatus = await db.query('INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING authorid', [
         authorFirstname,
         authorLastname
       ])
@@ -173,14 +173,15 @@ const AddBook = async (
     }
 
     // now add book genres if available or not
-    const getBookGenresStatus = await db.query(`SELECT * FROM genres WHERE genres.genre_name = $1`, [bookData.genre])
+    const getBookGenresStatus = await db.query(`SELECT genre_id FROM genres WHERE genres.genre_name = $1`, [bookData.genre])
     let currentGenreId: number
+
     // genre exits
     if (getBookGenresStatus.rowCount > 0) {
       currentGenreId = getBookGenresStatus.rows[0].genre_id
     } else {
       // genre doesn't exist so add new genre
-      const addBookNewGenre = await db.query(`INSERT INTO genres (genre_name) VALUES ($1) RETURNING *`, [
+      const addBookNewGenre = await db.query(`INSERT INTO genres (genre_name) VALUES ($1) RETURNING genre_id`, [
         bookData.genre
       ])
       currentGenreId = addBookNewGenre.rows[0].genre_id
@@ -219,7 +220,7 @@ const AddBook = async (
     logger.error(err, 'Error while adding new book')
     return {
       success: false,
-      message: 'Error while adding new book'
+      message: 'Failed while adding new book'
     }
   }
 }
@@ -233,7 +234,7 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
     if (bookWithId.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book is unavaiable'
+        message: 'Book is unavailable'
       }
     }
 
@@ -261,7 +262,7 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
     if (bookUpdateStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating a book'
+        message: 'Failed to update book'
       }
     }
 
@@ -274,7 +275,7 @@ const UpdateBook = async (bookID: number, newBookInfo: Partial<NewBookPayload>):
     logger.error(err, 'Error while updating book')
     return {
       success: false,
-      message: 'Error while updating book'
+      message: 'Failed to update book'
     }
   }
 }
