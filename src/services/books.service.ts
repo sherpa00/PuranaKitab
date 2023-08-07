@@ -392,7 +392,7 @@ const UpdateBookGenre = async (genre: string, bookid: number): Promise<ServiceRe
 const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
   try {
     // get the book with bookid
-    const bookWithId = await db.query('SELECT * FROM books WHERE bookid = $1', [bookID])
+    const bookWithId = await db.query('SELECT bookid FROM books WHERE bookid = $1', [bookID])
 
     // book not found with given bookid
     if (bookWithId.rowCount <= 0) {
@@ -403,62 +403,77 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
     }
 
     // get the book images
-    const bookImagesWithId = await db.query('SELECT * FROM book_images WHERE bookid = $1', [bookID])
+    const bookImagesWithId = await db.query('SELECT img_public_id FROM book_images WHERE bookid = $1', [bookID])
     let deleteBookImagesWithIdStatus: any
     // if only book images exits delete them
     if (bookImagesWithId.rowCount === 2) {
       // and delete book images from cloud
-      await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
-      await removeImageFromCloud(bookImagesWithId.rows[1].img_public_id)
+      const removeImgFromCloudStatus1: ICloudinaryResponse = await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
+      const removeImgFromCloudStatus2: ICloudinaryResponse = await removeImageFromCloud(bookImagesWithId.rows[1].img_public_id)
+
+      if (!removeImgFromCloudStatus1.success || !removeImgFromCloudStatus2.success) {
+        return {
+          success: false,
+          message: 'Failed to remove book'
+        }
+      }
       // then delete book images with bookid from db
-      deleteBookImagesWithIdStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 RETURNING *', [bookID])
+      deleteBookImagesWithIdStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 RETURNING book_image_id', [bookID])
       if (deleteBookImagesWithIdStatus.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete a book'
+          message: 'Failed to remove book'
         }
       }
     }
 
     if (bookImagesWithId.rowCount === 1) {
       // and delete book images from cloud
-      await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
+      const removeImgFromCloudStatus1: ICloudinaryResponse = await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
+
+      if (!removeImgFromCloudStatus1.success) {
+        return {
+          success: false,
+          message: 'Failed to remove book'
+        }
+      }
+
       // then delete book images with bookid from db
-      deleteBookImagesWithIdStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 RETURNING *', [bookID])
+      deleteBookImagesWithIdStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 RETURNING book_image_id', [bookID])
       if (deleteBookImagesWithIdStatus.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete a book'
+          message: 'Failed to remove book'
         }
       }
     }
 
     // delete book's reviews
-    const foundBookReviews = await db.query('SELECT * FROM reviews WHERE reviews.bookid = $1', [bookID])
+    const foundBookReviews = await db.query('SELECT reviewid FROM reviews WHERE reviews.bookid = $1', [bookID])
 
     if (foundBookReviews.rowCount > 0) {
       // if reviews found delete them
-      const deleteBookReviews = await db.query('DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING *', [bookID])
+      const deleteBookReviews = await db.query('DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING reviewid', [bookID])
 
       if (deleteBookReviews.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete a book'
+          message: 'Failed to remove book'
         }
       }
     }
 
-    // delete carts with this booki
-    const foundCarts = await db.query('SELECT * FROM carts WHERE carts.bookid = $1', [bookID])
+    // delete carts with this books
+    const foundCarts = await db.query('SELECT cartid FROM carts WHERE carts.bookid = $1', [bookID])
 
     if (foundCarts.rowCount > 0) {
       // if carts found delete them
-      const deleteCarts = await db.query('DELETE FROM carts WHERE carts.bookid = $1 RETURNING *', [bookID])
+      const deleteCarts = await db.query('DELETE FROM carts WHERE carts.bookid = $1 RETURNING cartid', [bookID])
 
       if (deleteCarts.rowCount <= 0) {
         return {
           success: false,
-          message: 'Failed to delete a book'
+          message: 'Failed to remove book'
         }
       }
     }
@@ -469,20 +484,20 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
     if (deleteBookWithIdStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Failed to delete a book'
+        message: 'Failed to remove book'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully Removed a book',
+      message: 'Successfully removed book',
       data: deleteBookWithIdStatus.rows[0]
     }
   } catch (err) {
     logger.error(err, 'Error while removing a book')
     return {
       success: false,
-      message: 'Error while removing a book'
+      message: 'Failed to remove book'
     }
   }
 }
