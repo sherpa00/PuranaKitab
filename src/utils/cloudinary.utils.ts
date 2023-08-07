@@ -51,7 +51,7 @@ const uploadImageToCloud = async (imageToBeUpload: string): Promise<ICloudinaryR
     logger.error(err, 'Error while uploading image to cloud')
     return {
       success: false,
-      message: 'Error while uploading image '
+      message: 'Failed to upload image'
     }
   } finally {
     // finnally delete locally added image after uploading to cloud

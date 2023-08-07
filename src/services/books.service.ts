@@ -506,7 +506,7 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
 const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<ServiceResponse> => {
   try {
     // first showing if book is in db or not
-    const isBookFound = await db.query('SELECT * FROM books WHERE bookid = $1', [bookid])
+    const isBookFound = await db.query('SELECT bookid FROM books WHERE bookid = $1', [bookid])
 
     if (isBookFound.rowCount <= 0) {
       return {
@@ -516,7 +516,7 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
     }
 
     // check if already book image exitst or not
-    const isBookImgFound = await db.query('SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2', [
+    const isBookImgFound = await db.query('SELECT book_image_id FROM book_images WHERE bookid = $1 AND img_type = $2', [
       bookid,
       imgType
     ])
@@ -524,7 +524,7 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
     if (isBookImgFound.rowCount > 0) {
       return {
         success: false,
-        message: `Book Image of ${imgType} cover already exits`
+        message: `Book Image of ${imgType} cover already exists`
       }
     }
 
@@ -539,7 +539,7 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
     }
 
     const imgToDbStatus = await db.query(
-      'INSERT INTO book_images(bookid, img_src, img_type, img_public_id) VALUES ($1, $2, $3, $4) RETURNING *',
+      'INSERT INTO book_images(bookid, img_src, img_type, img_public_id) VALUES ($1, $2, $3, $4) RETURNING img_src',
       [bookid, imgUploadStatus.imgURL, imgType, imgUploadStatus.imgPublicId]
     )
 
@@ -552,7 +552,7 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
 
     return {
       success: true,
-      message: imgUploadStatus.message,
+      message: 'Successfully uploaded book image',
       data: {
         src: imgToDbStatus.rows[0].img_src
       }
