@@ -570,17 +570,17 @@ const AddBookImg = async (bookid: number, imgPath: string, imgType: string): Pro
 const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): Promise<ServiceResponse> => {
   try {
     // first find if book exits or not
-    const isBookFound = await db.query('SELECT * FROM books WHERE bookid = $1', [bookid])
+    const isBookFound = await db.query('SELECT bookid FROM books WHERE bookid = $1', [bookid])
 
     if (isBookFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book is not available'
+        message: 'Book is unavailable'
       }
     }
 
     // then find if book image exits or not
-    const isBookImgFound = await db.query('SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2', [
+    const isBookImgFound = await db.query('SELECT img_public_id FROM book_images WHERE bookid = $1 AND img_type = $2', [
       bookid,
       imgType
     ])
@@ -588,7 +588,7 @@ const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): 
     if (isBookImgFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'Book images not found ! Upload them first'
+        message: 'Book images is unavailable'
       }
     }
 
@@ -600,7 +600,8 @@ const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): 
 
     if (!imgUpdateStatus.success) {
       return {
-        ...imgUpdateStatus
+        success: false,
+        message: 'Failed to update book image'
       }
     }
 
@@ -621,7 +622,7 @@ const UpdateBookImg = async (bookid: number, imgPath: string, imgType: string): 
 const DeleteBookImage = async (bookid: number, imgType: string): Promise<ServiceResponse> => {
   try {
     // first show if book images
-    const isBookImgFound = await db.query('SELECT * FROM book_images WHERE bookid = $1 AND img_type = $2', [
+    const isBookImgFound = await db.query('SELECT img_public_id FROM book_images WHERE bookid = $1 AND img_type = $2', [
       bookid,
       imgType
     ])
@@ -629,7 +630,7 @@ const DeleteBookImage = async (bookid: number, imgType: string): Promise<Service
     if (isBookImgFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'No Book images found'
+        message: 'Book images is unavailable'
       }
     }
 
@@ -646,7 +647,7 @@ const DeleteBookImage = async (bookid: number, imgType: string): Promise<Service
     }
 
     // remove images from db
-    const bookImgRemoveStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 AND img_type = $2', [
+    const bookImgRemoveStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 AND img_type = $2 RETURNING book_image_id', [
       bookid,
       imgType
     ])

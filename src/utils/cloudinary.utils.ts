@@ -107,19 +107,19 @@ const removeImageFromCloud = async (imgPublicId: string): Promise<ICloudinaryRes
     if (imageRemovedFromCloudinaryData.result !== 'ok') {
       return {
         success: false,
-        message: 'Failed to remove image from cloud'
+        message: 'Failed to remove image'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully removed image from cloud'
+      message: 'Successfully removed image'
     }
   } catch (err) {
     logger.error(err, 'Error while removng image from cloud')
     return {
       success: false,
-      message: 'Error while removing image'
+      message: 'Failed to remove image'
     }
   }
 }

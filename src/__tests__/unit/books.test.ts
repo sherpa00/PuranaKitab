@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { db } from '../../configs/db.configs'
-import { AddBook, GetAllBooks, GetOnlyOneBook, UpdateBook, type NewBookPayload, RemoveBookWithId, AddBookImg } from '../../services/books.service'
+import { AddBook, GetAllBooks, GetOnlyOneBook, UpdateBook, type NewBookPayload, RemoveBookWithId, AddBookImg, UpdateBookImg, DeleteBookImage } from '../../services/books.service'
 import generatePaginationMetadata from '../../helpers/generatePaginationMetadata'
 import { type IPaginationMetadata } from '../../types'
 import { type ICloudinaryResponse, removeImageFromCloud, updateImageToCloud, uploadImageToCloud } from '../../utils/cloudinary.utils'
@@ -14,9 +14,9 @@ jest.mock('../../configs/db.configs.ts', () => ({
 jest.mock('../../helpers/generatePaginationMetadata.ts')
 jest.mock('../../utils/cloudinary.utils.ts', () => ({
     uploadImageToCloud: jest.fn(),
+    updateImageToCloud: jest.fn(),
     removeImageFromCloud: jest.fn()
 }))
-
 
 describe('Testing get all books service', () => {
     const tempGenre: string = 'genre'
@@ -799,6 +799,258 @@ describe('Testing add book image service', () => {
         expect(uploadImageToCloud).toHaveBeenCalled()
     })
     
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+})
+
+describe('Testing update book image service', () => {
+
+    const bookid: number = 1
+    const bookImgCover: string = 'FRONT'
+    const bookImgPath: string = '/src/public/img.jpg'
+
+    const mockedGetBookDbQuery = {
+        rowCount: 1,
+        rows: [{
+            bookid: 1
+        }]
+    }
+    const mockedGetBookImgDbQuery = {
+        rowCount: 1,
+        rows: [{
+            book_image_id: 1
+        }]
+    }
+    const mockedImgUpdate: ICloudinaryResponse = {
+        success: true,
+        message: 'Successfully updated image'
+    }
+
+    beforeEach(() => {
+        jest.resetAllMocks()
+    })
+
+    it('Should return success response when updating book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetBookDbQuery)
+            .mockResolvedValueOnce(mockedGetBookImgDbQuery)
+        ;(updateImageToCloud as jest.Mock)
+            .mockResolvedValue(mockedImgUpdate)
+
+        const result = await UpdateBookImg(bookid, bookImgPath, bookImgCover)
+
+        expect(result.success).toBeTruthy()
+        expect(result.message).toEqual('Successfully updated book images')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+        expect(updateImageToCloud).toHaveBeenCalled()
+    })
+
+    it('Should return error response when database fails while gettting book for updating book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockRejectedValueOnce(new Error('Database Error'))
+            .mockResolvedValueOnce(mockedGetBookImgDbQuery)
+        ;(updateImageToCloud as jest.Mock)
+            .mockResolvedValue(mockedImgUpdate)
+
+        const result = await UpdateBookImg(bookid, bookImgPath, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to update book images')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(1)
+        expect(updateImageToCloud).not.toHaveBeenCalled()
+    })
+
+    it('Should return error response when book is unavailable for updating book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce({
+                rowCount: 0,
+                rows: []
+            })
+            .mockResolvedValueOnce(mockedGetBookImgDbQuery)
+        ;(updateImageToCloud as jest.Mock)
+            .mockResolvedValue(mockedImgUpdate)
+
+        const result = await UpdateBookImg(bookid, bookImgPath, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Book is unavailable')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(1)
+        expect(updateImageToCloud).not.toHaveBeenCalled()
+    })
+
+    it('Should return error response when database while getting book images for updating book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetBookDbQuery)
+            .mockRejectedValueOnce(new Error('Database Error'))
+        ;(updateImageToCloud as jest.Mock)
+            .mockResolvedValue(mockedImgUpdate)
+
+        const result = await UpdateBookImg(bookid, bookImgPath, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to update book images')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+        expect(updateImageToCloud).not.toHaveBeenCalled()
+    })
+
+    it('Should return error response when book images is unavialble for updating book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetBookDbQuery)
+            .mockResolvedValueOnce({
+                rowCount: 0,
+                rows: []
+            })
+        ;(updateImageToCloud as jest.Mock)
+            .mockResolvedValue(mockedImgUpdate)
+
+        const result = await UpdateBookImg(bookid, bookImgPath, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Book images is unavailable')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+        expect(updateImageToCloud).not.toHaveBeenCalled()
+    })
+
+    it('Should return error response when updating images from cloud while updating book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetBookDbQuery)
+            .mockResolvedValueOnce(mockedGetBookImgDbQuery)
+        ;(updateImageToCloud as jest.Mock)
+            .mockResolvedValue({
+                success: false,
+                message: 'Error while updating image'
+            })
+        const result = await UpdateBookImg(bookid, bookImgPath, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to update book image')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+        expect(updateImageToCloud).toHaveBeenCalled()
+    })
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+})
+
+describe('Testing remove book image service', () => {
+
+    const bookid: number = 1
+    const bookImgCover: string = 'FRONT'
+
+    const mockedGetBookImgDbQuery = {
+        rowCount: 1,
+        rows: [{
+            img_public_id: 1
+        }]
+    }
+    const mockedRemoveBookImgDbQuery = {
+        rowCount: 1,
+        rows: [{
+            book_image_id: 1
+        }]
+    }
+    const mockedImgRemove: ICloudinaryResponse = {
+        success: true,
+        message: 'Successfully removed image'
+    }
+
+    beforeEach(() => {
+        jest.resetAllMocks()
+    })
+
+    it('Should return success response when removing book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetBookImgDbQuery)
+            .mockResolvedValueOnce(mockedRemoveBookImgDbQuery)
+        ;(removeImageFromCloud as jest.Mock)
+            .mockResolvedValue(mockedImgRemove)
+
+        const result = await DeleteBookImage(bookid, bookImgCover)
+
+        expect(result.success).toBeTruthy()
+        expect(result.message).toEqual('Successfully removed book image')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+        expect(removeImageFromCloud).toHaveBeenCalled()
+    })
+
+    it('Should return error response when database fails while gettting book images for removing book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockRejectedValueOnce(new Error('Database Error'))
+            .mockResolvedValueOnce(mockedRemoveBookImgDbQuery)
+        ;(removeImageFromCloud as jest.Mock)
+            .mockResolvedValue(mockedImgRemove)
+
+        const result = await DeleteBookImage(bookid, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to remove book image')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(1)
+        expect(removeImageFromCloud).not.toHaveBeenCalled()
+    })
+
+    it('Should return error response when book image is unavailable for removing book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce({
+                rowCount: 0,
+                rows: []
+            })
+            .mockResolvedValueOnce(mockedRemoveBookImgDbQuery)
+        ;(removeImageFromCloud as jest.Mock)
+            .mockResolvedValue(mockedImgRemove)
+
+        const result = await DeleteBookImage(bookid, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Book images is unavailable')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(1)
+        expect(removeImageFromCloud).not.toHaveBeenCalled()
+    })
+
+    it('Should return error response when removing from cloud fails while removing book images', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetBookImgDbQuery)
+            .mockResolvedValueOnce(mockedRemoveBookImgDbQuery)
+        ;(removeImageFromCloud as jest.Mock)
+            .mockResolvedValue({
+                success: false,
+                message: 'Failed to remove image'
+            })
+        const result = await DeleteBookImage(bookid, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to remove book image')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(1)
+        expect(removeImageFromCloud).toHaveBeenCalled()
+    })
+
+    it('Should return error response when database fails removing book image', async() => {
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetBookImgDbQuery)
+            .mockRejectedValueOnce(new Error('Database Error'))
+        ;(removeImageFromCloud as jest.Mock)
+            .mockResolvedValue(mockedImgRemove)
+
+        const result = await DeleteBookImage(bookid, bookImgCover)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to remove book image')
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+        expect(removeImageFromCloud).toHaveBeenCalled()
+    })
+
     afterEach(() => {
         jest.clearAllMocks()
     })
