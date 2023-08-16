@@ -51,7 +51,7 @@ const GetBookGenres = async (page?: number, size?: number): Promise<ServiceRespo
     logger.error(err, 'Error while getting all book genres')
     return {
       success: false,
-      message: 'Error while getting all book genres'
+      message: 'Failed to get all book genres'
     }
   }
 }
@@ -95,7 +95,7 @@ const AddBookGenre = async (genreName: string): Promise<ServiceResponse> => {
     logger.error(err, 'Error while adding new book genre')
     return {
       success: false,
-      message: 'Error while adding new book genre'
+      message: 'Failed to add book genre'
     }
   }
 }
@@ -104,7 +104,7 @@ const AddBookGenre = async (genreName: string): Promise<ServiceResponse> => {
 const UpdateGenre = async (genreId: number, genreName: string): Promise<ServiceResponse> => {
   try {
     // verify if book genre already exists or not
-    const foundBookGenre = await db.query('SELECT * FROM genres WHERE genres.genre_id = $1', [genreId])
+    const foundBookGenre = await db.query('SELECT COUNT(*) FROM genres WHERE genres.genre_id = $1', [genreId])
 
     if (foundBookGenre.rowCount < 0) {
       return {
@@ -113,7 +113,7 @@ const UpdateGenre = async (genreId: number, genreName: string): Promise<ServiceR
       }
     }
 
-    if (foundBookGenre.rowCount === 0) {
+    if (foundBookGenre.rows[0].count === 0) {
       return {
         success: false,
         message: 'Book genre is not available'
@@ -142,7 +142,7 @@ const UpdateGenre = async (genreId: number, genreName: string): Promise<ServiceR
     logger.error(err, 'Error while updating book genre')
     return {
       success: false,
-      message: 'Error while updating book genre'
+      message: 'Failed to update book genre'
     }
   }
 }
@@ -151,16 +151,16 @@ const UpdateGenre = async (genreId: number, genreName: string): Promise<ServiceR
 const DeleteGenre = async (genreId: number): Promise<ServiceResponse> => {
   try {
     // verify if book genre already exists or not
-    const foundBookGenre = await db.query('SELECT * FROM genres WHERE genres.genre_id = $1', [genreId])
+    const foundBookGenre = await db.query('SELECT COUNT(*) FROM genres WHERE genres.genre_id = $1', [genreId])
 
     if (foundBookGenre.rowCount < 0) {
       return {
         success: false,
-        message: 'Failed to update book genre'
+        message: 'Failed to remove book genre'
       }
     }
 
-    if (foundBookGenre.rowCount === 0) {
+    if (foundBookGenre.rows[0].count === 0) {
       return {
         success: false,
         message: 'Book genre is not available'
@@ -186,7 +186,7 @@ const DeleteGenre = async (genreId: number): Promise<ServiceResponse> => {
     logger.error(err, 'Error while removing book genre')
     return {
       success: false,
-      message: 'Error while removing book genre'
+      message: 'Failed to remove book genre'
     }
   }
 }
