@@ -438,7 +438,7 @@ const ConfirmOrders = async (orderid: number): Promise<ServiceResponse> => {
 const RemoveOrder = async (orderid: number): Promise<ServiceResponse> => {
   try {
     // check if order exists
-    const foundOrder = await db.query('SELECT * FROM orders WHERE orders.orderid = $1', [orderid])
+    const foundOrder = await db.query('SELECT payment_status FROM orders WHERE orders.orderid = $1', [orderid])
 
     if (foundOrder.rowCount <= 0) {
       return {
