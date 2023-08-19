@@ -29,7 +29,7 @@ const STRIPE = new Stripe(STRIPE_SECRET, {
 
 // service for place order process offline (cash on delivery)
 const PlaceOrderOffline = async (
-  cartsList: [{ cartid: number }],
+  cartsList: [{cartid: number}],
   userid: number,
   phoneNumber: number
 ): Promise<ServiceResponse> => {
@@ -98,7 +98,7 @@ const PlaceOrderOffline = async (
       }
     })
 
-    // update order with attached orere payemnt intent id
+    // update order with attached payemnt intent id
     const updatedOrderWithPayment = await db.query(
       'UPDATE orders SET payment_intent_id = $1 WHERE orders.userid = $2 AND orders.orderid = $3 RETURNING *',
       [String(paymentIntent.id), userid, parseInt(addOrderStatus.rows[0].orderid)]
@@ -136,7 +136,7 @@ const PlaceOrderOffline = async (
                         available_quantity = $1
                     WHERE
                         bookid = $2
-                    RETURNING *
+                    RETURNING available_quantity
                 `,
         [
           // eslint-disable-next-line no-sequences
@@ -343,7 +343,7 @@ const PlaceOrderOnline = async (
     logger.error(err, 'Error while placing order')
     return {
       success: false,
-      message: 'Failed to place order'
+      message: 'Failed to place your order'
     }
   }
 }
