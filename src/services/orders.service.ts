@@ -382,12 +382,12 @@ const ShowMyOrders = async (userid: number): Promise<ServiceResponse> => {
 const ConfirmOrders = async (orderid: number): Promise<ServiceResponse> => {
   try {
     // check if order exists or not
-    const orderFound = await db.query('SELECT * FROM orders WHERE orders.orderid = $1', [orderid])
+    const orderFound = await db.query('SELECT payment_status FROM orders WHERE orders.orderid = $1', [orderid])
 
     if (orderFound.rowCount <= 0) {
       return {
         success: false,
-        message: 'Failed to confirm order'
+        message: 'No order found'
       }
     }
 
@@ -395,7 +395,7 @@ const ConfirmOrders = async (orderid: number): Promise<ServiceResponse> => {
     if (orderFound.rows[0].payment_status === 'paid') {
       return {
         success: false,
-        message: 'Failed to confirm order'
+        message: 'Order already confirmed'
       }
     }
 
@@ -429,7 +429,7 @@ const ConfirmOrders = async (orderid: number): Promise<ServiceResponse> => {
     logger.error(err, 'Error while confirming order')
     return {
       success: false,
-      message: 'Failed to conifrm order'
+      message: 'Failed to confirm order'
     }
   }
 }

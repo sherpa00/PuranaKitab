@@ -1,7 +1,7 @@
 /* eslint-disable no-labels */
 import * as dotenv from 'dotenv'
 import { db } from '../../configs/db.configs'
-import { OnlineCardDetails, PlaceOrderOffline, PlaceOrderOnline, RemoveOrder, ShowMyOrders } from '../../services/orders.service'
+import { ConfirmOrders, OnlineCardDetails, PlaceOrderOffline, PlaceOrderOnline, RemoveOrder, ShowMyOrders } from '../../services/orders.service'
 
 jest.mock('../../configs/db.configs.ts', () => ({
     db: {
@@ -26,7 +26,7 @@ jest.mock('stripe', () => ({
           }
     }))
   }))
-
+  
 describe('Testing show my orders service', () => {
     const userid: number = 1
 
@@ -223,6 +223,126 @@ describe('Testing remove my orders service', () => {
         expect(db.query).toHaveBeenCalled()
         expect(db.query).toHaveBeenCalledTimes(2)
     })
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+})
+
+describe('Testing confirm order service', () => {
+    const orderid: number = 1
+
+    const mockedGetOrderDbQuery = {
+        rowCount: 1,
+        rows: [{
+            payment_status: 'unpaid'
+        }]
+    }
+    const mockedUpdateOrderDbQuery = {
+        rwoCount: 1,
+        rows: [{
+            orderid,
+      'userid': 1,
+      'phone_number': 9807462732,
+      'ordered_books': [
+        {
+          'bookid': 234,
+          'total_quantity': 1,
+          'book_original_price': 1000,
+          'book_total_price': 1000
+        }
+      ],
+      'total_amount': 1000,
+      'payment_intent_id': 'jfdj_fj3298foj20384',
+      'payment_status': 'paid',
+      'payment_method': 'card'
+        }]
+    }
+
+    it('Should return success response when confirming order', async() => {
+        jest.resetAllMocks()
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetOrderDbQuery)
+            .mockResolvedValueOnce(mockedUpdateOrderDbQuery)
+        
+        const result = await ConfirmOrders(orderid)
+
+        expect(result.success).toBeTruthy()
+        expect(result.message).toEqual('Successfully confirmed the order')
+        expect(result.data).toBeDefined()
+        expect(result.data).toEqual(mockedUpdateOrderDbQuery.rows[0])
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+    })
+
+    it('Should return error response when database fails while getting orders for confirming order', async() => {
+        jest.resetAllMocks()
+        ;(db.query as jest.Mock)
+            .mockRejectedValueOnce(new Error('Database Error'))
+            .mockResolvedValueOnce(mockedUpdateOrderDbQuery)
+        
+        const result = await ConfirmOrders(orderid)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to confirm order')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return error response when order is not found for confirming order', async() => {
+        jest.resetAllMocks()
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce({
+                rowCount: 0,
+                rows: []
+            })
+            .mockResolvedValueOnce(mockedUpdateOrderDbQuery)
+        
+        const result = await ConfirmOrders(orderid)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('No order found')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return error response when order is already paid for confirming order', async() => {
+        jest.resetAllMocks()
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce({
+                rowCount: 1,
+                rows: [{
+                    payment_status: 'paid'
+                }]
+            })
+            .mockResolvedValueOnce(mockedUpdateOrderDbQuery)
+        
+        const result = await ConfirmOrders(orderid)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Order already confirmed')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(1)
+    })
+
+    it('Should return error response when database fails while confirming order', async() => {
+        jest.resetAllMocks()
+        ;(db.query as jest.Mock)
+            .mockResolvedValueOnce(mockedGetOrderDbQuery)
+            .mockRejectedValueOnce(new Error('Database Error'))
+        
+        const result = await ConfirmOrders(orderid)
+
+        expect(result.success).toBeFalsy()
+        expect(result.message).toEqual('Failed to confirm order')
+        expect(result.data).toBeUndefined()
+        expect(db.query).toHaveBeenCalled()
+        expect(db.query).toHaveBeenCalledTimes(2)
+    })
+
 
     afterEach(() => {
         jest.clearAllMocks()
