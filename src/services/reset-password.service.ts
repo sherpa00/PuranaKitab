@@ -8,7 +8,7 @@ const ResetPassword = async (resetToken: string, newPassword: string): Promise<S
   try {
     // verify that reset token exits and is not expired
     const foundResetToken = await db.query(
-      'SELECT * FROM reset_tokens WHERE reset_tokens.token = $1 AND reset_tokens.expiry_date > NOW()',
+      'SELECT email FROM reset_tokens WHERE reset_tokens.token = $1 AND reset_tokens.expiry_date > NOW()',
       [resetToken]
     )
 
@@ -20,12 +20,14 @@ const ResetPassword = async (resetToken: string, newPassword: string): Promise<S
     }
 
     // then verify if user exists for token realated email
-    const foundUser = await db.query('SELECT * FROM users WHERE users.email = $1', [foundResetToken.rows[0].email])
+    const foundUser = await db.query('SELECT userid,username,salt,email FROM users WHERE users.email = $1', [
+      foundResetToken.rows[0].email
+    ])
 
     if (foundUser.rowCount <= 0) {
       return {
         success: false,
-        message: 'No Account Found'
+        message: 'No User Account Found'
       }
     }
 
@@ -36,10 +38,10 @@ const ResetPassword = async (resetToken: string, newPassword: string): Promise<S
     const newHashedPassword: string = await hash(newPassword, originalSalt)
 
     // update user db
-    const updateUserPassword = await db.query('UPDATE users SET password = $1 WHERE users.email = $2 RETURNING *', [
-      newHashedPassword,
-      foundUser.rows[0].email
-    ])
+    const updateUserPassword = await db.query(
+      'UPDATE users SET password = $1 WHERE users.email = $2 RETURNING userid,username,email',
+      [newHashedPassword, foundUser.rows[0].email]
+    )
 
     if (updateUserPassword.rowCount <= 0) {
       return {
@@ -50,7 +52,7 @@ const ResetPassword = async (resetToken: string, newPassword: string): Promise<S
 
     // remove reset token then
     const removeResetToken = await db.query(
-      'DELETE FROM reset_tokens WHERE reset_tokens.token = $1 AND reset_tokens.email = $2 RETURNING *',
+      'DELETE FROM reset_tokens WHERE reset_tokens.token = $1 AND reset_tokens.email = $2 RETURNING email',
       [resetToken, foundUser.rows[0].email]
     )
 
@@ -69,7 +71,7 @@ const ResetPassword = async (resetToken: string, newPassword: string): Promise<S
     logger.error(err, 'Error while resetting password')
     return {
       success: false,
-      message: 'Error while reseting password'
+      message: 'Failed to reset password'
     }
   }
 }

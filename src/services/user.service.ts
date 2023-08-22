@@ -7,10 +7,9 @@ import logger from '../utils/logger.utils'
 const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse> => {
   try {
     // get the user data from db
-    const userData = await db.query(
-      'SELECT username,userid,email,role,last_logout,createat FROM users WHERE users.userid = $1',
-      [authenticatedUserid]
-    )
+    const userData = await db.query('SELECT userid,username,email,role,createat FROM users WHERE users.userid = $1', [
+      authenticatedUserid
+    ])
 
     if (userData.rowCount <= 0) {
       return {
@@ -21,7 +20,7 @@ const GetUserData = async (authenticatedUserid: number): Promise<ServiceResponse
 
     return {
       success: true,
-      message: 'Get User Data successful',
+      message: 'Get User Data successfull',
       data: userData.rows[0]
     }
   } catch (err) {
@@ -44,7 +43,7 @@ const UpdateUsername = async (authenticatedUserId: number, newUsername: string):
     if (updateStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating username in query'
+        message: 'Error while updating username'
       }
     }
 
@@ -73,7 +72,7 @@ const UpdateEmail = async (authenticatedUserId: number, newEmail: string): Promi
     if (updateStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Error while updating email in query'
+        message: 'Error while updating email'
       }
     }
 
@@ -157,10 +156,9 @@ const UpdatePassword = async (
 const DeleteUser = async (authenticatedUserId: number, password: string): Promise<ServiceResponse> => {
   try {
     // first get the user for db
-    const originalUserPassData = await db.query(
-      'SELECT userid,email,username,password FROM users WHERE users.userid = $1',
-      [authenticatedUserId]
-    )
+    const originalUserPassData = await db.query('SELECT password FROM users WHERE users.userid = $1', [
+      authenticatedUserId
+    ])
 
     if (originalUserPassData.rowCount <= 0) {
       return {
@@ -181,24 +179,22 @@ const DeleteUser = async (authenticatedUserId: number, password: string): Promis
     }
 
     // here delete user accoutn from db
-    const deleteStatus = await db.query('DELETE FROM users WHERE users.userid = $1', [authenticatedUserId])
+    const deleteStatus = await db.query('DELETE FROM users WHERE users.userid = $1 RETURNING userid, username, email', [
+      authenticatedUserId
+    ])
 
     if (deleteStatus.rowCount <= 0) {
       return {
         success: false,
-        message: 'Erorr while deleting user'
+        message: 'Error while deleting user'
       }
     }
 
     return {
       success: true,
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      message: `Successfully deleted ${originalUserPassData.rows[0].username}'s account`,
-      data: {
-        userid: originalUserPassData.rows[0].userid,
-        username: originalUserPassData.rows[0].username,
-        email: originalUserPassData.rows[0].email
-      }
+      message: 'Successfully deleted user account',
+      data: deleteStatus.rows[0]
     }
   } catch (err) {
     logger.error(err, 'Error while deleting user')

@@ -158,7 +158,7 @@ const SearchBooks = async (
     logger.error(err, 'Error while search books')
     return {
       success: false,
-      message: 'Error while searching books'
+      message: 'Failed to search books'
     }
   }
 }

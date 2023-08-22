@@ -6,7 +6,6 @@ import { db } from '../../configs/db.configs'
 import { type Iuser } from '../../types'
 
 describe('Testing book genres routes', () => {
-
   // assign temporary user
   const tempAdminUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
     username: 'testing2',
@@ -77,11 +76,8 @@ describe('Testing book genres routes', () => {
   })
 
   it('Should return categories best seller books', async () => {
-    const reqBody = await request(app)
-        .get(
-            '/api/categories/best-seller'
-        )
-        
+    const reqBody = await request(app).get('/api/categories/best-seller')
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -92,11 +88,8 @@ describe('Testing book genres routes', () => {
     const page: number = 1
     const size: number = 1
 
-    const reqBody = await request(app)
-        .get(
-            `/api/categories/best-seller?page=${page}&size=${size}`
-        )
-        
+    const reqBody = await request(app).get(`/api/categories/best-seller?page=${page}&size=${size}`)
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -109,23 +102,16 @@ describe('Testing book genres routes', () => {
     const page: string = 'ksfd'
     const size: number = 1
 
-    const reqBody = await request(app)
-        .get(
-            `/api/categories/best-seller?page=${page}&size=${size}`
-        )
-        
+    const reqBody = await request(app).get(`/api/categories/best-seller?page=${page}&size=${size}`)
+
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
   })
 
-
   it('Should return categories top rated books', async () => {
-    const reqBody = await request(app)
-        .get(
-            '/api/categories/top-rated'
-        )
-        
+    const reqBody = await request(app).get('/api/categories/top-rated')
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -136,11 +122,8 @@ describe('Testing book genres routes', () => {
     const page: number = 1
     const size: number = 1
 
-    const reqBody = await request(app)
-        .get(
-            `/api/categories/top-rated?page=${page}&size=${size}`
-        )
-        
+    const reqBody = await request(app).get(`/api/categories/top-rated?page=${page}&size=${size}`)
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -153,23 +136,16 @@ describe('Testing book genres routes', () => {
     const page: string = 'ksfd'
     const size: number = 1
 
-    const reqBody = await request(app)
-        .get(
-            `/api/categories/top-rated?page=${page}&size=${size}`
-        )
-        
+    const reqBody = await request(app).get(`/api/categories/top-rated?page=${page}&size=${size}`)
+
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
   })
 
-
   it('Should return categories new arrivals books', async () => {
-    const reqBody = await request(app)
-        .get(
-            '/api/categories/new-arrivals'
-        )
-        
+    const reqBody = await request(app).get('/api/categories/new-arrivals')
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -180,11 +156,8 @@ describe('Testing book genres routes', () => {
     const page: number = 1
     const size: number = 1
 
-    const reqBody = await request(app)
-        .get(
-            `/api/categories/new-arrivals?page=${page}&size=${size}`
-        )
-        
+    const reqBody = await request(app).get(`/api/categories/new-arrivals?page=${page}&size=${size}`)
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -197,22 +170,16 @@ describe('Testing book genres routes', () => {
     const page: string = 'ksfd'
     const size: number = 1
 
-    const reqBody = await request(app)
-        .get(
-            `/api/categories/new-arrivals?page=${page}&size=${size}`
-        )
-        
+    const reqBody = await request(app).get(`/api/categories/new-arrivals?page=${page}&size=${size}`)
+
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
   })
 
   it('Should return categories recently added books', async () => {
-    const reqBody = await request(app)
-        .get(
-            '/api/categories/recently-added'
-        )
-        
+    const reqBody = await request(app).get('/api/categories/recently-added')
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -223,11 +190,8 @@ describe('Testing book genres routes', () => {
     const page: number = 1
     const size: number = 1
 
-    const reqBody = await request(app)
-        .get(
-            `/api/categories/recently-added?page=${page}&size=${size}`
-        )
-        
+    const reqBody = await request(app).get(`/api/categories/recently-added?page=${page}&size=${size}`)
+
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
     expect(reqBody.body.data).toBeDefined()
@@ -240,11 +204,8 @@ describe('Testing book genres routes', () => {
     const page: string = 'ksfd'
     const size: number = 1
 
-    const reqBody = await request(app)
-        .get(
-            `/api/categories/recently-added?page=${page}&size=${size}`
-        )
-        
+    const reqBody = await request(app).get(`/api/categories/recently-added?page=${page}&size=${size}`)
+
     expect(reqBody.statusCode).toBe(403)
     expect(reqBody.body.success).toBeFalsy()
     expect(reqBody.body.data).toBeUndefined()
@@ -254,9 +215,9 @@ describe('Testing book genres routes', () => {
     // clear admin user
     await db.query('DELETE FROM users WHERE users.userid = $1', [currAdminUserId])
     // clear books
-    await db.query('DELETE FROM books WHERE books.bookid = $1',[tempAddBookid])
+    await db.query('DELETE FROM books WHERE books.bookid = $1', [tempAddBookid])
     // clear book authors
-    await db.query('DELETE FROM authors WHERE authors.authorid = $1',[tempAuthorid])
+    await db.query('DELETE FROM authors WHERE authors.authorid = $1', [tempAuthorid])
     // clear book genres
     await db.query('DELETE FROM genres WHERE genres.genre_id = $1', [tempGenreid])
     tempAdminJwt = ''

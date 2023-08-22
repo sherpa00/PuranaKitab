@@ -1,5 +1,5 @@
 // middleware to upload image to cloudinary
-import { v2 as cloudinary } from 'cloudinary'
+import {type UploadApiResponse, v2 as cloudinary } from 'cloudinary'
 import * as dotenv from 'dotenv'
 import * as fs from 'node:fs/promises'
 import logger from './logger.utils'
@@ -26,7 +26,7 @@ cloudinary.config({
 const uploadImageToCloud = async (imageToBeUpload: string): Promise<ICloudinaryResponse> => {
   try {
     // uplaod to cloudinary
-    const imageUploadedToCloudinaryData = await cloudinary.uploader.upload(imageToBeUpload, {
+    const imageUploadedToCloudinaryData: UploadApiResponse = await cloudinary.uploader.upload(imageToBeUpload, {
       folder: 'PuranaKitab'
     })
 
@@ -34,16 +34,16 @@ const uploadImageToCloud = async (imageToBeUpload: string): Promise<ICloudinaryR
     const { url, public_id } = imageUploadedToCloudinaryData
 
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    if (!url) {
+    if (!url || !public_id) {
       return {
         success: false,
-        message: 'Failed to upload imaage'
+        message: 'Failed to upload image'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully uploaded image to cloud',
+      message: 'Successfully uploaded image',
       imgURL: url,
       imgPublicId: String(public_id).replace('PuranaKitab/', '')
     }
@@ -51,7 +51,7 @@ const uploadImageToCloud = async (imageToBeUpload: string): Promise<ICloudinaryR
     logger.error(err, 'Error while uploading image to cloud')
     return {
       success: false,
-      message: 'Error while uploading image '
+      message: 'Failed to upload image'
     }
   } finally {
     // finnally delete locally added image after uploading to cloud
@@ -82,7 +82,8 @@ const updateImageToCloud = async (imageToBeUpload: string, imgPublicId: string):
 
     return {
       success: true,
-      message: 'Successfully updated image'
+      message: 'Successfully updated image',
+      imgURL: url
     }
   } catch (err) {
     logger.error(err, 'Error while updating image from cloud')
@@ -107,19 +108,19 @@ const removeImageFromCloud = async (imgPublicId: string): Promise<ICloudinaryRes
     if (imageRemovedFromCloudinaryData.result !== 'ok') {
       return {
         success: false,
-        message: 'Failed to remove image from cloud'
+        message: 'Failed to remove image'
       }
     }
 
     return {
       success: true,
-      message: 'Successfully removed image from cloud'
+      message: 'Successfully removed image'
     }
   } catch (err) {
     logger.error(err, 'Error while removng image from cloud')
     return {
       success: false,
-      message: 'Error while removing image'
+      message: 'Failed to remove image'
     }
   }
 }

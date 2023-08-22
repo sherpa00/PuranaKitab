@@ -6,7 +6,7 @@ import logger from '../utils/logger.utils'
 const GetAllReviews = async (bookID: number): Promise<ServiceResponse> => {
   try {
     // show if book exits or not
-    const foundBook = await db.query('SELECT * FROM books WHERE books.bookid = $1', [bookID])
+    const foundBook = await db.query('SELECT bookid FROM books WHERE books.bookid = $1', [bookID])
 
     if (foundBook.rowCount <= 0) {
       return {
@@ -25,14 +25,6 @@ const GetAllReviews = async (bookID: number): Promise<ServiceResponse> => {
       }
     }
 
-    if (foundBookReview.rowCount === 0) {
-      return {
-        success: true,
-        message: 'Successfully got all book reviews',
-        data: []
-      }
-    }
-
     return {
       success: true,
       message: 'Successfully got all book reviews',
@@ -42,7 +34,7 @@ const GetAllReviews = async (bookID: number): Promise<ServiceResponse> => {
     logger.error(err, 'Error while getting all book reviews')
     return {
       success: false,
-      message: 'Error while gettting all book reviews'
+      message: 'Failed to get all book reviews'
     }
   }
 }
@@ -57,7 +49,7 @@ const AddReview = async (
 ): Promise<ServiceResponse> => {
   try {
     // verify if book exits or not
-    const foundBook = await db.query('SELECT * FROM books WHERE bookid = $1', [bookID])
+    const foundBook = await db.query('SELECT bookid FROM books WHERE bookid = $1', [bookID])
     if (foundBook.rowCount <= 0) {
       return {
         success: false,
@@ -66,7 +58,7 @@ const AddReview = async (
     }
 
     // verify if already reviews exits for same user and book
-    const reviewsFound = await db.query('SELECT * FROM reviews WHERE userid = $1 AND bookid = $2', [userID, bookID])
+    const reviewsFound = await db.query('SELECT reviewid FROM reviews WHERE userid = $1 AND bookid = $2', [userID, bookID])
 
     if (reviewsFound.rowCount > 0) {
       return {
@@ -97,7 +89,7 @@ const AddReview = async (
     logger.error(err, 'Error while adding book review')
     return {
       success: false,
-      message: 'Error while adding book review'
+      message: 'Failed to add book review'
     }
   }
 }
@@ -106,12 +98,12 @@ const AddReview = async (
 const RemoveSinlgeReview = async (reviewID: number): Promise<ServiceResponse> => {
   try {
     // check if book reviews exits or not
-    const foundReview = await db.query('SELECT * FROM reviews WHERE reviews.reviewid = $1', [reviewID])
+    const foundReview = await db.query('SELECT reviewid FROM reviews WHERE reviews.reviewid = $1', [reviewID])
 
     if (foundReview.rowCount <= 0) {
       return {
         success: false,
-        message: 'No book reviews found'
+        message: 'No book review found'
       }
     }
 
@@ -136,7 +128,7 @@ const RemoveSinlgeReview = async (reviewID: number): Promise<ServiceResponse> =>
     logger.error(err, 'Error while removing a book review')
     return {
       success: false,
-      message: 'Error while removing a book reivew'
+      message: 'Failed to remove book review'
     }
   }
 }
@@ -145,7 +137,7 @@ const RemoveSinlgeReview = async (reviewID: number): Promise<ServiceResponse> =>
 const RemoveAllReviews = async (bookID: number): Promise<ServiceResponse> => {
   try {
     // verify if book exits or not
-    const bookFound = await db.query('SELECT * FROM books WHERE books.bookid = $1', [bookID])
+    const bookFound = await db.query('SELECT bookid FROM books WHERE books.bookid = $1', [bookID])
 
     if (bookFound.rowCount <= 0) {
       return {
@@ -173,7 +165,7 @@ const RemoveAllReviews = async (bookID: number): Promise<ServiceResponse> => {
     logger.error(err, 'Error while removing all book reviews')
     return {
       success: false,
-      message: 'Error while removing all book reviews'
+      message: 'Failed to remove all book reviews'
     }
   }
 }
