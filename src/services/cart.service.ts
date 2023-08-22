@@ -33,7 +33,9 @@ const GetAllCart = async (userID: number): Promise<ServiceResponse> => {
 const AddCart = async (userID: number, bookID: number, bookQuantity: number): Promise<ServiceResponse> => {
   try {
     // get the book from db by bookid
-    const foundBookWithBookid = await db.query('SELECT price, available_quantity FROM books WHERE bookid = $1', [bookID])
+    const foundBookWithBookid = await db.query('SELECT price, available_quantity FROM books WHERE bookid = $1', [
+      bookID
+    ])
 
     if (foundBookWithBookid.rowCount <= 0) {
       return {
@@ -90,10 +92,10 @@ const AddCart = async (userID: number, bookID: number, bookQuantity: number): Pr
 const UpdateCart = async (userID: number, cartID: number, bookQuantity: number): Promise<ServiceResponse> => {
   try {
     // first verify if cart exits or not with cartID
-    const foundCart = await db.query('SELECT bookid, original_price FROM carts WHERE carts.cartid = $1 AND carts.userid = $2', [
-      cartID,
-      userID
-    ])
+    const foundCart = await db.query(
+      'SELECT bookid, original_price FROM carts WHERE carts.cartid = $1 AND carts.userid = $2',
+      [cartID, userID]
+    )
 
     if (foundCart.rowCount <= 0) {
       return {
@@ -172,10 +174,10 @@ const RemoveSingleCart = async (userID: number, cartID: number): Promise<Service
     }
 
     // remove cart
-    const removeSingleCartStatus = await db.query('DELETE FROM carts WHERE carts.cartid = $1 AND carts.userid = $2 RETURNING *', [
-      cartID,
-      userID
-    ])
+    const removeSingleCartStatus = await db.query(
+      'DELETE FROM carts WHERE carts.cartid = $1 AND carts.userid = $2 RETURNING *',
+      [cartID, userID]
+    )
 
     if (removeSingleCartStatus.rowCount <= 0) {
       return {

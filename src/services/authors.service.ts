@@ -7,7 +7,6 @@ import logger from '../utils/logger.utils'
 // service to get all book services
 const GetAllBookAuthors = async (page?: number, size?: number): Promise<ServiceResponse> => {
   try {
-
     // count authors
     const getBookAuthorsCount = await db.query(`SELECT COUNT(*) FROM authors`)
 

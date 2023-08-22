@@ -1,4 +1,4 @@
 .env
-./node_modules
-./pm2.configs
-./roles
+node_modules
+pm2.configs.json
+roles.json

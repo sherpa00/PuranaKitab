@@ -58,7 +58,10 @@ const AddReview = async (
     }
 
     // verify if already reviews exits for same user and book
-    const reviewsFound = await db.query('SELECT reviewid FROM reviews WHERE userid = $1 AND bookid = $2', [userID, bookID])
+    const reviewsFound = await db.query('SELECT reviewid FROM reviews WHERE userid = $1 AND bookid = $2', [
+      userID,
+      bookID
+    ])
 
     if (reviewsFound.rowCount > 0) {
       return {

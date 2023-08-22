@@ -1,5 +1,5 @@
 // middleware to upload image to cloudinary
-import {type UploadApiResponse, v2 as cloudinary } from 'cloudinary'
+import { type UploadApiResponse, v2 as cloudinary } from 'cloudinary'
 import * as dotenv from 'dotenv'
 import * as fs from 'node:fs/promises'
 import logger from './logger.utils'

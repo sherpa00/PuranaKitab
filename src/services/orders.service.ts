@@ -29,7 +29,7 @@ const STRIPE = new Stripe(STRIPE_SECRET, {
 
 // service for place order process offline (cash on delivery)
 const PlaceOrderOffline = async (
-  cartsList: [{cartid: number}],
+  cartsList: [{ cartid: number }],
   userid: number,
   phoneNumber: number
 ): Promise<ServiceResponse> => {

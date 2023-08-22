@@ -15,8 +15,8 @@ export type NewBookPayload = Omit<IBook, 'createdat' | 'bookid' | 'authorid' | '
 
 // service for getting all books
 const GetAllBooks = async (
-  genre?: string | null ,
-  author?: string | null ,
+  genre?: string | null,
+  author?: string | null,
   page?: number,
   size?: number
 ): Promise<ServiceResponse> => {
@@ -154,10 +154,10 @@ const AddBook = async (
 
     if (getAuthorStatus.rowCount <= 0) {
       // no author found so add new author
-      const addAuthorStatus = await db.query('INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING authorid', [
-        authorFirstname,
-        authorLastname
-      ])
+      const addAuthorStatus = await db.query(
+        'INSERT INTO authors (firstname, lastname) VALUES ($1, $2) RETURNING authorid',
+        [authorFirstname, authorLastname]
+      )
 
       if (addAuthorStatus.rowCount <= 0) {
         return {
@@ -173,7 +173,9 @@ const AddBook = async (
     }
 
     // now add book genres if available or not
-    const getBookGenresStatus = await db.query(`SELECT genre_id FROM genres WHERE genres.genre_name = $1`, [bookData.genre])
+    const getBookGenresStatus = await db.query(`SELECT genre_id FROM genres WHERE genres.genre_name = $1`, [
+      bookData.genre
+    ])
     let currentGenreId: number
 
     // genre exits
@@ -408,8 +410,12 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
     // if only book images exits delete them
     if (bookImagesWithId.rowCount === 2) {
       // and delete book images from cloud
-      const removeImgFromCloudStatus1: ICloudinaryResponse = await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
-      const removeImgFromCloudStatus2: ICloudinaryResponse = await removeImageFromCloud(bookImagesWithId.rows[1].img_public_id)
+      const removeImgFromCloudStatus1: ICloudinaryResponse = await removeImageFromCloud(
+        bookImagesWithId.rows[0].img_public_id
+      )
+      const removeImgFromCloudStatus2: ICloudinaryResponse = await removeImageFromCloud(
+        bookImagesWithId.rows[1].img_public_id
+      )
 
       if (!removeImgFromCloudStatus1.success || !removeImgFromCloudStatus2.success) {
         return {
@@ -418,7 +424,10 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
         }
       }
       // then delete book images with bookid from db
-      deleteBookImagesWithIdStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 RETURNING book_image_id', [bookID])
+      deleteBookImagesWithIdStatus = await db.query(
+        'DELETE FROM book_images WHERE bookid = $1 RETURNING book_image_id',
+        [bookID]
+      )
       if (deleteBookImagesWithIdStatus.rowCount <= 0) {
         return {
           success: false,
@@ -429,7 +438,9 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
 
     if (bookImagesWithId.rowCount === 1) {
       // and delete book images from cloud
-      const removeImgFromCloudStatus1: ICloudinaryResponse = await removeImageFromCloud(bookImagesWithId.rows[0].img_public_id)
+      const removeImgFromCloudStatus1: ICloudinaryResponse = await removeImageFromCloud(
+        bookImagesWithId.rows[0].img_public_id
+      )
 
       if (!removeImgFromCloudStatus1.success) {
         return {
@@ -439,7 +450,10 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
       }
 
       // then delete book images with bookid from db
-      deleteBookImagesWithIdStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 RETURNING book_image_id', [bookID])
+      deleteBookImagesWithIdStatus = await db.query(
+        'DELETE FROM book_images WHERE bookid = $1 RETURNING book_image_id',
+        [bookID]
+      )
       if (deleteBookImagesWithIdStatus.rowCount <= 0) {
         return {
           success: false,
@@ -453,7 +467,9 @@ const RemoveBookWithId = async (bookID: number): Promise<ServiceResponse> => {
 
     if (foundBookReviews.rowCount > 0) {
       // if reviews found delete them
-      const deleteBookReviews = await db.query('DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING reviewid', [bookID])
+      const deleteBookReviews = await db.query('DELETE FROM reviews WHERE reviews.bookid = $1 RETURNING reviewid', [
+        bookID
+      ])
 
       if (deleteBookReviews.rowCount <= 0) {
         return {
@@ -647,10 +663,10 @@ const DeleteBookImage = async (bookid: number, imgType: string): Promise<Service
     }
 
     // remove images from db
-    const bookImgRemoveStatus = await db.query('DELETE FROM book_images WHERE bookid = $1 AND img_type = $2 RETURNING book_image_id', [
-      bookid,
-      imgType
-    ])
+    const bookImgRemoveStatus = await db.query(
+      'DELETE FROM book_images WHERE bookid = $1 AND img_type = $2 RETURNING book_image_id',
+      [bookid, imgType]
+    )
 
     if (bookImgRemoveStatus.rowCount <= 0) {
       return {

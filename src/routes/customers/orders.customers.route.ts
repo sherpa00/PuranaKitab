@@ -1,11 +1,14 @@
 import express, { type IRouter } from 'express'
 import { body } from 'express-validator'
 import { PlaceOrderOfflineOne, PlaceOrderOnlineOne, ShowMyOrdersOne } from '../../controllers/orders.controller'
+import passport from '../../configs/passport.config'
 
 const router: IRouter = express.Router()
 
 router.get(
   '/my-orders',
+  // customer user authentication and authorization
+  passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   ShowMyOrdersOne
 )
@@ -22,6 +25,8 @@ router.post(
     .withMessage('Body Phone Number should not be empty')
     .isMobilePhone('ne-NP')
     .withMessage('Body Phone number should be valid phone number'),
+    // customer user authentication and authorization
+  passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   PlaceOrderOfflineOne
 )
@@ -63,6 +68,8 @@ router.post(
     .withMessage('Credit card cvc should be given')
     .isString()
     .withMessage('Credit card cvc should a string'),
+    // customer user authentication and authorization
+  passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   PlaceOrderOnlineOne
 )
