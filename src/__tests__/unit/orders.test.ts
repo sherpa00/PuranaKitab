@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-labels */
 import * as dotenv from 'dotenv'
 import { db } from '../../configs/db.configs'
