@@ -13,7 +13,7 @@ router.get(
     .withMessage('Param orderid should not be empty')
     .isInt()
     .withMessage('Param orderid must be integer'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   ConfirmOrdersOne
@@ -26,7 +26,7 @@ router.delete(
     .withMessage('Param orderid should not be empty')
     .isInt()
     .withMessage('Param orderid must be integer'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   RemoveOrderOne

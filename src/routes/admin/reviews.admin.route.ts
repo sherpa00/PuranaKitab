@@ -24,7 +24,7 @@ router.delete(
     .withMessage('Body bookid should not be empty')
     .isNumeric()
     .withMessage('Body bookid should be an integer'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   RemoveAllOneBookReviews

@@ -18,7 +18,7 @@ router.post(
     .withMessage('Body lastname should not be empty')
     .isString()
     .withMessage('Body lastname should be a string'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   AddNewBookOneAuthor
@@ -46,7 +46,7 @@ router.delete(
     .withMessage('Param authorid should not be empty')
     .isInt()
     .withMessage('Param authorid should be an integer'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   RemoveOneAuthor

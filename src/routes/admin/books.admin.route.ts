@@ -96,7 +96,7 @@ router.patch(
     .withMessage('Body lastname should not be empty')
     .isString()
     .withMessage('Body lastname should be a string'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneBookAuthor
@@ -110,7 +110,7 @@ router.patch(
     .withMessage('Body genre should not be empty')
     .isString()
     .withMessage('Body genre should be a string'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneBookGenre

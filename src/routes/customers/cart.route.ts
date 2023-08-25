@@ -33,7 +33,7 @@ router.post(
     .withMessage('Quantity should not be empty')
     .isNumeric()
     .withMessage('Quantity should be integer'),
-    // customer user authentication and authorization
+  // customer user authentication and authorization
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   AddOneCart
@@ -51,7 +51,7 @@ router.patch(
     .withMessage('Quantity should not be empty')
     .isNumeric()
     .withMessage('Quantity should be an integer'),
-    // customer user authentication and authorization
+  // customer user authentication and authorization
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneCart

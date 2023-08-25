@@ -25,7 +25,7 @@ router.post(
     .withMessage('Body Phone Number should not be empty')
     .isMobilePhone('ne-NP')
     .withMessage('Body Phone number should be valid phone number'),
-    // customer user authentication and authorization
+  // customer user authentication and authorization
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   PlaceOrderOfflineOne
@@ -68,7 +68,7 @@ router.post(
     .withMessage('Credit card cvc should be given')
     .isString()
     .withMessage('Credit card cvc should a string'),
-    // customer user authentication and authorization
+  // customer user authentication and authorization
   passport.authenticate('jwt', { session: false }),
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   PlaceOrderOnlineOne

@@ -13,7 +13,7 @@ router.post(
     .withMessage('Body genre should not be empty')
     .isString()
     .withMessage('Body genre should be a string'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   AddBookOneGenre
@@ -31,7 +31,7 @@ router.patch(
     .withMessage('Body genre should not be empty')
     .isString()
     .withMessage('Body genre should be a string'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   UpdateOneGenre
@@ -44,7 +44,7 @@ router.delete(
     .withMessage('Param genreid should not be empty')
     .isInt()
     .withMessage('Param genreid should be an integer'),
-    passport.authenticate('jwt', { session: false }),
+  passport.authenticate('jwt', { session: false }),
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   DeleteOneGenre
