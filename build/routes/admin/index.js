@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AdminRouter = void 0;
+const express_1 = require("express");
+const books_admin_route_1 = require("./books.admin.route");
+const authors_admin_route_1 = require("./authors.admin.route");
+const genres_admin_route_1 = require("./genres.admin.route");
+const reviews_admin_route_1 = require("./reviews.admin.route");
+const orders_admin_route_1 = require("./orders.admin.route");
+const router = (0, express_1.Router)();
+exports.AdminRouter = router;
+router.use('/books', books_admin_route_1.BookAdminRouter);
+router.use('/authors', authors_admin_route_1.AuthorsAdminRouter);
+router.use('/genres', genres_admin_route_1.GenresAdminRouter);
+router.use('/reviews', reviews_admin_route_1.ReviewsAdminRouter);
+router.use('/orders', orders_admin_route_1.OrdersAdminRouter);

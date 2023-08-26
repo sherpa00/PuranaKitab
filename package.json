@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "jest --verbose",
-    "test:unit": "jest --verbose --testMatch='**/src/__tests__/unit/*.test.[jt]s?(x)'",
-    "test:integration": "jest --verbose --testMatch='**/src/__tests__/integration/*.test.[jt]s?(x)'",
+    "test": "cross-env NODE_ENV=testing jest --verbose",
+    "test:unit": "cross-env NODE_ENV=testing --verbose --testMatch='**/src/__tests__/unit/*.test.[jt]s?(x)'",
+    "test:integration": "cross-env NODE_ENV=testing jest --verbose --testMatch='**/src/__tests__/integration/*.test.[jt]s?(x)'",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "npx prettier --ignore-path .gitignore --write .",

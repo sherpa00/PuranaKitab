@@ -48,6 +48,12 @@ Start the server
 
 ## Environment Variables
 
+- **.env.testing:** Environment Variables for testing purposes
+
+- **.env.development:** Environment Variables for development purposes
+
+- **.env.production:** Environment Variables for production purposes
+
 To run this project, you will need to add the following environment variables to your .env file
 
 `PORT`
@@ -67,6 +73,10 @@ To run this project, you will need to add the following environment variables to
 
 `DEFAULT_GMAIL`,
 `GMAIL_APP_PASSWORD`
+
+`DATABAE_URL`,
+
+`STRIPE_SECRET`
 
 ## Running Tests
 

@@ -5,7 +5,10 @@ import { db } from '../configs/db.configs'
 import { type InewUser } from './register.service'
 import logger from '../utils/logger.utils'
 
-dotenv.config()
+dotenv.config({
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  path: `.env.${process.env.NODE_ENV}`
+})
 
 export interface loginPayload {
   success: boolean

@@ -4,7 +4,10 @@ import * as dotenv from 'dotenv'
 import * as fs from 'node:fs/promises'
 import logger from './logger.utils'
 
-dotenv.config()
+dotenv.config({
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  path: `.env.${process.env.NODE_ENV}`
+})
 
 // types for response of image uplaod
 export interface ICloudinaryResponse {

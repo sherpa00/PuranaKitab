@@ -2,6 +2,7 @@ import { genSalt, hash } from 'bcrypt'
 import { db } from '../configs/db.configs'
 import type { ServiceResponse, Iuser } from '../types'
 import logger from '../utils/logger.utils'
+
 // types for new user --> username and password only
 export type InewUser = Pick<Iuser, 'username' | 'email' | 'password'>
 

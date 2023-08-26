@@ -4,7 +4,10 @@ import { db } from '../configs/db.configs'
 import { type ServiceResponse } from '../types'
 import logger from '../utils/logger.utils'
 
-dotenv.config()
+dotenv.config({
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  path: `.env.${process.env.NODE_ENV}`
+})
 
 interface OrderedBooks {
   bookid: number

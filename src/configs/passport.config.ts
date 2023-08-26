@@ -6,6 +6,12 @@ import { type Request } from 'express'
 import { db } from './db.configs'
 import logger from '../utils/logger.utils'
 
+dotenv.config({
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  path: `.env.${process.env.NODE_ENV}`
+})
+
+
 // type for userdata;
 export interface userPayload {
   userid: number
@@ -13,8 +19,6 @@ export interface userPayload {
   username: string
   role: string
 }
-
-dotenv.config()
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const PUBLIC_KEY: string = process.env.PUBLIC_KEY!

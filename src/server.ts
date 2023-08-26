@@ -4,7 +4,10 @@ import { connectToDb } from './configs/db.configs'
 import app from './index'
 import logger from './utils/logger.utils'
 
-dotenv.config()
+dotenv.config({
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  path: `.env.${process.env.NODE_ENV}`
+})
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const PORT: number = parseInt(process.env.PORT!)

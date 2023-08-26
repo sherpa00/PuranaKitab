@@ -2,7 +2,10 @@ import nodemailer, { type Transporter } from 'nodemailer'
 import * as dotenv from 'dotenv'
 import logger from '../utils/logger.utils'
 
-dotenv.config()
+dotenv.config({
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  path: `.env.${process.env.NODE_ENV}`
+})
 
 export interface SendResetEmailStatus {
   success: boolean
