@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit'
 // create account rate limit
 const createAccountLimit = rateLimit({
   windowMs: 60 * 60 * 1000, // 1hr,
-  max: 50,
+  max: 10,
   message: 'Too many account creations from this IP, please try again later',
   standardHeaders: true,
   legacyHeaders: false
@@ -12,7 +12,7 @@ const createAccountLimit = rateLimit({
 // login account rate limit
 const loginAccountLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15mins,
-  max: 50,
+  max: 10,
   message: 'Too many account login from this IP, please try again later',
   standardHeaders: true,
   legacyHeaders: false

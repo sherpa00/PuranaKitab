@@ -7,9 +7,6 @@ dotenv.config({
   path: `.env.${process.env.NODE_ENV}`
 })
 
-// eslint-disable-next-line no-console
-console.log(process.env.DB_DATABASE)
-
 const db = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,

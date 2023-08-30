@@ -3,6 +3,7 @@ import express, { type Application, type Request, type Response } from 'express'
 import morgan from 'morgan'
 import pinoHTTP from 'pino-http'
 import StatusCode from 'http-status-codes'
+import * as helmet from 'helmet'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
 import logger from './utils/logger.utils'
@@ -11,6 +12,9 @@ import { RootRouter } from './routes'
 
 // server application
 const app: Application = express()
+
+// helmet conifig for better secure headers
+app.use(helmet.default())
 
 // middlewares for server handling
 app.use(express.json())
