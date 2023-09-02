@@ -62,7 +62,18 @@ const swaggerFile: any = process.cwd() + '/src/swagger/swagger.json'
 const swaggerData: any = fs.readFileSync(swaggerFile, 'utf-8')
 const swaggerDocs: any = JSON.parse(swaggerData)
 
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs))
+// dev purpose only
+if (process.env.NODE_ENV === 'development') {
+  const swaggerHOST: string = 'localhost:' + String(process.env.PORT)
+  app.use('/api/docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocs, {
+      swaggerOptions: {
+        host: swaggerHOST
+      }
+    }))
+}
+
 
 // root api router
 app.use('/', RootRouter)

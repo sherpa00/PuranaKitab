@@ -3,4 +3,3 @@
 .env.production
 node_modules
 pm2.configs.json
-roles.json
