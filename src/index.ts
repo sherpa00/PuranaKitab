@@ -9,12 +9,20 @@ import swaggerUi from 'swagger-ui-express'
 import logger from './utils/logger.utils'
 import { errorFailSafeHandler, errorLogger, errorResponder } from './middlewares/error-handler.middleware'
 import { RootRouter } from './routes'
+import dotenv from 'dotenv'
+
+dotenv.config({
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+  path: `.env.${process.env.NODE_ENV}`
+})
 
 // server application
 const app: Application = express()
 
 // helmet conifig for better secure headers
-app.use(helmet.default())
+if (process.env.NODE_ENV === 'production') {
+  app.use(helmet.default())
+}
 
 // middlewares for server handling
 app.use(express.json())
@@ -64,16 +72,18 @@ const swaggerDocs: any = JSON.parse(swaggerData)
 
 // dev purpose only
 if (process.env.NODE_ENV === 'development') {
-  const swaggerHOST: string = 'localhost:' + String(process.env.PORT)
-  app.use('/api/docs',
+  const port = process.env.PORT ?? 3001
+  const swaggerHOST: string = 'localhost:' + String(port)
+  app.use(
+    '/api/docs',
     swaggerUi.serve,
     swaggerUi.setup(swaggerDocs, {
       swaggerOptions: {
         host: swaggerHOST
       }
-    }))
+    })
+  )
 }
-
 
 // root api router
 app.use('/', RootRouter)

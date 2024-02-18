@@ -48,6 +48,8 @@ Start the server
 
 ## Environment Variables
 
+- **.env:** Environment Variables for DATABASE_URL for database migration using pg-node-migrate (ps: pg-node-migrate only loads env variables from .env)
+
 - **.env.testing:** Environment Variables for testing purposes
 
 - **.env.development:** Environment Variables for development purposes
