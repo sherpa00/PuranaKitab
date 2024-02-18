@@ -1,6 +1,0 @@
-.env
-.env.testing
-.env.development
-.env.production
-node_modules
-pm2.configs.json
