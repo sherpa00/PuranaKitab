@@ -5,15 +5,16 @@ import app from '../../index'
 import { db } from '../../configs/db.configs'
 import { type Iuser } from '../../types'
 import { capitalize } from '../../controllers/authors.controller'
+import { faker } from '@faker-js/faker'
 
 describe('Testing book genres routes', () => {
   // temp genres payload
   const tempGenresPayload1 = {
-    genre_name: 'Testing123094328'
+    genre_name: faker.music.genre()
   }
 
   const tempGenresPayload2 = {
-    genre_name: 'Testing248903280'
+    genre_name: faker.music.genre()
   }
 
   // new update temp genre
@@ -21,9 +22,9 @@ describe('Testing book genres routes', () => {
 
   // assign temporary user
   const tempAdminUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing2',
-    email: 'testing2409382094832@gmail.com',
-    password: 'testing3'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   // temporary jwttoken

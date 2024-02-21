@@ -51,6 +51,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // root rotue for checking server functioning
 app.get('/api', (req: Request, res: Response): void => {
+  logger.info(process.env.PRIVATE_KEY)
+  logger.info(process.env.PUBLIC_KEY)
   try {
     res.status(StatusCode.OK).json({
       success: true,

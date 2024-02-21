@@ -4,13 +4,14 @@ import { hash, genSalt } from 'bcrypt'
 import { db } from '../../configs/db.configs'
 import app from '../../index'
 import { type Iuser } from '../../types/index'
+import { faker } from '@faker-js/faker'
 
 describe('Testing books search routes', () => {
   // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing12423',
-    email: 'testing3598090920@gmail.com',
-    password: 'testing482032'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   let tempAdminUserid: number

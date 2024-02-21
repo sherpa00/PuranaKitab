@@ -4,17 +4,18 @@ import { db } from '../../configs/db.configs'
 import app from '../../index'
 import { type Iuser } from '../../types'
 import { capitalize } from '../../controllers/authors.controller'
+import { faker } from '@faker-js/faker'
 
 describe('Testing book authors routes', () => {
   // temp author payload
   const tempBookAuthorPayload1 = {
-    firstname: 'testing83',
-    lastname: 'author'
+    firstname: faker.person.firstName(),
+    lastname: faker.person.lastName()
   }
 
   const tempBookAuthorPayload2 = {
-    firstname: 'testing2',
-    lastname: 'author2'
+    firstname: faker.person.firstName(),
+    lastname: faker.person.lastName()
   }
 
   // current temp book author ids
@@ -22,14 +23,14 @@ describe('Testing book authors routes', () => {
   let currentBookAuthorId2: number
 
   // assign for post and patch
-  const tempFirstname: string = 'testing30928349023'
-  const tempLastname: string = 'author449083240'
+  const tempFirstname: string = faker.person.firstName()
+  const tempLastname: string = faker.person.lastName()
 
   // assign temporary user
   const tempAdminUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing2',
-    email: 'testing2409382094832@gmail.com',
-    password: 'testing3'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   // temporary jwttoken

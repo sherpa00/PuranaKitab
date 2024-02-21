@@ -3,13 +3,14 @@ import app from '../../index'
 import { type Iuser } from '../../types'
 import { db } from '../../configs/db.configs'
 import logger from '../../utils/logger.utils'
+import { faker } from '@faker-js/faker'
 
 describe('Testing for Login and Register routes', () => {
   // asssing new userdata
   const tempUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing',
-    email: 'testing@gmail.com',
-    password: 'testing'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   let tempUserid: number

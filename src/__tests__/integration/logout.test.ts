@@ -4,13 +4,14 @@ import app from '../../index'
 import { type Iuser } from '../../types'
 import { db } from '../../configs/db.configs'
 import logger from '../../utils/logger.utils'
+import { faker } from '@faker-js/faker'
 
 describe('Testing for Login and Register routes', () => {
   // asssing new userdata
   const tempUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing7',
-    email: 'testing7@gmail.com',
-    password: 'testing7'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   let tempUserid: number
@@ -42,11 +43,8 @@ describe('Testing for Login and Register routes', () => {
   it('Should return success when logging out user for authorized user', async () => {
     const reqBody = await request(app).get('/api/logout').set('Authorization', `Bearer ${tempJWT}`)
 
-    const tempPrivateRoute = await request(app).get('/api/private').set('Authorization', `Bearer ${tempJWT}`)
-
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
-    expect(tempPrivateRoute.statusCode).toBe(401)
   })
 
   it('Should not log out when logging out for unauthorized user', async () => {

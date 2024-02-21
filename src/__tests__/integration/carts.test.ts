@@ -4,13 +4,14 @@ import { genSalt, hash } from 'bcrypt'
 import app from '../../index'
 import { db } from '../../configs/db.configs'
 import type { Iuser } from '../../types'
+import { faker } from '@faker-js/faker'
 
 describe('Testing cart routes', () => {
   // assign temporary user
   const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing523423',
-    email: 'testing95083290909045328@gmail.com',
-    password: 'testing095'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   // temporary jwttoken
@@ -22,9 +23,9 @@ describe('Testing cart routes', () => {
 
   // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing12423',
-    email: 'testing183598021548390920@gmail.com',
-    password: 'testing482032'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   let tempAdminUserid: number
@@ -412,7 +413,7 @@ describe('Testing cart routes', () => {
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
-    expect(reqBody.body.data).toBeUndefined()
+    expect(reqBody.body.data).toBeDefined()
   })
 
   it('Should not delete cart with incorrect cartid for authorized customer user', async () => {
@@ -535,7 +536,7 @@ describe('Testing cart routes', () => {
 
     expect(reqBody.statusCode).toBe(200)
     expect(reqBody.body.success).toBeTruthy()
-    expect(reqBody.body.data).toBeUndefined()
+    expect(reqBody.body.data).toBeDefined()
     expect(tempGetCart.body.data).toEqual([])
   })
 

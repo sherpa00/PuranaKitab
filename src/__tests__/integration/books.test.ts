@@ -3,13 +3,14 @@ import { genSalt, hash } from 'bcrypt'
 import app from '../../index'
 import { db } from '../../configs/db.configs'
 import { type Iuser } from '../../types'
+import { faker } from '@faker-js/faker'
 
 describe('Testing book routes', () => {
   // assign temporary user
   const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing4',
-    email: 'testing9509kjb40329045328@gmail.com',
-    password: 'testing4klj'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   // temporary jwttoken
@@ -21,9 +22,9 @@ describe('Testing book routes', () => {
 
   // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing1289423',
-    email: 'test238095483hg90920@gmail.com',
-    password: 'testing489032'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   let tempAdminUserid: number

@@ -5,13 +5,14 @@ import app from '../../index'
 import { db } from '../../configs/db.configs'
 import type { Iuser } from '../../types'
 import { OnlineCardDetails } from '../../services/orders.service'
+import { faker } from '@faker-js/faker'
 
 describe('Testing orders routes', () => {
   // assign temporary user
   const tempUser: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing523423',
-    email: 'testing95083290909045328@gmail.com',
-    password: 'testing095'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   // temporary jwttoken
@@ -23,9 +24,9 @@ describe('Testing orders routes', () => {
 
   // asssing new admin userdata
   const tempAdminUserData: Pick<Iuser, 'username' | 'email' | 'password'> = {
-    username: 'testing12423',
-    email: 'testing183598021548390920@gmail.com',
-    password: 'testing482032'
+    username: faker.internet.userName(),
+    email: faker.internet.email(),
+    password: faker.internet.password()
   }
 
   let tempAdminUserid: number
@@ -131,7 +132,7 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
 
     const reqBody = await request(app)
       .post('/api/orders/place-order/offline')
@@ -177,7 +178,7 @@ describe('Testing orders routes', () => {
         cartid: 3898923853
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
 
     const reqBody = await request(app)
       .post('/api/orders/place-order/offline')
@@ -216,7 +217,7 @@ describe('Testing orders routes', () => {
         cartid: 3898923853
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343234
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
 
     const reqBody = await request(app)
       .post('/api/orders/place-order/offline')
@@ -255,7 +256,7 @@ describe('Testing orders routes', () => {
         cartid: 3898923853
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
 
     const reqBody = await request(app)
       .post('/api/orders/place-order/offline')
@@ -293,12 +294,12 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const reqBody = await request(app)
@@ -346,12 +347,12 @@ describe('Testing orders routes', () => {
         cartid: 3898923853
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const reqBody = await request(app)
@@ -392,12 +393,12 @@ describe('Testing orders routes', () => {
         cartid: 3898923853
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343234
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const reqBody = await request(app)
@@ -438,12 +439,12 @@ describe('Testing orders routes', () => {
         cartid: 3898923853
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const reqBody = await request(app)
@@ -483,7 +484,7 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
 
     const tempAddOrder = await request(app)
       .post('/api/orders/place-order/offline')
@@ -530,7 +531,7 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
 
     const tempAddOrder = await request(app)
       .post('/api/orders/place-order/offline')
@@ -573,12 +574,12 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const tempAddOrder = await request(app)
@@ -624,7 +625,7 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
 
     const tempAddOrder = await request(app)
       .post('/api/orders/place-order/offline')
@@ -667,12 +668,12 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const tempAddOrder = await request(app)
@@ -717,12 +718,12 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const tempAddOrder = await request(app)
@@ -766,12 +767,12 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const tempAddOrder = await request(app)
@@ -818,12 +819,12 @@ describe('Testing orders routes', () => {
         cartid: tempAddCart1.body.data.cartid
       }
     ]
-    const tempBodyPhoneNumber: number = 9804080343
+    const tempBodyPhoneNumber: number = parseInt(faker.phone.number())
     const tempBodyCardDetails = {
-      creditCard: '4242424242424242',
+      creditCard: faker.finance.creditCardNumber(),
       expMonth: 11,
-      expYear: 2023,
-      cvc: '123'
+      expYear: 3000,
+      cvc: faker.finance.creditCardCVV()
     }
 
     const tempAddOrder = await request(app)
