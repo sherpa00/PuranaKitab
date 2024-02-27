@@ -18,8 +18,8 @@ exports.up = pgm => {
     foreignKeys: {
       columns: 'bookid',
       references: 'books(bookid)',
-      onUpdate: 'NO ACTION',
-      onDelete: 'NO ACTION'
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
     }
   })
 }

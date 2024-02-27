@@ -5,9 +5,9 @@
   "main": "server.js",
   "scripts": {
     "test:only": "cross-env NODE_ENV=testing jest $@",
-    "test": "cross-env NODE_ENV=testing jest --verbose",
     "test:unit": "cross-env NODE_ENV=testing jest --verbose --testMatch='**/src/__tests__/unit/*.test.[jt]s?(x)'",
-    "test:integration": "cross-env NODE_ENV=testing jest --verbose --testMatch='**/src/__tests__/integration/*.test.[jt]s?(x)'",
+    "test:integration": "cross-env NODE_ENV=testing jest --verbose --runInBand --testMatch='**/src/__tests__/integration/*.test.[jt]s?(x)'",
+    "test": "npm run test:unit && npm run test:integration",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "npx prettier --ignore-path .gitignore --write .",

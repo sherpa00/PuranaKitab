@@ -57,8 +57,8 @@ exports.up = pgm => {
     foreignKeys: {
       columns: 'authorid',
       references: 'authors(authorid)',
-      onUpdate: 'NO ACTION',
-      onDelete: 'NO ACTION'
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
     }
   })
 
@@ -66,8 +66,8 @@ exports.up = pgm => {
     foreignKeys: {
       columns: 'genre_id',
       references: 'genres(genre_id)',
-      onUpdate: 'NO ACTION',
-      onDelete: 'NO ACTION'
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
     }
   })
 

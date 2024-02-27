@@ -11,7 +11,7 @@ exports.up = pgm => {
     userid: {
       type: 'integer'
     },
-    qauntity: {
+    quantity: {
       type: 'integer',
       notNull: true
     },
@@ -29,8 +29,8 @@ exports.up = pgm => {
     foreignKeys: {
       columns: 'bookid',
       references: 'books(bookid)',
-      onDelete: 'NO ACTION',
-      onUPDATE: 'NO ACTION'
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
     }
   })
 
@@ -38,8 +38,8 @@ exports.up = pgm => {
     foreignKeys: {
       columns: 'userid',
       references: 'users(userid)',
-      onDelete: 'NO ACTION',
-      onUPDATE: 'NO ACTION'
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
     }
   })
 }
