@@ -8,18 +8,22 @@ on:
 
 jobs:
   Lint_Build_Test:
-    name: Linting and testing
+    name: Linting and unit testing
 
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
 
     steps:
       - name: Checkout Repositary
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Setup Node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install Dependencies
@@ -32,4 +36,4 @@ jobs:
         run: npm run build --if-present
 
       - name: Test Code
-        run: npm run test
+        run: npm run test:unit
