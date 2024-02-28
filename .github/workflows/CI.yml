@@ -48,11 +48,9 @@ jobs:
         node-version: [16.x]
     services:
       postgres:
-        image: postgres:14-alpine
+        image: postgres
         env:
-          POSTGRES_USER: localUser
-          POSTGRES_PASSWORD: localhostPassword
-          POSTGRES_DATABASE: test
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -82,13 +80,13 @@ jobs:
 
       - name: Test Code
         env:
-          DATABASE_URL: postgres://localUser:localhostPassword@localhost:5432/test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
           PORT: 3003
           DB_HOST: localhost
-          DB_USER: localUser
-          DB_PASSWORD: localhostPassword
+          DB_USER: postgres
+          DB_PASSWORD: postgres
           DB_PORT: 5432
-          DB_DATABASE: test
+          DB_DATABASE: postgres
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
