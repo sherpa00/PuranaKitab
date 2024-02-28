@@ -51,13 +51,13 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd pg-isready
-          --health-interval 10s
-          --health-timeout 5s 
-          --health-retries 5
 
     steps:
       - name: Checkout Repositary
@@ -79,6 +79,8 @@ jobs:
         run: npm run build --if-present
 
       - name: Test Code
+        run: npm run migrate up
+          npm run test:integration
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
           PORT: 3003
@@ -95,6 +97,3 @@ jobs:
           DEFAULT_GMAIL: ${{ secrets.DEFAULT_GMAIL }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           STRIPE_SECRET: ${{ secrets.STRIPE_SECRET }}
-
-        run: npm run migrate up
-          npm run test:integration
