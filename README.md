@@ -12,38 +12,52 @@ A REST api for book store where you can buy used (purana) books (kitab).
 
 - **Language:** Typescript
 
-- **Database:** postgresql
+- **Database:** postgresql (with pg driver)
 
 ## Run Locally
 
-Clone the project
+1. Clone the project
 
 ```bash
   git clone https://github.com/sherpa00/PuranaKitab.git
 ```
 
-Go to the project directory
+2. Go to the project directory
 
 ```bash
-  cd PURANAKITAB
+  cd PuranaKitab
 ```
 
-Install dependencies
+3. Install dependencies
 
 ```bash
   npm install
 ```
 
-Build the server
+4. Create your local and test postgres database
+
+5. Create required Environment Variables
 
 ```bash
-  npm run build
+  touch .env.development .env.testing .env.production
 ```
 
-Start the server
+6. Create new Environment Variable which stores pg db url string as DATABASE_URL for running db migration
 
 ```bash
-  npm run start
+  touch .env
+```
+
+7. After creating .env and adding DATABASE_URL in it, run the migration to crreate required tables
+
+```bash
+   npm run migrate up
+```
+
+8. Start the server in dev mode
+
+```bash
+  npm run dev
 ```
 
 ## Environment Variables
@@ -82,10 +96,23 @@ To run this project, you will need to add the following environment variables to
 
 ## Running Tests
 
-To run tests, run the following command
+To run tests, follow according to below steps:
+
+1. Create test postgres database locally
+
+2. Add the created test database url string to DATABASE_URL in .env file
+
+3. Run database migration file to create required tables for testing database in integration tests
 
 ```bash
-  npm run test
+  npm run migrate up
+```
+
+4. Now, Run tests
+
+``bash
+npm run test
+
 ```
 
 ## Project Introduction
@@ -126,3 +153,4 @@ The REST API example is given below.
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+```
