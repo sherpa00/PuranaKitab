@@ -110,9 +110,8 @@ To run tests, follow according to below steps:
 
 4. Now, Run tests
 
-``bash
-npm run test
-
+```bash
+ npm run test
 ```
 
 ## Project Introduction
@@ -153,4 +152,7 @@ The REST API example is given below.
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/) [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+
+```
+
 ```
